@@ -1,28 +1,206 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app :style="this.$vuetify.theme.dark ? '' : 'background-color: #EEE'">
+    <component :is="`style`">
+      <!-- .selectedNavBarItem { border-right: 6px {{$background}} solid; transition: 0.3s; } -->
+      .selectedNavBarItem .las { background-color: {{ this.$background }};
+      border-radius: 50px; padding:5px; transition: 0.3s; margin-right: 15px;
+      color: #FFFFFF; } .v-application--is-rtl
+      .v-list-group--no-action>.v-list-group__items>.v-list-item {
+      padding-right: 47px !important;}
+      .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px {{ this.$background }} solid !important;}
+    </component>
+    <v-navigation-drawer permanent app right fixed v-if="isLoggedIn">
+      <v-list>
+        <center>
+          <br /><br />
+          <Logo width="150px" />
+
+          <br />
+          <v-chip x-small :color="$background" outlined>
+            {{ userInfo.username }}
+          </v-chip>
+          <br />
+        </center>
+        <template v-for="item in items">
+          <v-list-item
+            :key="item.title"
+            v-if="item.child == null"
+            link
+            :to="item.route"
+            active-class="selectedNavBarItem"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <i :class="item.icon + ' homePageNavBarIcons'"></i>
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-group
+            v-if="item.child != null"
+            :key="item.title"
+            :prepend-icon="item.action"
+            no-action
+          >
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <i :class="item.icon + ' homePageNavBarIcons'"></i>
+                  {{ item.title }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
+
+            <template v-for="child in item.child">
+              <v-list-item
+                :key="child.title"
+                link
+                :to="child.route"
+                active-class="selectedNavBarItem"
+              >
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <i :class="child.icon + ' homePageNavBarIcons'"></i>
+                    {{ child.title }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+        </template>
+      </v-list>
+
+      <template v-slot:append>
+        <v-list-item @click="darkMode()">
+          <v-list-item-content>
+            <v-list-item-title>
+              <i
+                :class="
+                  $vuetify.theme.dark
+                    ? 'las la-sun homePageNavBarIcons'
+                    : 'las la-moon homePageNavBarIcons'
+                "
+              ></i>
+              {{ $vuetify.theme.dark ? "Light mode" : "Dark mode" }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="logout()">
+          <v-list-item-content>
+            <v-list-item-title>
+              <i class="las la-power-off homePageNavBarIcons"></i>
+              تسجيل الخروج
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <br /><br />
+      </template>
+    </v-navigation-drawer>
+
+    <div class="mainContent">
+      <v-main>
+        <v-container class="pa-0 mainContent" fluid>
+          <vue-page-transition name="fade">
+            <Login v-if="!isLoggedIn" />
+            <router-view v-else />
+          </vue-page-transition>
+        </v-container>
+      </v-main>
+    </div>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import Login from "./components/Login.vue";
+import Logo from "./components/Logo.vue";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Login,
+    Logo,
+  },
+  data: () => ({
+    items: [
+      { title: "الرئيسية", icon: "las la-home", route: "/home", child: null },
+      {
+        title: "المخزن",
+        icon: "las la-file-invoice",
+        route: null,
+        child: [
+          {
+            title: "الفواتير",
+            icon: "las la-file-invoice",
+            route: "/invoices",
+            child: null,
+          },
+          {
+            title: "الزيارات",
+            icon: "las la-map-marked-alt",
+            route: "/visits",
+            child: null,
+          },
+          { title: "المواد", icon: "las la-box", route: "/items" },
+        ],
+      },
+      {
+        title: "المواد التالفة",
+        icon: "las la-exclamation-circle",
+        route: "/damagedItems",
+        child: null,
+      },
+      {
+        title: "الزبائن الموردين",
+        icon: "las la-user-friends",
+        route: "/customers",
+        child: null,
+      },
+      { title: "الخريطة", icon: "las la-map", route: "/map", child: null },
+      {
+        title: "الحسابات",
+        icon: "las la-user-circle",
+        route: "/accounts",
+        child: null,
+      },
+      {
+        title: "التقارير",
+        icon: "las la-chart-bar",
+        route: "/reports",
+        child: null,
+      },
+      {
+        title: "الاعدادات",
+        icon: "las la-cog",
+        route: "/settings",
+        child: null,
+      },
+    ],
+  }),
+  methods: {
+    logout() {
+      localStorage.clear();
+      location.reload();
+    },
+    darkMode() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      localStorage.setItem("darkMode", this.$vuetify.theme.dark);
+    },
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
+    },
+  },
+  created: function () {
+    let isDarkMode = false;
+    if (localStorage.getItem("darkMode") == "true") {
+      isDarkMode = true;
+    }
+    this.$vuetify.theme.dark = isDarkMode;
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style src="./style.css"></style>
