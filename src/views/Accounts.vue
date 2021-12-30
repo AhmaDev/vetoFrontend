@@ -11,7 +11,7 @@
 
         <v-tab
           style="justify-content: center !important"
-          v-for="role in roles"
+          v-for="(role, index) in roles"
           :key="role.idRole"
         >
           {{ role.roleName }}
@@ -19,7 +19,7 @@
           <v-chip dark color="red" x-small>
             {{
               accounts.filter(
-                (user) => user.roleId == roles[selectedRoleId].idRole
+                (user) => user.roleId == roles[index].idRole
               ).length
             }}
           </v-chip>

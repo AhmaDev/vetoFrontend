@@ -32,6 +32,9 @@ const routes = [
   { path: '/new/damagedItems', name: 'DamagedItems', component: () => import('../views/NewDamagedInvoice.vue') },
   { path: '/damagedItems/:id', name: 'DamagedItems', component: () => import('../views/NewDamagedInvoice.vue') },
   { path: '/user/:id', name: 'User', component: () => import('../views/User.vue') },
+  { path: '/delivery', name: 'Delivery', component: () => import('../views/Delivery.vue') },
+  { path: '/delivery/:id', name: 'DeliveryStatus', component: () => import('../components/DeliveryStatus.vue') },
+  { path: '/money/:id', name: 'DeliveryStatus', component: () => import('../components/MoneyStatus.vue') },
 ]
 
 const router = new VueRouter({
