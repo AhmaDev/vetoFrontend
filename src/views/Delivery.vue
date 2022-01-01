@@ -66,7 +66,7 @@
             color="success"
             elevation="0"
             small
-            :to="'/print/invoice/' + item.idInvoice"
+            :to="'/delivery/' + item.idDeliveryStatus + '?print=true'"
           >
             طباعة كشف التوزيع
           </v-btn>
@@ -76,7 +76,7 @@
             color="warning"
             elevation="0"
             small
-            :to="'/print/invoice/' + item.idInvoice"
+            :to="'/money/' + item.idDeliveryStatus + '?print=true'"
           >
             طباعة كشف المالية
           </v-btn>
@@ -86,7 +86,7 @@
             color="secondary"
             elevation="0"
             small
-            :to="'/print/invoice/' + item.idInvoice"
+            :to="'/print/invoice/' + JSON.stringify(item.invoices).slice(1,-1)"
           >
             طباعة الفواتير
           </v-btn>

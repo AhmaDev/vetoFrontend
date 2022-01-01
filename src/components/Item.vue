@@ -52,37 +52,28 @@
             item-value="idItemGroup"
           ></v-autocomplete>
         </v-col>
-        <v-col cols="8">
-          <v-text-field
-            label="وصف المادة"
-            outlined
-            hide-details
-            notdense
-            v-model="item.itemDescription"
-          ></v-text-field>
-        </v-col>
         <v-col cols="4">
           <v-autocomplete
             v-model="item.manufactureId"
-            :items="groups"
+            :items="manufactures"
             outlined
             hide-details
             notdense
             label="الشركة الموردة"
-            item-text="itemGroupName"
-            item-value="idItemGroup"
+            item-text="customerName"
+            item-value="idCustomer"
           ></v-autocomplete>
         </v-col>
         <v-col cols="4">
           <v-autocomplete
             v-model="item.itemTypeId"
-            :items="groups"
+            :items="itemTypes"
             outlined
             hide-details
             notdense
             label="نوع المادة"
-            item-text="itemGroupName"
-            item-value="idItemGroup"
+            item-text="itemTypeName"
+            item-value="idItemType"
           ></v-autocomplete>
         </v-col>
 
@@ -129,6 +120,15 @@
             v-model="item.itemWeight"
           ></v-text-field>
         </v-col>
+        <v-col cols="2">
+          <v-autocomplete
+            outlined
+            hide-details
+            notdense
+            :items="itemWeightSuffixes"
+            v-model="item.itemWeightSuffix"
+          ></v-autocomplete>
+        </v-col>
 
         <v-col cols="2">
           <v-text-field
@@ -174,7 +174,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="2">
+        <v-col cols="12">
           <v-switch
             v-model="item.isAvailable"
             label="متاح للبيع"
@@ -207,7 +207,7 @@
             id="imagePath"
           />
         </v-col>
-        <v-col cols="6">
+        <v-col cols="8">
           <v-data-table
             :headers="pricesHeader"
             :items="item.prices"
@@ -263,6 +263,8 @@ export default {
   data: () => ({
     permissions: [],
     sellPrices: [],
+    itemTypes: [],
+    manufactures: [],
     itemId: 0,
     item: null,
     image: null,
@@ -271,6 +273,7 @@ export default {
       { text: "المبلغ", value: "price" },
       { text: "الهدف اليومي للمندوب", value: "delegateTarget" },
     ],
+    itemWeightSuffixes: ["غرام", "كيلو", "ملي", "لتر"],
   }),
   created: function () {
     // LOAD PERMS START
@@ -311,6 +314,18 @@ export default {
         .get(this.$baseUrl + "sellprice")
         .then((res) => {
           this.sellPrices = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "itemType")
+        .then((res) => {
+          this.itemTypes = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "manufacture")
+        .then((res) => {
+          this.manufactures = res.data;
         })
         .finally(() => {});
     },
@@ -399,6 +414,7 @@ export default {
           maximumStoreNotify: this.item.maximumStoreNotify,
           minimumStoreNotify: this.item.minimumStoreNotify,
           itemWeight: this.item.itemWeight,
+          itemWeightSuffix: this.item.itemWeightSuffix,
         })
         .then((res) => {
           console.log(res.data);
@@ -418,7 +434,8 @@ export default {
           sellPriceId: id,
           price: 0,
           delegateTarget: 0,
-        }).then(() => {
+        })
+        .then(() => {
           this.fetch();
         })
         .catch(() => {

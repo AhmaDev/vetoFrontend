@@ -44,7 +44,7 @@
               غير متاح
             </div>
             <v-card-title class="textOverFlow">
-              {{ item.itemName }}
+              {{ item.fullItemName }}
             </v-card-title>
 
             <v-card-text class="textOverFlow">

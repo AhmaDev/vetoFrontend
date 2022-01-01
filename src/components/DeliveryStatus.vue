@@ -193,6 +193,18 @@ export default {
     this.$http.get(this.$baseUrl + "settings").then((res) => {
       this.appData = res.data;
     });
+
+    if (
+      this.$route.query.print != undefined ||
+      this.$route.query.print != null
+    ) {
+      setTimeout(() => {
+        this.$print(this.$refs.print);
+        setTimeout(() => {
+          this.$router.go(-1);
+        }, 2000);
+      }, 1000);
+    }
   },
   methods: {
     fetch() {
@@ -275,7 +287,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 td,
 th {
   padding: 10px;

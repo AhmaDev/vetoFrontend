@@ -1,5 +1,10 @@
 <template>
-  <div ref="print" v-if="deliveryStatus != null" id="deliveryStatus" class="pa-10">
+  <div
+    ref="print"
+    v-if="deliveryStatus != null"
+    id="deliveryStatus"
+    class="pa-10"
+  >
     <v-sheet class="pa-10 sheet" elevation="2">
       <div v-if="appData != null" class="pa-10">
         <center>
@@ -63,94 +68,92 @@
     <br />
     <v-sheet class="pa-10 sheet" elevation="2">
       <table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
-    <tr>
-        <td colspan="2">اسم الحساب</td>
-        <td>البيان</td>
-    </tr>
-    <tr>
-        <td width="200px">مجموع الاعداد مباعة بالمبالغ</td>
-        <td width="200px">{{sumQty()}}</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>مجموع الاعداد مباعة بهدايا</td>
-        <td>{{sumQty2()}}</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>مجموع الكلي للاعداد</td>
-        <td>{{sumQty() + sumQty2()}}</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>عدد النقص</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>عدد الراجع</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>الصافي الاعداد</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>مبلغ الاعداد قبل نقص وراجع</td>
-        <td>{{totalPrice()}}</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>مبلغ النقص</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>مبلغ الراجع</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>صافي مبيعات كل مندوبين مفرد </td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
-<table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
-    <tr>
-        <td colspan="1">
+        <tr>
+          <td colspan="2">اسم الحساب</td>
+          <td>البيان</td>
+        </tr>
+        <tr>
+          <td width="200px">مجموع الاعداد مباعة بالمبالغ</td>
+          <td width="200px">{{ sumQty() }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مجموع الاعداد مباعة بهدايا</td>
+          <td>{{ sumQty2() }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مجموع الكلي للاعداد</td>
+          <td>{{ sumQty() + sumQty2() }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>عدد النقص</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>عدد الراجع</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>الصافي الاعداد</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مبلغ الاعداد قبل نقص وراجع</td>
+          <td>{{ totalPrice() }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مبلغ النقص</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مبلغ الراجع</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>صافي مبيعات كل مندوبين مفرد</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
+        <tr>
+          <td colspan="1">
             <table border="1" cellspacing="0" width="100%" dir="rtl">
-                <tr>
-                    <td width="10px">تسلسل</td>
-                    <td>رقم توزيع</td>
-                    <td width="200px">اسم موزع والأب</td>
-                    <td width="200px">المبلغ</td>
-                    <td width="200px">اسم حساب</td>
-                    <td width="40%">البيان</td>
-                </tr>
-                <tr v-for="(x,i) in [1,1,1,1,1,1,1,1,1,1]" :key="i">
-                    <td>{{i+1}}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+              <tr>
+                <td width="10px">تسلسل</td>
+                <td>رقم توزيع</td>
+                <td width="200px">اسم موزع والأب</td>
+                <td width="200px">المبلغ</td>
+                <td width="200px">اسم حساب</td>
+                <td width="40%">البيان</td>
+              </tr>
+              <tr v-for="(x, i) in [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]" :key="i">
+                <td>{{ i + 1 }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
             </table>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2" style="height: 200px;">
-            ملاحظات المسؤول
-        </td>
-    </tr>
-</table>
-<br>
-<br>
-<span style="float: right;">توقيع واسم امين المخزن</span>
-<span style="float: left;">توقيع واسم المدقق</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="height: 200px">ملاحظات المسؤول</td>
+        </tr>
+      </table>
+      <br />
+      <br />
+      <span style="float: right">توقيع واسم امين المخزن</span>
+      <span style="float: left">توقيع واسم المدقق</span>
     </v-sheet>
 
     <v-fab-transition>
@@ -181,10 +184,16 @@ export default {
     this.$http.get(this.$baseUrl + "settings").then((res) => {
       this.appData = res.data;
     });
-    if (this.$route.query.print != undefined || this.$route.query.print != null) {
+    if (
+      this.$route.query.print != undefined ||
+      this.$route.query.print != null
+    ) {
       setTimeout(() => {
-        this.print();
-      }, 2000);
+        this.$print(this.$refs.print);
+        setTimeout(() => {
+          this.$router.go(-1);
+        }, 2000);
+      }, 1000);
     }
   },
   methods: {
@@ -262,13 +271,13 @@ export default {
       );
     },
     print() {
-        this.$print(this.$refs.print);
-    }
+      this.$print(this.$refs.print);
+    },
   },
 };
 </script>
 
-<style>
+<style scoped>
 td,
 th {
   padding: 10px;
@@ -280,13 +289,13 @@ th {
   page-break-after: always;
   direction: rtl !important;
 }
-@media print{
+@media print {
   * {
-    font-size:10px !important;
+    font-size: 10px !important;
     -webkit-print-color-adjust: exact;
   }
   .v-btn {
-      display: none !important;
+    display: none !important;
   }
 }
 </style>
