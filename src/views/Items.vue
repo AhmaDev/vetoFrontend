@@ -98,6 +98,7 @@
                 label="اسم المادة"
                 v-model="newItem.itemName"
                 outlined
+                hide-details
                 dense
               ></v-text-field>
             </v-col>
@@ -106,6 +107,7 @@
                 label="رمز المادة"
                 v-model="newItem.itemCode"
                 outlined
+                hide-details
                 dense
               ></v-text-field>
             </v-col>
@@ -115,6 +117,7 @@
                 type="number"
                 v-model="newItem.itemBarcode"
                 outlined
+                hide-details
                 dense
               ></v-text-field>
             </v-col>
@@ -126,16 +129,132 @@
                 item-text="itemGroupName"
                 item-value="idItemGroup"
                 outlined
+                hide-details
                 dense
               ></v-select>
             </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="newItem.itemDescription"
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="newItem.manufactureId"
+                :items="manufactures"
                 outlined
+                hide-details
                 dense
-                label="وصف المادة"
-              ></v-textarea>
+                label="الشركة الموردة"
+                item-text="customerName"
+                item-value="idCustomer"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="newItem.itemTypeId"
+                :items="itemTypes"
+                outlined
+                hide-details
+                dense
+                label="نوع المادة"
+                item-text="itemTypeName"
+                item-value="idItemType"
+              ></v-autocomplete>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="عرض الكارتون"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.cartonWidth"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="ارتفاع الكارتون"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.cartonHeight"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="طول الكارتون"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.cartonLength"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="وزن الكارتون"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.itemWeight"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-autocomplete
+                outlined
+                hide-details
+                dense
+                :items="itemWeightSuffixes"
+                v-model="newItem.itemWeightSuffix"
+              ></v-autocomplete>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="عدد القطع في الكارتون"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.cartonQauntity"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="عدد ايام صلاحية المادة"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.expireAge"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="الحد الادنى للتنبيه"
+                type="number"
+                hint="العدد بالكراتين"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.minimumStoreNotify"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="4">
+              <v-text-field
+                label="الحد الاعلى للتنبيه"
+                type="number"
+                hint="العدد بالكراتين"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.maximumStoreNotify"
+              ></v-text-field>
             </v-col>
             <v-col cols="12">
               <h3>اضافة سعر</h3>
@@ -148,6 +267,7 @@
                     item-text="sellPriceName"
                     item-value="idSellPrice"
                     outlined
+                    hide-details
                     dense
                     v-model="newItem.sellPriceId"
                   ></v-select>
@@ -157,6 +277,7 @@
                     dense
                     label="المبلغ"
                     type="number"
+                    hide-details
                     outlined
                     v-model="newItem.sellPriceAmount"
                   ></v-text-field>
@@ -244,6 +365,9 @@ export default {
     items: [],
     groups: [],
     sellPrices: [],
+    manufactures: [],
+    itemTypes: [],
+    itemWeightSuffixes: ["غرام", "كيلو", "ملي", "لتر"],
     newItemSellPrices: [],
     newItemDialog: false,
     newItem: {
@@ -255,6 +379,17 @@ export default {
       sellPriceAmount: 0,
       sellPriceId: null,
       image: null,
+      manufactureId: null,
+      itemTypeId: null,
+      cartonWidth: null,
+      cartonHeight: null,
+      cartonLength: null,
+      cartonQauntity: null,
+      expireAge: null,
+      maximumStoreNotify: null,
+      minimumStoreNotify: null,
+      itemWeight: null,
+      itemWeightSuffix: null,
     },
   }),
   created: function () {
@@ -298,6 +433,18 @@ export default {
       this.$http.get(this.$baseUrl + "sellprice").then((res) => {
         this.sellPrices = res.data;
       });
+      this.$http
+        .get(this.$baseUrl + "itemType")
+        .then((res) => {
+          this.itemTypes = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "manufacture")
+        .then((res) => {
+          this.manufactures = res.data;
+        })
+        .finally(() => {});
     },
     addNewSellPrice() {
       if (this.newItem.sellPriceId != null) {
@@ -341,7 +488,6 @@ export default {
         this.newItem.itemName.length == 0 ||
         this.newItem.itemCode.length == 0 ||
         this.newItem.itemBarcode.length == 0 ||
-        this.newItem.itemDescription.length == 0 ||
         this.newItem.itemGroup == null ||
         this.newItemSellPrices.length == 0
       ) {

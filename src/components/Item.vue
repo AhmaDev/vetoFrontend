@@ -174,14 +174,14 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12">
+        <v-col cols="2">
           <v-switch
             v-model="item.isAvailable"
             label="متاح للبيع"
             inset
           ></v-switch>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="2">
           <v-btn onclick="document.getElementById('filepicker').click()" block>
             <v-icon> mdi-cloud-outline </v-icon>
             &nbsp;&nbsp; تعديل صورة المادة
@@ -207,7 +207,7 @@
             id="imagePath"
           />
         </v-col>
-        <v-col cols="8">
+        <v-col cols="12">
           <v-data-table
             :headers="pricesHeader"
             :items="item.prices"
@@ -240,6 +240,10 @@
               <v-text-field
                 @change="updatePrice(item.idItemPrice, $event)"
                 :value="item.price"
+                type="number"
+                outlined
+                dense
+                hide-details
               ></v-text-field>
             </template>
 
@@ -247,7 +251,51 @@
               <v-text-field
                 @change="updateDelegateTarget(item.idItemPrice, $event)"
                 :value="item.delegateTarget"
+                type="number"
+                outlined
+                dense
+                hide-details
               ></v-text-field>
+            </template>
+
+            <template v-slot:[`item.damagedItemPrice`]="{ item }">
+              <v-text-field
+                @change="updateDamagedItemPrice(item.idItemPrice, $event)"
+                :value="item.damagedItemPrice"
+                type="number"
+                outlined
+                dense
+                hide-details
+              ></v-text-field>
+            </template>
+
+            <template v-slot:[`item.itemDescription`]="{ item }">
+              <v-text-field
+                outlined
+                @change="updateItemDescription(item.idItemPrice, $event)"
+                :value="item.itemDescription"
+                dense
+                hide-details
+              ></v-text-field>
+            </template>
+
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-menu offset-y>
+                <template v-bind="item" v-slot:activator="{ on, attrs }">
+                  <v-btn v-bind="attrs" v-on="on" icon>
+                    <v-icon color="red" title="حذف السعر"
+                      >mdi-delete-outline</v-icon
+                    >
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item @click="deletePrice(item.idItemPrice)">
+                    <v-list-item-title
+                      >اضغط هنا لتأكيد حذف السعر</v-list-item-title
+                    >
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </template>
           </v-data-table>
         </v-col>
@@ -272,6 +320,9 @@ export default {
       { text: "السعر", value: "sellPriceName" },
       { text: "المبلغ", value: "price" },
       { text: "الهدف اليومي للمندوب", value: "delegateTarget" },
+      { text: "سعر القطعة التالفة", value: "damagedItemPrice" },
+      { text: "وصف المادة", value: "itemDescription", width: "50%" },
+      { text: "الاجراءات", value: "actions" },
     ],
     itemWeightSuffixes: ["غرام", "كيلو", "ملي", "لتر"],
   }),
@@ -363,6 +414,53 @@ export default {
             message: "تم تعديل هدف المندوب",
             duration: 3000,
           });
+        })
+        .finally(() => loading.hide());
+    },
+    updateItemDescription(id, value) {
+      let loading = this.$loading.show();
+      this.$http
+        .put(this.$baseUrl + "item/updatePrice/" + id, {
+          itemDescription: value,
+        })
+        .then((res) => {
+          console.log(res.data);
+          this.$toast.open({
+            type: "success",
+            message: "تم تعديل وصف المادة لهذا السعر",
+            duration: 3000,
+          });
+        })
+        .finally(() => loading.hide());
+    },
+    updateDamagedItemPrice(id, value) {
+      let loading = this.$loading.show();
+      this.$http
+        .put(this.$baseUrl + "item/updatePrice/" + id, {
+          damagedItemPrice: value,
+        })
+        .then((res) => {
+          console.log(res.data);
+          this.$toast.open({
+            type: "success",
+            message: "تم تعديل سعر القطعة التالفة ",
+            duration: 3000,
+          });
+        })
+        .finally(() => loading.hide());
+    },
+    deletePrice(id) {
+      let loading = this.$loading.show();
+      this.$http
+        .delete(this.$baseUrl + "item/itemPrice/delete/" + id)
+        .then((res) => {
+          console.log(res.data);
+          this.$toast.open({
+            type: "warning",
+            message: "تم حذف السعر ",
+            duration: 3000,
+          });
+          this.fetch();
         })
         .finally(() => loading.hide());
     },

@@ -4,7 +4,7 @@
       <v-toolbar-title>كشف التوزيع</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <v-card class="pa-10">
+    <v-card class="pa-10 deliveryStatusTable">
       <v-row>
         <v-col>
           <v-autocomplete
@@ -29,70 +29,104 @@
             dense
           ></v-text-field>
         </v-col>
-        <v-col>
-          <v-btn @click="startMethod()" dark :color="$background">
+        <v-col cols="2">
+          <v-btn @click="startMethod(0)" dark :color="$background">
             اضافة كشف توزيع جديد
+          </v-btn>
+        </v-col>
+        <v-col cols="2">
+          <v-btn @click="startMethod(1)" dark :color="$background">
+            اضافة كشف مالية جديد
           </v-btn>
         </v-col>
       </v-row>
     </v-card>
     <br />
-    <v-card class="pa-10">
-      <v-data-table :items="deliveriesStatus" :headers="tableHeader">
-        <template v-slot:[`item.total`]="{ item }">
-          {{ sum(item) }}
-        </template>
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-btn
-            color="primary"
-            elevation="0"
-            small
-            :to="'/delivery/' + item.idDeliveryStatus"
-          >
-            مشاهدة كشف التوزيع
-          </v-btn>
-          &nbsp;
-          <v-btn
-            color="error"
-            elevation="0"
-            small
-            :to="'/money/' + item.idDeliveryStatus"
-          >
-            مشاهدة كشف المالية
-          </v-btn>
-          &nbsp;
+    <v-row>
+      <v-col cols="12" md="6">
 
-          <v-btn
-            color="success"
-            elevation="0"
-            small
-            :to="'/delivery/' + item.idDeliveryStatus + '?print=true'"
-          >
-            طباعة كشف التوزيع
-          </v-btn>
-          &nbsp;
-
-          <v-btn
-            color="warning"
-            elevation="0"
-            small
-            :to="'/money/' + item.idDeliveryStatus + '?print=true'"
-          >
-            طباعة كشف المالية
-          </v-btn>
-          &nbsp;
-
-          <v-btn
-            color="secondary"
-            elevation="0"
-            small
-            :to="'/print/invoice/' + JSON.stringify(item.invoices).slice(1,-1)"
-          >
-            طباعة الفواتير
-          </v-btn>
-        </template>
-      </v-data-table>
-    </v-card>
+        <v-card class="pa-10 deliveryStatusTable">
+        <h3>كشف التوزيع</h3>
+          <v-data-table :items="deliveriesStatus" :headers="tableHeader">
+            <template v-slot:[`item.total`]="{ item }">
+              {{ sum(item) }}
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-btn
+                color="primary"
+                elevation="0"
+                block
+                small
+                :to="'/delivery/' + item.idDeliveryStatus"
+              >
+                مشاهدة كشف التوزيع
+              </v-btn>
+              <v-btn
+                color="success"
+                elevation="0"
+                block
+                small
+                :to="'/delivery/' + item.idDeliveryStatus + '?print=true'"
+              >
+                طباعة كشف التوزيع
+              </v-btn>
+              <v-btn
+                color="secondary"
+                block
+                elevation="0"
+                small
+                :to="
+                  '/print/invoice/' + JSON.stringify(item.invoices).slice(1, -1)
+                "
+              >
+                طباعة الفواتير
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-card class="pa-10 deliveryStatusTable">
+        <h3>كشف المالية</h3>
+          <v-data-table :items="deliveriesStatusMoney" :headers="tableHeaderMoney">
+            <template v-slot:[`item.total`]="{ item }">
+              {{ sum(item) }}
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-btn
+                color="error"
+                elevation="0"
+                small
+                block
+                :to="'/money/' + item.idDeliveryStatus"
+              >
+                مشاهدة كشف المالية
+              </v-btn>
+              <v-btn
+                color="warning"
+                elevation="0"
+                small
+                block
+                :to="'/money/' + item.idDeliveryStatus + '?print=true'"
+              >
+                طباعة كشف المالية
+              </v-btn>
+              <v-btn
+                color="secondary"
+                elevation="0"
+                small
+                block
+                :to="
+                  '/print/invoice/' + JSON.stringify(item.invoices).slice(1, -1)
+                "
+              >
+                طباعة الفواتير
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -103,10 +137,17 @@ export default {
     deliveriesStatus: [],
     deliveries: [],
     selectedDeliveries: [],
+    deliveriesStatusMoney: [],
     selectedDate: null,
     tableHeader: [
       { text: "رقم التوزيع", value: "idDeliveryStatus" },
       { text: "اسم الموزع", value: "deliveryName" },
+      { text: "التاريخ", value: "creationFixedDate" },
+      { text: "المبلغ", value: "total" },
+      { text: "الاجراءات", value: "actions" },
+    ],
+    tableHeaderMoney: [
+      { text: "رقم الكشف", value: "idDeliveryStatus" },
       { text: "التاريخ", value: "creationFixedDate" },
       { text: "المبلغ", value: "total" },
       { text: "الاجراءات", value: "actions" },
@@ -127,11 +168,12 @@ export default {
       this.$http
         .get(this.$baseUrl + "deliveryStatus")
         .then((res) => {
-          this.deliveriesStatus = res.data;
+          this.deliveriesStatus = res.data.filter(e => e.deliveryStatusType == 0);
+          this.deliveriesStatusMoney = res.data.filter(e => e.deliveryStatusType == 1);
         })
         .finally(() => loading.hide());
     },
-    startMethod() {
+    startMethod(type) {
       if (this.selectedDeliveries.length == 0 || this.selectedDate == null) {
         this.$toast.open({
           type: "error",
@@ -145,6 +187,7 @@ export default {
         .post(this.$baseUrl + "deliveryStatus/multipleInsert", {
           deliveries: this.selectedDeliveries,
           date: this.selectedDate,
+          deliveryStatusType: type,
         })
         .then(() => {
           setTimeout(() => {
@@ -165,5 +208,7 @@ export default {
 </script>
 
 <style>
-
+.deliveryStatusTable .v-btn {
+  margin: 5px !important;
+}
 </style>
