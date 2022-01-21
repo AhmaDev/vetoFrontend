@@ -17,11 +17,12 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import Print from 'vue-printjs'
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import LDrawToolbar from 'vue2-leaflet-draw-toolbar';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
 import { firestorePlugin } from 'vuefire'
 import VueBottomSheet from "@webzlodimir/vue-bottom-sheet";
-
+import JsonExcel from "vue-json-excel";
 import '@/util/auth.js';
 
 delete Icon.Default.prototype._getIconUrl;
@@ -31,8 +32,8 @@ Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 Vue.config.productionTip = false
-// Vue.prototype.$baseUrl = 'http://localhost:3000/';
-Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
+Vue.prototype.$baseUrl = 'http://localhost:3000/';
+// Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
 Vue.prototype.$appVersion = '1.4.0';
 Vue.http = Vue.prototype.$http = axios;
 Vue.prototype.$background = "#007BFF"
@@ -52,6 +53,8 @@ Vue.use(VueBottomSheet);
 Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
+Vue.component("downloadExcel", JsonExcel);
+Vue.component('l-draw-toolbar', LDrawToolbar);
 
 new Vue({
   vuetify,

@@ -34,6 +34,12 @@
       </v-tab>
       <v-tab>
         <v-icon right>
+          mdi-package-variant
+        </v-icon>
+        الماركات
+      </v-tab>
+      <v-tab>
+        <v-icon right>
           mdi-format-list-bulleted-type
         </v-icon>
         انواع المواد
@@ -88,6 +94,9 @@
         <ItemGroupsSettings />
       </v-tab-item>
       <v-tab-item>
+        <BrandsSettings />
+      </v-tab-item>
+      <v-tab-item>
         <ItemTypesSettings />
       </v-tab-item>
       <v-tab-item>
@@ -127,6 +136,7 @@ import SupervisorDelegates from './settings/supervisorDelegates.vue'
 import DeliveryDelegates from './settings/deliveryDelegates.vue'
 import ProvincesPage from './settings/provinces.vue'
 import ItemTypesSettings from './settings/itemType.vue'
+import BrandsSettings from './settings/brands.vue'
 export default {
   components: {
     GlobalSettings,
@@ -139,7 +149,8 @@ export default {
     SupervisorDelegates,
     DeliveryDelegates,
     ProvincesPage,
-    ItemTypesSettings
+    ItemTypesSettings,
+    BrandsSettings
   },
   data: () => ({
     permissions: [],

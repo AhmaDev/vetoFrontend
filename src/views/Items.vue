@@ -95,7 +95,7 @@
           <v-row justify="center" align="center">
             <v-col cols="6">
               <v-text-field
-                label="اسم المادة"
+                label="نوع شكل العلبة"
                 v-model="newItem.itemName"
                 outlined
                 hide-details
@@ -152,7 +152,7 @@
                 outlined
                 hide-details
                 dense
-                label="نوع المادة"
+                label="نوع المنتج داخل العلبة"
                 item-text="itemTypeName"
                 item-value="idItemType"
               ></v-autocomplete>
@@ -193,7 +193,7 @@
 
             <v-col cols="4">
               <v-text-field
-                label="وزن الكارتون"
+                label="وزن العلبة"
                 type="number"
                 outlined
                 hide-details

@@ -1,10 +1,10 @@
 <template>
-  <div id="itemGroupsSettings">
+  <div id="brands">
     <v-row>
       <v-col>
         <v-text-field
-          label="اسم المجموعة"
-          placeholder="اضافة مجموعة جديدة"
+          label="اسم الماركة"
+          placeholder="اضافة ماركة جديدة"
           outlined
           dense
           v-model="itemGroupFields.title"
@@ -22,7 +22,7 @@
       class="elevation-0"
     >
       <template v-slot:[`item.itemGroupName`]="{ item }">
-        <v-text-field outlined dense @change="editGroup(item.idItemGroup, $event)" :value="item.itemGroupName" hide-details></v-text-field>
+        <v-text-field outlined dense @change="editGroup(item.idBrand, $event)" :value="item.brandName" hide-details></v-text-field>
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
@@ -35,7 +35,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="deleteItemGroup(item.idItemGroup)">
+            <v-list-item @click="deleteItemGroup(item.idBrand)">
               <v-list-item-title
                 >اضغط هنا لتأكيد حذف المجموعة</v-list-item-title
               >
@@ -49,11 +49,11 @@
 
 <script>
 export default {
-  name: "ItemGroupsSettings",
+  name: "BrandsSettings",
   data: () => ({
     itemGroups: {
       header: [
-        { text: "اسم المجموعة", value: "itemGroupName" },
+        { text: "اسم الماركة", value: "brandName" },
         { text: "الاجراءات", value: "actions", align: "left" },
       ],
       data: [],
@@ -69,7 +69,7 @@ export default {
     fetch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "itemgroup")
+        .get(this.$baseUrl + "brands")
         .then((res) => {
           this.itemGroups.data = res.data;
         })
@@ -79,8 +79,8 @@ export default {
       if (this.itemGroupFields.title != "") {
         let loading = this.$loading.show();
         this.$http
-          .post(this.$baseUrl + "itemgroup/new", {
-            itemGroupName: this.itemGroupFields.title,
+          .post(this.$baseUrl + "brands/new", {
+            brandName: this.itemGroupFields.title,
           })
           .then(() => {
             this.fetch();
@@ -96,12 +96,12 @@ export default {
     deleteItemGroup(itemId) {
         let loading = this.$loading.show();
         this.$http
-          .delete(this.$baseUrl + "itemgroup/delete/" + itemId)
+          .delete(this.$baseUrl + "brands/delete/" + itemId)
           .then(() => {
             this.fetch();
             this.$toast.open({
               type: "warning",
-              message: " تم حذف المجموعة",
+              message: " تم حذف الماركة",
               duration: 3000,
             });
           })
@@ -110,14 +110,14 @@ export default {
     editGroup(itemId, e) {
         let loading = this.$loading.show();
         this.$http
-          .put(this.$baseUrl + "itemgroup/edit/" + itemId , {
-              itemGroupName: e,
+          .put(this.$baseUrl + "brands/edit/" + itemId , {
+              brandName: e,
           })
           .then(() => {
             this.fetch();
             this.$toast.open({
               type: "success",
-              message: " تم تعديل المجموعة",
+              message: " تم تعديل الماركة",
               duration: 3000,
             });
           })

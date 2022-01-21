@@ -116,7 +116,7 @@
                   </v-list-item-avatar>
                   <v-list-item-content>
                     <v-list-item-title
-                      v-html="data.item.itemName"
+                      v-html="data.item.fullItemName"
                     ></v-list-item-title>
                     <v-list-item-subtitle
                       v-html="data.item.itemGroupName"
@@ -280,9 +280,7 @@ export default {
                 idDamagedItemsInvoiceContent:
                   this.invoice.items[i].idDamagedItemsInvoiceContent,
                 itemId: this.invoice.items[i].itemId,
-                itemName: this.items.filter(
-                  (item) => item.idItem == this.invoice.items[i].itemId
-                )[0].itemName,
+                itemName: this.invoice.items[i].itemName,
                 count: this.invoice.items[i].count,
               });
             }

@@ -131,7 +131,7 @@
                 outlined
                 dense
                 label="المادة"
-                item-text="itemName"
+                item-text="fullItemName"
                 item-value="idItem"
                 v-on:change="
                   getPriceForItem($event);
@@ -146,7 +146,7 @@
                   </v-list-item-avatar>
                   <v-list-item-content>
                     <v-list-item-title
-                      v-html="data.item.itemName"
+                      v-html="data.item.fullItemName"
                     ></v-list-item-title>
                     <v-list-item-subtitle
                       v-html="data.item.itemGroupName"
@@ -427,9 +427,7 @@ export default {
               this.invoiceContents.contents.push({
                 idInvoiceContent: this.invoice.items[i].idInvoiceContent,
                 itemId: this.invoice.items[i].itemId,
-                itemName: this.items.filter(
-                  (item) => item.idItem == this.invoice.items[i].itemId
-                )[0].itemName,
+                itemName: this.invoice.items[i].itemName,
                 itemPrice: this.invoice.items[i].price,
                 quantity: this.invoice.items[i].count,
                 discount: this.invoice.items[i].discount,

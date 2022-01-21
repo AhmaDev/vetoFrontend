@@ -12,16 +12,7 @@
 
     <v-card v-if="item != null" class="pa-10" no-elevation>
       <v-row>
-        <v-col cols="4">
-          <v-text-field
-            label="اسم المادة"
-            outlined
-            hide-details
-            notdense
-            v-model="item.itemName"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="4">
+        <v-col cols="6">
           <v-text-field
             label="رمز المادة"
             outlined
@@ -30,7 +21,7 @@
             v-model="item.itemCode"
           ></v-text-field>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="6">
           <v-text-field
             label="باركود"
             outlined
@@ -39,6 +30,68 @@
             v-model="item.itemBarcode"
             type="number"
           ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-autocomplete
+            v-model="item.itemTypeId"
+            :items="itemTypes"
+            outlined
+            hide-details
+            notdense
+            label="نوع المنتج داخل العلبة"
+            item-text="itemTypeName"
+            item-value="idItemType"
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            label="نوع شكل العلبة"
+            outlined
+            hide-details
+            notdense
+            v-model="item.itemName"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            label="وزن العلبة"
+            type="number"
+            outlined
+            hide-details
+            notdense
+            v-model="item.itemWeight"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="1">
+          <v-autocomplete
+            outlined
+            hide-details
+            notdense
+            :items="itemWeightSuffixes"
+            v-model="item.itemWeightSuffix"
+          ></v-autocomplete>
+        </v-col>
+         <v-col cols="2">
+          <v-text-field
+            label="عدد القطع في الكارتون"
+            type="number"
+            outlined
+            hide-details
+            notdense
+            v-model="item.cartonQauntity"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="3">
+          <v-autocomplete
+            v-model="item.brandId"
+            :items="brands"
+            outlined
+            hide-details
+            notdense
+            label="الماركة"
+            item-text="brandName"
+            item-value="idBrand"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="4">
           <v-autocomplete
@@ -62,18 +115,6 @@
             label="الشركة الموردة"
             item-text="customerName"
             item-value="idCustomer"
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="4">
-          <v-autocomplete
-            v-model="item.itemTypeId"
-            :items="itemTypes"
-            outlined
-            hide-details
-            notdense
-            label="نوع المادة"
-            item-text="itemTypeName"
-            item-value="idItemType"
           ></v-autocomplete>
         </v-col>
 
@@ -110,36 +151,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="2">
-          <v-text-field
-            label="وزن الكارتون"
-            type="number"
-            outlined
-            hide-details
-            notdense
-            v-model="item.itemWeight"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="2">
-          <v-autocomplete
-            outlined
-            hide-details
-            notdense
-            :items="itemWeightSuffixes"
-            v-model="item.itemWeightSuffix"
-          ></v-autocomplete>
-        </v-col>
-
-        <v-col cols="2">
-          <v-text-field
-            label="عدد القطع في الكارتون"
-            type="number"
-            outlined
-            hide-details
-            notdense
-            v-model="item.cartonQauntity"
-          ></v-text-field>
-        </v-col>
+       
 
         <v-col cols="2">
           <v-text-field
@@ -307,8 +319,9 @@
 <script>
 export default {
   name: "Item",
-  groups: [],
   data: () => ({
+    groups: [],
+    brands: [],
     permissions: [],
     sellPrices: [],
     itemTypes: [],
@@ -365,6 +378,12 @@ export default {
         .get(this.$baseUrl + "sellprice")
         .then((res) => {
           this.sellPrices = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "brands")
+        .then((res) => {
+          this.brands = res.data;
         })
         .finally(() => {});
       this.$http
@@ -513,6 +532,7 @@ export default {
           minimumStoreNotify: this.item.minimumStoreNotify,
           itemWeight: this.item.itemWeight,
           itemWeightSuffix: this.item.itemWeightSuffix,
+          brandId: this.item.brandId,
         })
         .then((res) => {
           console.log(res.data);

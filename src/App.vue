@@ -10,7 +10,7 @@
       .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px {{ this.$background }} solid !important;}
     </component>
     <v-navigation-drawer permanent app right fixed v-if="isLoggedIn">
-      <v-list>
+      <v-list dense>
         <center>
           <br /><br />
           <Logo width="150px" />
@@ -71,6 +71,7 @@
       </v-list>
 
       <template v-slot:append>
+        <v-list dense>
         <v-list-item @click="darkMode()">
           <v-list-item-content>
             <v-list-item-title>
@@ -93,6 +94,7 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        </v-list>
         <br /><br />
       </template>
     </v-navigation-drawer>
@@ -160,6 +162,12 @@ export default {
         title: "الحسابات",
         icon: "las la-user-circle",
         route: "/accounts",
+        child: null,
+      },
+      {
+        title: "التقرير العام",
+        icon: "las la-file-invoice-dollar",
+        route: "/reports/overview",
         child: null,
       },
       {

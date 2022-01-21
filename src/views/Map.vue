@@ -10,8 +10,11 @@
       >
         رسم المسار
       </v-btn>
-      <v-btn @click="editCustomers = false" v-if="editCustomers" color="red">
+      <v-btn @click="editCustomers = false" v-if="editCustomers" color="error">
         الخروج من رسم المسار
+      </v-btn>
+      <v-btn @click="selectByDrag()" v-if="editCustomers" color="success">
+        تحديد
       </v-btn>
     </v-app-bar>
 
@@ -59,8 +62,10 @@
       :key="forceRerender"
       style="height: 100vh"
       :zoom="map.zoom"
+      ref="map"
       :center="map.center"
     >
+      <l-draw-toolbar position="topleft" v-if="editCustomers" />
       <l-tile-layer
         :url="map.url"
         :attribution="map.attribution"
@@ -89,7 +94,7 @@
             />
           </l-icon>
           <l-popup ref="marker">
-            اخر تحديث للموقع قبل {{getLocationDate(marker.date) * -1}} دقيقة
+            اخر تحديث للموقع قبل {{ getLocationDate(marker.date) * -1 }} دقيقة
           </l-popup>
         </l-marker>
       </template>
@@ -189,6 +194,9 @@ export default {
     },
   }),
   methods: {
+    selectByDrag(){
+      document.getElementsByClassName('leaflet-draw-draw-rectangle')[0].click();
+    },
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
         (p) => p.permissionKey == permissionKey
@@ -307,7 +315,18 @@ export default {
       this.users = res.data;
     });
   },
-  mounted: function () {},
+  mounted: function () {
+    var map = this.$refs.map;
+    map.mapObject.on("draw:created", (e) => {
+      for (let i = 0; i < this.customers.length; i++) {
+        var gps = this.customers[i].location.split(",");
+        if (e.layer.getBounds().contains({ lat: gps[0], lon: gps[1] })) {
+          this.selectCustomer(this.customers[i])
+        }
+      }
+      e.layer.remove();
+    });
+  },
   firestore: {
     mapData: db.collection("gpsTracking"),
   },
@@ -326,5 +345,12 @@ export default {
 .disconnected {
   position: absolute;
   top: 0px;
+}
+.leaflet-control-toolbar, .leaflet-popup-toolbar  {
+  padding-left: 0px !important;
+}
+
+.leaflet-control-toolbar {
+  display: none !important;
 }
 </style>
