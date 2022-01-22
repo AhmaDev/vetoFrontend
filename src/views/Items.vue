@@ -95,15 +95,6 @@
           <v-row justify="center" align="center">
             <v-col cols="6">
               <v-text-field
-                label="نوع شكل العلبة"
-                v-model="newItem.itemName"
-                outlined
-                hide-details
-                dense
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
                 label="رمز المادة"
                 v-model="newItem.itemCode"
                 outlined
@@ -122,6 +113,68 @@
               ></v-text-field>
             </v-col>
             <v-col cols="6">
+              <v-autocomplete
+                v-model="newItem.itemTypeId"
+                :items="itemTypes"
+                outlined
+                hide-details
+                dense
+                label="نوع المنتج داخل العلبة"
+                item-text="itemTypeName"
+                item-value="idItemType"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                label="نوع شكل العلبة"
+                v-model="newItem.itemName"
+                outlined
+                hide-details
+                dense
+              ></v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-text-field
+                label="وزن العلبة"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.itemWeight"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-autocomplete
+                outlined
+                hide-details
+                dense
+                :items="itemWeightSuffixes"
+                v-model="newItem.itemWeightSuffix"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                label="عدد القطع في الكارتون"
+                type="number"
+                outlined
+                hide-details
+                dense
+                v-model="newItem.cartonQauntity"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-select
+                :items="brands"
+                label="الماركة"
+                v-model="newItem.brandId"
+                item-text="brandName"
+                item-value="idBrand"
+                outlined
+                hide-details
+                dense
+              ></v-select>
+            </v-col>
+            <v-col cols="4">
               <v-select
                 :items="groups"
                 label="المجموعة"
@@ -133,7 +186,7 @@
                 dense
               ></v-select>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="4">
               <v-autocomplete
                 v-model="newItem.manufactureId"
                 :items="manufactures"
@@ -143,18 +196,6 @@
                 label="الشركة الموردة"
                 item-text="customerName"
                 item-value="idCustomer"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                v-model="newItem.itemTypeId"
-                :items="itemTypes"
-                outlined
-                hide-details
-                dense
-                label="نوع المنتج داخل العلبة"
-                item-text="itemTypeName"
-                item-value="idItemType"
               ></v-autocomplete>
             </v-col>
 
@@ -188,37 +229,6 @@
                 hide-details
                 dense
                 v-model="newItem.cartonLength"
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="4">
-              <v-text-field
-                label="وزن العلبة"
-                type="number"
-                outlined
-                hide-details
-                dense
-                v-model="newItem.itemWeight"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="4">
-              <v-autocomplete
-                outlined
-                hide-details
-                dense
-                :items="itemWeightSuffixes"
-                v-model="newItem.itemWeightSuffix"
-              ></v-autocomplete>
-            </v-col>
-
-            <v-col cols="4">
-              <v-text-field
-                label="عدد القطع في الكارتون"
-                type="number"
-                outlined
-                hide-details
-                dense
-                v-model="newItem.cartonQauntity"
               ></v-text-field>
             </v-col>
 
@@ -367,6 +377,7 @@ export default {
     sellPrices: [],
     manufactures: [],
     itemTypes: [],
+    brands: [],
     itemWeightSuffixes: ["غرام", "كيلو", "ملي", "لتر"],
     newItemSellPrices: [],
     newItemDialog: false,
@@ -390,6 +401,7 @@ export default {
       minimumStoreNotify: null,
       itemWeight: null,
       itemWeightSuffix: null,
+      brandId: null,
     },
   }),
   created: function () {
@@ -443,6 +455,12 @@ export default {
         .get(this.$baseUrl + "manufacture")
         .then((res) => {
           this.manufactures = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "brands")
+        .then((res) => {
+          this.brands = res.data;
         })
         .finally(() => {});
     },
@@ -525,6 +543,18 @@ export default {
                 sellPriceAmount: 0,
                 sellPriceId: null,
                 image: null,
+                manufactureId: null,
+                itemTypeId: null,
+                cartonWidth: null,
+                cartonHeight: null,
+                cartonLength: null,
+                cartonQauntity: null,
+                expireAge: null,
+                maximumStoreNotify: null,
+                minimumStoreNotify: null,
+                itemWeight: null,
+                itemWeightSuffix: null,
+                brandId: null,
               });
           })
           .finally(() => {

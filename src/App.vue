@@ -167,7 +167,7 @@ export default {
       {
         title: "التقرير العام",
         icon: "las la-file-invoice-dollar",
-        route: "/reports/overview",
+        route: "/reportsOverview",
         child: null,
       },
       {

@@ -15,7 +15,7 @@
           outlined
           :disabled="!checkPermission('customers_edit')"
           v-model="customer.storeName"
-          label="اسم المحل الصريح"
+          label="اسم المصنع"
         ></v-text-field>
       </v-col>
       <v-col cols="6">
@@ -23,7 +23,7 @@
           outlined
           :disabled="!checkPermission('customers_edit')"
           v-model="customer.customerName"
-          label="اسم الزبون"
+          label="اسم المورد"
         ></v-text-field>
       </v-col>
       <v-col cols="4">
@@ -31,10 +31,10 @@
           outlined
           :disabled="!checkPermission('customers_edit')"
           v-model="customer.phone"
-          label="رقم الهاتف الاول"
+          label="رقم الهاتف "
         ></v-text-field>
       </v-col>
-      <v-col cols="4">
+      <!-- <v-col cols="4">
         <v-text-field
           outlined
           :disabled="!checkPermission('customers_edit')"
@@ -97,7 +97,7 @@
           label="فئة الزبون"
         >
         </v-autocomplete>
-      </v-col>
+      </v-col> -->
       <v-col cols="8">
         <v-text-field
           outlined
@@ -106,7 +106,7 @@
           label="العنوان"
         ></v-text-field>
       </v-col>
-      <v-col cols="6">
+      <!-- <v-col cols="6">
         <v-row>
           <v-col cols="6">
             <v-text-field
@@ -152,7 +152,7 @@
             :lat-lng="map.markerLatLng"
           ></l-marker>
         </l-map>
-      </v-col>
+      </v-col> -->
     </v-row>
   </div>
 </template>
@@ -234,7 +234,7 @@ export default {
         .then(() => {
           this.$toast.open({
             type: "success",
-            message: "تم تحديث معلومات الزبون",
+            message: "تم تحديث المعلومات ",
             duration: 3000,
           });
         })

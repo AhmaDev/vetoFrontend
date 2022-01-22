@@ -32,8 +32,8 @@ Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 Vue.config.productionTip = false
-Vue.prototype.$baseUrl = 'http://localhost:3000/';
-// Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
+// Vue.prototype.$baseUrl = 'http://localhost:3000/';
+Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
 Vue.prototype.$appVersion = '1.4.0';
 Vue.http = Vue.prototype.$http = axios;
 Vue.prototype.$background = "#007BFF"
