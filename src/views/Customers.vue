@@ -217,7 +217,7 @@ export default {
       }
       let loading = this.$loading.show();
       this.$http
-        .post(this.$baseUrl + "customer/new", {
+        .post(this.$baseUrl + "manufacture/new", {
           customerName: this.newManufacture.name,
           storeName: this.newManufacture.manufactureName,
           createdBy: 1,

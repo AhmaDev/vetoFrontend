@@ -342,6 +342,10 @@ export default {
     },
   }),
   created: function () {
+    this.getCurrentDate().then((value) => {
+      this.search.dateFrom = value;
+      this.search.dateTo = value;
+    });
     this.fetch();
   },
   methods: {

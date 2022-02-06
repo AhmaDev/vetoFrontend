@@ -24,6 +24,7 @@ import { firestorePlugin } from 'vuefire'
 import VueBottomSheet from "@webzlodimir/vue-bottom-sheet";
 import JsonExcel from "vue-json-excel";
 import '@/util/auth.js';
+import '@/util/date.js';
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({

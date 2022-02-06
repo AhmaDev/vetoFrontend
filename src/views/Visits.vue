@@ -27,14 +27,19 @@
                 </v-autocomplete>
               </v-col>
               <v-col>
-                  <v-text-field dense v-model="selectedDate" outlined label="التاريخ" type="date">
-
-                  </v-text-field>
+                <v-text-field
+                  dense
+                  v-model="selectedDate"
+                  outlined
+                  label="التاريخ"
+                  type="date"
+                >
+                </v-text-field>
               </v-col>
               <v-col cols="2">
-                  <v-btn block @click="selectDelegate()" color="primary">
-                      بحث
-                  </v-btn>
+                <v-btn block @click="selectDelegate()" color="primary">
+                  بحث
+                </v-btn>
               </v-col>
             </v-row>
           </div>
@@ -116,6 +121,9 @@ export default {
     },
   },
   created: function () {
+    this.getCurrentDate().then((value) => {
+      this.selectedDate = value;
+    });
     this.fetch();
   },
   methods: {
@@ -140,26 +148,35 @@ export default {
       });
     },
     selectDelegate() {
-        if (this.selectedDelegate < 1) {
-            this.$toast.open({
-            type: "warning",
-            message: "يرجى اختيار مندوب",
-            duration: 3000,
-          });
-          return;
-        }
-        if (this.selectedDate == "") {
-            this.$toast.open({
-            type: "warning",
-            message: "يرجى اختيار تاريخ",
-            duration: 3000,
-          });
-          return;
-        }
+      if (this.selectedDelegate < 1) {
+        this.$toast.open({
+          type: "warning",
+          message: "يرجى اختيار مندوب",
+          duration: 3000,
+        });
+        return;
+      }
+      if (this.selectedDate == "") {
+        this.$toast.open({
+          type: "warning",
+          message: "يرجى اختيار تاريخ",
+          duration: 3000,
+        });
+        return;
+      }
       let loading = this.$loading.show();
-      this.$http.get(this.$baseUrl + "visit/user/" + this.selectedDelegate + "?date=" + this.selectedDate).then((res) => {
+      this.$http
+        .get(
+          this.$baseUrl +
+            "visit/user/" +
+            this.selectedDelegate +
+            "?date=" +
+            this.selectedDate
+        )
+        .then((res) => {
           this.visits = res.data;
-      }).finally(() => loading.hide());
+        })
+        .finally(() => loading.hide());
     },
   },
 };

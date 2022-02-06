@@ -31,7 +31,7 @@
           outlined
           :disabled="!checkPermission('customers_edit')"
           v-model="customer.phone"
-          label="رقم الهاتف الاول"
+          label="رقم الهاتف اسياسيل"
         ></v-text-field>
       </v-col>
       <v-col cols="4">
@@ -39,7 +39,79 @@
           outlined
           :disabled="!checkPermission('customers_edit')"
           v-model="customer.secondPhone"
-          label="رقم الهاتف الثاني"
+          label="رقم الهاتف زين"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.additionalPhoneNumber"
+          label="رقم الهاتف كورك"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.employeeName"
+          label="اسم العامل في الموقع"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.employeesCount"
+          label="عدد العاملين في الموقع"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.customerAge"
+          label="عمر صاحب الموقع"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.customerAge"
+          label="عمر صاحب الموقع"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.standsCount"
+          label="عدد العارضات"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.customerWork"
+          label="وظيفة صاحب الموقع"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.friendPhone"
+          label="رقم اخ او صديق 1"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          outlined
+          :disabled="!checkPermission('customers_edit')"
+          v-model="customerInfo.secondFriendPhone"
+          label="رقم اخ او صديق 2"
         ></v-text-field>
       </v-col>
       <v-col cols="4">
@@ -153,6 +225,10 @@
           ></l-marker>
         </l-map>
       </v-col>
+      <v-col cols="12">
+        <h3>صور الموقع</h3>
+        <img style="margin: 10px" v-for="image in customerImages" :key="image.idCustomerImage" :src="$baseUrl + 'files/' + image.imagePath" alt="">
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -164,6 +240,8 @@ export default {
   data: () => ({
     permissions: [],
     customer: null,
+    customerInfo: null,
+    customerImages: [],
     sellPrices: [],
     customerClasses: [],
     delegates: [],
@@ -220,8 +298,18 @@ export default {
           let gps = this.customer.location.split(",");
           this.map.center = [gps[0], gps[1]];
           this.map.markerLatLng = [gps[0], gps[1]];
-        })
-        .finally(() => loading.hide());
+          this.$http
+            .get(this.$baseUrl + "customer/info/" + this.customerId)
+            .then((res) => {
+              this.customerInfo = res.data;
+            })
+            .finally(() => loading.hide());
+        });
+      this.$http
+        .get(this.$baseUrl + "customer/images/" + this.customerId)
+        .then((res) => {
+          this.customerImages = res.data;
+        });
     },
     save() {
       let loading = this.$loading.show();

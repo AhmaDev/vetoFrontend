@@ -97,6 +97,10 @@ export default {
     },
   }),
   created: function () {
+    this.getCurrentDate().then((value) => {
+      this.searchFields.startDate = value;
+      this.searchFields.endDate = value;
+    });
     let loading = this.$loading.show();
     this.$http
       .get(this.$baseUrl + "customer")

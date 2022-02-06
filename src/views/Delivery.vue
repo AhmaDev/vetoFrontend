@@ -154,6 +154,9 @@ export default {
     ],
   }),
   created: function () {
+    this.getCurrentDate().then((value) => {
+      this.selectedDate = value;
+    });
     this.fetch();
     this.getData();
   },

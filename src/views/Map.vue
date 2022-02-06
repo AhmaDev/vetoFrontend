@@ -126,6 +126,22 @@
             item-value="idUser"
           >
           </v-autocomplete>
+           <v-autocomplete
+            v-model="selectedVisitDay"
+            :items="days"
+            item-text="displayName"
+            item-value="day"
+            label="يوم الزيارة الاول"
+          >
+          </v-autocomplete>
+           <v-autocomplete
+            v-model="selectedSecondVisitDay"
+            :items="days"
+            item-text="displayName"
+            item-value="day"
+            label="يوم الزيارة الثاني"
+          >
+          </v-autocomplete>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="red" @click="dialogs.setDelegate = false">
@@ -189,6 +205,8 @@ export default {
       { day: "saturday", displayName: "السبت" },
     ],
     selectedDelegateId: 0,
+    selectedVisitDay: 'sunday',
+    selectedSecondVisitDay: 'sunday',
     dialogs: {
       setDelegate: false,
     },
@@ -280,6 +298,8 @@ export default {
       this.$http
         .put(this.$baseUrl + "customer/edit/multiple/" + ids, {
           createdBy: this.selectedDelegateId,
+          visitDay: this.selectedVisitDay,
+          secondVisitDay: this.selectedSecondVisitDay,
         })
         .then((res) => {
           console.log(res);

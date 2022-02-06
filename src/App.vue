@@ -7,7 +7,8 @@
       color: #FFFFFF; } .v-application--is-rtl
       .v-list-group--no-action>.v-list-group__items>.v-list-item {
       padding-right: 47px !important;}
-      .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px {{ this.$background }} solid !important;}
+      .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px
+      {{ this.$background }} solid !important;}
     </component>
     <v-navigation-drawer permanent app right fixed v-if="isLoggedIn">
       <v-list dense>
@@ -72,28 +73,28 @@
 
       <template v-slot:append>
         <v-list dense>
-        <v-list-item @click="darkMode()">
-          <v-list-item-content>
-            <v-list-item-title>
-              <i
-                :class="
-                  $vuetify.theme.dark
-                    ? 'las la-sun homePageNavBarIcons'
-                    : 'las la-moon homePageNavBarIcons'
-                "
-              ></i>
-              {{ $vuetify.theme.dark ? "Light mode" : "Dark mode" }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click="logout()">
-          <v-list-item-content>
-            <v-list-item-title>
-              <i class="las la-power-off homePageNavBarIcons"></i>
-              تسجيل الخروج
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          <v-list-item @click="darkMode()">
+            <v-list-item-content>
+              <v-list-item-title>
+                <i
+                  :class="
+                    $vuetify.theme.dark
+                      ? 'las la-sun homePageNavBarIcons'
+                      : 'las la-moon homePageNavBarIcons'
+                  "
+                ></i>
+                {{ $vuetify.theme.dark ? "Light mode" : "Dark mode" }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="logout()">
+            <v-list-item-content>
+              <v-list-item-title>
+                <i class="las la-power-off homePageNavBarIcons"></i>
+                تسجيل الخروج
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
         <br /><br />
       </template>
@@ -142,7 +143,17 @@ export default {
             child: null,
           },
           { title: "المواد", icon: "las la-box", route: "/items" },
-          { title: " التوزيع والمالية", icon: "las la-route", route: "/delivery" },
+          {
+            title: " التوزيع والمالية",
+            icon: "las la-route",
+            route: "/delivery",
+          },
+          {
+            title: "اعداد المخزن",
+            icon: "las la-truck-loading",
+            route: "/store",
+            child: null,
+          },
         ],
       },
       {

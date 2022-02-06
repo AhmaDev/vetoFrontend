@@ -36,6 +36,7 @@ const routes = [
   { path: '/delivery', name: 'Delivery', component: () => import('../views/Delivery.vue') },
   { path: '/delivery/:id', name: 'DeliveryStatus', component: () => import('../components/DeliveryStatus.vue') },
   { path: '/money/:id', name: 'DeliveryStatus', component: () => import('../components/MoneyStatus.vue') },
+  { path: '/store', name: 'Store', component: () => import('../views/Store.vue') },
 ]
 
 const router = new VueRouter({

@@ -47,6 +47,18 @@
           ></v-autocomplete>
         </v-col>
         <v-col>
+          <v-autocomplete
+            :items="delegates"
+            item-text="username"
+            item-value="idUser"
+            outlined
+            dense
+            hide-details
+            label="المندوب"
+            v-model="selectedDelegate"
+          ></v-autocomplete>
+        </v-col>
+        <v-col>
           <v-btn @click="search()" color="primary" block dark> بحث </v-btn>
         </v-col>
       </v-row>
@@ -77,15 +89,17 @@
         <template v-slot:footer>
           <div class="pa-10 footerGrid" style="font-size: 14px !important">
             <v-row>
-              <v-col>  عدد الزبائن  <br>{{sum('totalCustomers')}} </v-col>
-              <v-col>  عدد الفواتير  <br>{{sum('invoicesCount')}} </v-col>
-              <v-col>  عدد الراجع  <br>{{sum('restoresCount')}} </v-col>
-              <v-col> مجموع  الفواتير  <br>{{sum('totalSelling')}} </v-col>
-              <v-col> مجموع  الراجع  <br>{{sum('totalRestores')}} </v-col>
-              <v-col> مجموع الهدايا  <br>{{sum('totalGifts')}} </v-col>
-              <v-col> مجموع العروض  <br>{{sum('totalOffers')}} </v-col>
-              <v-col> مجموع التالف  <br>{{sum('totalDamaged')}} </v-col>
-              <v-col class="success white--text"> الاجمالي  <br>{{sum('totalRemaining')}} </v-col>
+              <v-col> عدد الزبائن <br />{{ sum("totalCustomers") }} </v-col>
+              <v-col> عدد الفواتير <br />{{ sum("invoicesCount") }} </v-col>
+              <v-col> عدد الراجع <br />{{ sum("restoresCount") }} </v-col>
+              <v-col> مجموع الفواتير <br />{{ sum("totalSelling") }} </v-col>
+              <v-col> مجموع الراجع <br />{{ sum("totalRestores") }} </v-col>
+              <v-col> مجموع الهدايا <br />{{ sum("totalGifts") }} </v-col>
+              <v-col> مجموع العروض <br />{{ sum("totalOffers") }} </v-col>
+              <v-col> مجموع التالف <br />{{ sum("totalDamaged") }} </v-col>
+              <v-col class="success white--text">
+                الاجمالي <br />{{ sum("totalRemaining") }}
+              </v-col>
             </v-row>
           </div>
         </template>
@@ -100,9 +114,10 @@ export default {
   data: () => ({
     supervisors: [],
     delegates: [],
-    startDate: "2000-01-01",
-    endDate: "2022-12-31",
+    startDate: "",
+    endDate: "",
     selectedSuperVisor: 0,
+    selectedDelegate: 0,
     report: {
       data: [],
       header: [
@@ -123,6 +138,10 @@ export default {
     },
   }),
   created: function () {
+    this.getCurrentDate().then((value) => {
+      this.startDate = value;
+      this.endDate = value;
+    });
     this.fetch();
   },
   methods: {
@@ -138,6 +157,9 @@ export default {
 
       this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
         this.supervisors = res.data;
+      });
+      this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
+        this.delegates = res.data;
       });
     },
     search() {
@@ -155,6 +177,9 @@ export default {
       if (this.selectedSuperVisor > 0) {
         q = q + "&superVisorId=" + this.selectedSuperVisor;
       }
+      if (this.selectedDelegate > 0) {
+        q = q + "&delegateId=" + this.selectedDelegate;
+      }
       let loading = this.$loading.show();
       this.$http
         .get(this.$baseUrl + "reports/overview?" + q)
@@ -165,18 +190,18 @@ export default {
         .finally(() => loading.hide());
     },
     sum(columnName) {
-        let sum = 0;
-        for (let i = 0; i < this.report.data.length; i++) {
-            sum = sum + this.report.data[i][columnName];
-        }
-        return sum.toLocaleString();
-    }
+      let sum = 0;
+      for (let i = 0; i < this.report.data.length; i++) {
+        sum = sum + this.report.data[i][columnName];
+      }
+      return sum.toLocaleString();
+    },
   },
 };
 </script>
 
 <style>
 .footerGrid .col {
-    border: 1px grey solid !important;
+  border: 1px grey solid !important;
 }
 </style>
