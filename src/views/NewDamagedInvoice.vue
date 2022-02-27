@@ -31,7 +31,7 @@
           </v-list>
         </v-menu>
 
-        <v-btn :to="'/print/invoice/' + invoice.idDamagedItemsInvoice" icon>
+        <v-btn :to="'/print/damagedInvoice/' + invoice.idDamagedItemsInvoice" icon>
           <v-icon>mdi-printer</v-icon>
         </v-btn>
       </template>
@@ -40,9 +40,7 @@
     <v-row>
       <v-col cols="3">
         <v-card class="pa-5" no-elevation>
-          <v-alert dense outlined type="error">
-            فاتورة مواد تالفة
-          </v-alert>
+          <v-alert dense outlined type="error"> فاتورة مواد تالفة </v-alert>
           <v-text-field
             disabled
             v-model="invoice.idDamagedItemsInvoice"
@@ -159,6 +157,7 @@
             height="500"
             fixed-header
           >
+
             <template v-slot:[`item.options`]="{ item }">
               <v-menu offset-y>
                 <template v-bind:item="item" v-slot:activator="{ on, attrs }">
@@ -189,6 +188,16 @@
               </v-menu>
             </template>
           </v-data-table>
+          <div>
+            المجموع :
+            <b class="green--text">
+              {{
+                invoiceContents.contents
+                  .reduce((a, b) => a + b.totalPrice, 0)
+                  .toLocaleString()
+              }}
+            </b>
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -221,6 +230,8 @@ export default {
       headers: [
         { text: "اسم المادة", value: "itemName" },
         { text: "الكمية", value: "count" },
+        { text: "المبلغ", value: "price" },
+        { text: "الاجمالي", value: "totalPrice" },
         { text: "الاجراءات", value: "options" },
       ],
       contents: [],
@@ -282,6 +293,8 @@ export default {
                 itemId: this.invoice.items[i].itemId,
                 itemName: this.invoice.items[i].itemName,
                 count: this.invoice.items[i].count,
+                price: this.invoice.items[i].price,
+                totalPrice: this.invoice.items[i].totalPrice,
               });
             }
           })

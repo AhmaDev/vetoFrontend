@@ -149,6 +149,11 @@ export default {
             route: "/delivery",
           },
           {
+            title: "توزيع التالف",
+            icon: "las la-route",
+            route: "/damagedDelivery",
+          },
+          {
             title: "اعداد المخزن",
             icon: "las la-truck-loading",
             route: "/store",
