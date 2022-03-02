@@ -35,7 +35,7 @@ Icon.Default.mergeOptions({
 Vue.config.productionTip = false
 // Vue.prototype.$baseUrl = 'http://localhost:3000/';
 Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
-Vue.prototype.$appVersion = '1.4.0';
+Vue.prototype.$appVersion = '1.5.0';
 Vue.http = Vue.prototype.$http = axios;
 Vue.prototype.$background = "#007BFF"
 Vue.use(Loading , {
