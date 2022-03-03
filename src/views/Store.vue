@@ -45,6 +45,14 @@
             />
           </v-avatar>
         </template>
+        <template v-slot:[`item.lastRemaining`]="{ item }">
+          {{
+              lastStore.filter(s => s.idItem == item.idItem)[0].totalBuy +
+              lastStore.filter(s => s.idItem == item.idItem)[0].totalRestores +
+              lastStore.filter(s => s.idItem == item.idItem)[0].totalTempBuy -
+              (lastStore.filter(s => s.idItem == item.idItem)[0].totalSell + lastStore.filter(s => s.idItem == item.idItem)[0].totalBuyRestores)
+            }}
+        </template>
         <template v-slot:[`item.store`]="{ item }">
           <v-chip
             :color="
@@ -74,6 +82,7 @@ export default {
   name: "Store",
   data: () => ({
     store: [],
+    lastStore: [],
     search: {
       from: "",
       to: "",
@@ -81,6 +90,9 @@ export default {
     tableHeader: [
       { text: "", value: "imagePath" },
       { text: "اسم المادة", value: "fullItemName" },
+      { text: "المجموعة", value: "itemGroupName" },
+      { text: "المورد", value: "manufactureName" },
+      { text: "رصيد اول المدة", value: "lastRemaining" },
       { text: "المبيعات", value: "totalSell" },
       { text: "المشتريات", value: "totalBuy" },
       { text: "الراجع", value: "totalRestores" },
@@ -90,7 +102,7 @@ export default {
     ],
   }),
   created: function () {
-    this.fetch();
+    // this.fetch();
   },
   methods: {
     fetch() {
@@ -105,9 +117,21 @@ export default {
     fetchSearch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + `item/detailedStore?from=${this.search.from}&to=${this.search.to}`)
+        .get(
+          this.$baseUrl +
+            `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
+        )
         .then((res) => {
           this.store = res.data;
+        })
+        .finally(() => loading.hide());
+      this.$http
+        .get(
+          this.$baseUrl +
+            `item/detailedStore?from=2020-01-01&to=${this.search.from}`
+        )
+        .then((res) => {
+          this.lastStore = res.data;
         })
         .finally(() => loading.hide());
     },
