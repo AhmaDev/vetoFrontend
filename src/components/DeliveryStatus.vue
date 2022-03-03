@@ -1,5 +1,10 @@
 <template>
-  <div ref="print" v-if="deliveryStatus != null" id="deliveryStatus" class="pa-10">
+  <div
+    ref="print"
+    v-if="deliveryStatus != null"
+    id="deliveryStatus"
+    class="pa-10"
+  >
     <v-sheet class="pa-10 sheet" elevation="2">
       <div v-if="appData != null" class="pa-10">
         <center>
@@ -34,14 +39,18 @@
           <th>عدد الراجع</th>
           <th>اجمالي الراجع</th>
         </thead>
-        <template v-for="(item, i) in deliveryStatus.invoicesData">
+        <template
+          v-for="(item, i) in deliveryStatus.invoicesData.sort((a, b) =>
+            a.count < b.count ? 1 : b.count < a.count ? -1 : 0
+          )"
+        >
           <tr
             :style="
               item.total == 0 ? 'background-color: red; color: white' : ''
             "
             :key="i"
           >
-            <td>{{ item.itemName }}</td>
+            <td>{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
             <td>{{ item.count }}</td>
@@ -181,6 +190,7 @@ export default {
     deliveryStatusId: 0,
     deliveryStatus: null,
     discounts: [],
+    items: [],
     appData: null,
   }),
   created: function () {
@@ -192,6 +202,9 @@ export default {
     });
     this.$http.get(this.$baseUrl + "settings").then((res) => {
       this.appData = res.data;
+    });
+    this.$http.get(this.$baseUrl + "item").then((res) => {
+      this.items = res.data;
     });
 
     if (
@@ -232,6 +245,9 @@ export default {
         qty = qty + items[i].count;
       }
       return qty;
+    },
+    getItemName(itemId) {
+      return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
     },
     sumQty2() {
       let qty = 0;
@@ -281,8 +297,8 @@ export default {
       );
     },
     print() {
-        this.$print(this.$refs.print);
-    }
+      this.$print(this.$refs.print);
+    },
   },
 };
 </script>
@@ -299,13 +315,13 @@ th {
   page-break-after: always;
   direction: rtl !important;
 }
-@media print{
+@media print {
   * {
-    font-size:12px !important;
+    font-size: 12px !important;
     -webkit-print-color-adjust: exact;
   }
   .v-btn {
-      display: none !important;
+    display: none !important;
   }
 }
 </style>

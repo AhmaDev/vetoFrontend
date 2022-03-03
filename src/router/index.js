@@ -20,6 +20,7 @@ const routes = [
   { path: '/invoices', name: 'Invoices', component: () => import('../views/Invoices.vue') },
   { path: '/invoice/:id', name: 'Invoice', component: () => import('../views/NewInvoice.vue') },
   { path: '/print/invoice/:id', name: 'InvoicePrint', component: () => import('../views/print/invoice.vue') },
+  { path: '/print/delegate/:id/:date', name: 'DelegateSales', component: () => import('../views/print/delegate.vue') },
   { path: '/print/damagedInvoice/:id', name: 'DamagedInvoicePrint', component: () => import('../views/print/damagedInvoice.vue') },
   { path: '/new/invoice', name: 'Invoice', component: () => import('../views/NewInvoice.vue') },
   { path: '/customers', name: 'Customers', component: () => import('../views/Customers.vue') },
