@@ -9,7 +9,7 @@
       elevation="4"
     >
       <center>
-        كشف مبيعات المندوب :
+        كشف مبالغ التالف للمندوب :
         <b>{{ delegates.filter((d) => d.idUser == delegate)[0].username }}</b>
       </center>
       <br>
@@ -36,15 +36,15 @@
             v-for="invoice in invoices.filter(
               (invoice) => invoice.createdBy == delegate
             )"
-            :key="'INVOICE_' + invoice.idInvoice"
+            :key="'INVOICE_' + invoice.idDamagedItemsInvoice"
           >
             <td>
-              <center>{{ invoice.idInvoice }}</center>
+              <center>{{ invoice.idDamagedItemsInvoice }}</center>
             </td>
             <td>{{ invoice.customerId }}</td>
             <td>{{ invoice.customerName }}</td>
             <td>{{ invoice.creationFixedTime }}</td>
-            <td>{{ invoice.totalPrice.toLocaleString() }}</td>
+            <td>{{ invoice.total.toLocaleString() }}</td>
             <td></td>
             <td></td>
           </tr>
@@ -57,7 +57,7 @@
                 {{
                   invoices
                     .filter((invoice) => invoice.createdBy == delegate)
-                    .reduce((a, b) => a + b.totalPrice, 0)
+                    .reduce((a, b) => a + b.total, 0)
                     .toLocaleString()
                 }}
               </b>
@@ -83,9 +83,9 @@ export default {
     this.$http
       .get(
         this.$baseUrl +
-          "invoice/filter?user=" +
+          "damagedInvoice/user/" +
           this.$route.params.id +
-          "&date=" +
+          "?date=" +
           this.$route.params.date +
           "&type=1"
       )

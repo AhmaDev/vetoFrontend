@@ -145,14 +145,14 @@ export default {
     fetch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "customer/searchByName/customer?q")
+        .get(this.$baseUrl + "customer/searchByName/customer")
         .then((res) => {
           this.customers = res.data;
           this.allCustomers = res.data;
         })
         .finally(() => loading.hide());
       this.$http
-        .get(this.$baseUrl + "customer/searchByName/manufacture?q")
+        .get(this.$baseUrl + "customer/searchByName/manufacture")
         .then((res) => {
           this.manufactures = res.data;
         });

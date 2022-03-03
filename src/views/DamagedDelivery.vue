@@ -76,6 +76,17 @@
               >
                 طباعة الفواتير
               </v-btn>
+              <v-btn
+                color="error"
+                block
+                elevation="0"
+                small
+                :to="
+                  '/print/damagedDelegate/' + JSON.stringify(item.delegates).slice(1, -1) + '/' + item.creationFixedDate + '?print=1'
+                "
+              >
+                طباعة كشف مبالغ التالف
+              </v-btn>
             </template>
           </v-data-table>
         </v-card>

@@ -168,6 +168,12 @@ export default {
         child: null,
       },
       {
+        title: "كشف الهدايا",
+        icon: "las la-gift",
+        route: "/discounts",
+        child: null,
+      },
+      {
         title: "الزبائن الموردين",
         icon: "las la-user-friends",
         route: "/customers",

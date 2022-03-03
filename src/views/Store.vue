@@ -47,28 +47,48 @@
         </template>
         <template v-slot:[`item.lastRemaining`]="{ item }">
           {{
-              lastStore.filter(s => s.idItem == item.idItem)[0].totalBuy +
-              lastStore.filter(s => s.idItem == item.idItem)[0].totalRestores +
-              lastStore.filter(s => s.idItem == item.idItem)[0].totalTempBuy -
-              (lastStore.filter(s => s.idItem == item.idItem)[0].totalSell + lastStore.filter(s => s.idItem == item.idItem)[0].totalBuyRestores)
-            }}
+            lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
+            lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
+            lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
+            (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
+              lastStore.filter((s) => s.idItem == item.idItem)[0]
+                .totalBuyRestores)
+          }}
         </template>
         <template v-slot:[`item.store`]="{ item }">
           <v-chip
             :color="
-              item.totalBuy +
+              lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
+                lastStore.filter((s) => s.idItem == item.idItem)[0]
+                  .totalRestores +
+                lastStore.filter((s) => s.idItem == item.idItem)[0]
+                  .totalTempBuy -
+                (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
+                  lastStore.filter((s) => s.idItem == item.idItem)[0]
+                    .totalBuyRestores) -
+                item.totalSell -
+                item.totalBuyRestores +
+                item.totalBuy +
                 item.totalRestores +
-                item.totalTempBuy -
-                (item.totalSell + item.totalBuyRestores) <
+                item.totalTempBuy <
               1
                 ? 'error'
                 : 'success'
             "
-            >{{
+          >
+            {{
+              lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
+              lastStore.filter((s) => s.idItem == item.idItem)[0]
+                .totalRestores +
+              lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
+              (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
+                lastStore.filter((s) => s.idItem == item.idItem)[0]
+                  .totalBuyRestores) -
+              item.totalSell -
+              item.totalBuyRestores +
               item.totalBuy +
               item.totalRestores +
-              item.totalTempBuy -
-              (item.totalSell + item.totalBuyRestores)
+              item.totalTempBuy
             }}</v-chip
           >
         </template>
@@ -90,8 +110,8 @@ export default {
     tableHeader: [
       { text: "", value: "imagePath" },
       { text: "اسم المادة", value: "fullItemName" },
-      { text: "المجموعة", value: "itemGroupName" },
       { text: "المورد", value: "manufactureName" },
+      { text: "المجموعة", value: "itemGroupName" },
       { text: "رصيد اول المدة", value: "lastRemaining" },
       { text: "المبيعات", value: "totalSell" },
       { text: "المشتريات", value: "totalBuy" },
@@ -103,6 +123,10 @@ export default {
   }),
   created: function () {
     // this.fetch();
+    this.getCurrentDate().then((value) => {
+      this.search.from = value;
+      this.search.to = value;
+    });
   },
   methods: {
     fetch() {
