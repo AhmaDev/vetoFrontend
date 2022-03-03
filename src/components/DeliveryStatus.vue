@@ -39,11 +39,7 @@
           <th>عدد الراجع</th>
           <th>اجمالي الراجع</th>
         </thead>
-        <template
-          v-for="(item, i) in deliveryStatus.invoicesData.sort((a, b) =>
-            a.count < b.count ? 1 : b.count < a.count ? -1 : 0
-          )"
-        >
+        <template v-for="(item, i) in deliveryStatus.invoicesData">
           <tr
             :style="
               item.total == 0 ? 'background-color: red; color: white' : ''
@@ -226,6 +222,10 @@ export default {
         .get(this.$baseUrl + "deliveryStatus/" + this.deliveryStatusId)
         .then((res) => {
           this.deliveryStatus = res.data;
+          this.deliveryStatus.invoicesData =
+            this.deliveryStatus.invoicesData.sort((a, b) =>
+              a.count < b.count ? 1 : b.count < a.count ? -1 : 0
+            );
         })
         .finally(() => loading.hide());
     },
