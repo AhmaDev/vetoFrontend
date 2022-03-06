@@ -77,7 +77,7 @@
             :items="invoice.invoiceTypeId == 2 || invoice.invoiceTypeId == 4 || invoice.invoiceTypeId == 5 ? manufactures : customers"
             outlined
             dense
-            :label="invoice.invoiceTypeId == 2 ? 'المورد':'الزبون'"
+            :label="invoice.invoiceTypeId == 2 || invoice.invoiceTypeId == 4 || invoice.invoiceTypeId == 5 ? 'المورد':'الزبون'"
             item-text="storeName"
             item-value="idCustomer"
             :suffix="invoice.invoiceTypeId == null ? 'يرجى اختيار نوع الفاتورة' : ''"
