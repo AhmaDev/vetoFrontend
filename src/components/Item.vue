@@ -32,16 +32,13 @@
           ></v-text-field>
         </v-col>
         <v-col cols="2">
-          <v-autocomplete
-            v-model="item.itemTypeId"
-            :items="itemTypes"
+         <v-text-field
+            label="نوع المنتج داخل العلبة"
             outlined
             hide-details
             notdense
-            label="نوع المنتج داخل العلبة"
-            item-text="itemTypeName"
-            item-value="idItemType"
-          ></v-autocomplete>
+            v-model="item.itemType"
+          ></v-text-field>
         </v-col>
         <v-col cols="2">
           <v-text-field
@@ -522,7 +519,8 @@ export default {
           itemDescription: this.item.itemDescription,
           isAvailable: this.item.isAvailable,
           manufactureId: this.item.manufactureId,
-          itemTypeId: this.item.itemTypeId,
+          itemTypeId: 1,
+          itemType: this.item.itemType,
           cartonWidth: this.item.cartonWidth,
           cartonHeight: this.item.cartonHeight,
           cartonLength: this.item.cartonLength,

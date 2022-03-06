@@ -27,10 +27,12 @@
             <th>#</th>
             <th>المادة</th>
             <th>الكمية</th>
-            <th>سعر الوحدة</th>
+            <th>سعر</th>
             <th>الخصم</th>
             <th>نوع الخصم</th>
             <th>الاجمالي</th>
+            <th width="60px">عدد</th>
+            <th width="60px">مجموع</th>
           </tr>
         </thead>
         <tbody>
@@ -42,6 +44,8 @@
             <td>{{item.discount}}</td>
             <td>{{item.discountName}}</td>
             <td>{{item.total.toLocaleString()}}</td>
+            <td></td>
+            <td></td>
           </tr>
         </tbody>
         <tfoot>
@@ -49,6 +53,8 @@
             <td colspan="5"></td>
             <td>المجموع</td>
             <td>{{invoice.totalPrice.toLocaleString()}}</td>
+            <td></td>
+            <td></td>
           </tr>
         </tfoot>
       </table>

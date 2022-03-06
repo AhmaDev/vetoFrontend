@@ -3,6 +3,7 @@
     <v-app-bar app>
       <v-toolbar-title>الخريطة</v-toolbar-title>
       <v-spacer></v-spacer>
+      <template v-if='this.checkPermission("map_edit")'>
       <v-btn
         @click="editCustomers = true"
         v-if="!editCustomers"
@@ -16,6 +17,7 @@
       <v-btn @click="selectByDrag()" v-if="editCustomers" color="success">
         تحديد
       </v-btn>
+      </template>
     </v-app-bar>
 
     <v-navigation-drawer v-if="editCustomers" app>
@@ -70,6 +72,7 @@
         :url="map.url"
         :attribution="map.attribution"
       ></l-tile-layer>
+      <template v-if='this.checkPermission("map_tacking")'>
       <template v-if="!editCustomers">
         <l-marker
           v-for="marker in mapData"
@@ -97,6 +100,7 @@
             اخر تحديث للموقع قبل {{ getLocationDate(marker.date) * -1 }} دقيقة
           </l-popup>
         </l-marker>
+      </template>
       </template>
       <template v-if="editCustomers">
         <l-circle-marker

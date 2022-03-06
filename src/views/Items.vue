@@ -28,7 +28,7 @@
           <v-card elevation="6">
             <v-img
               v-if="item.imagePath != null"
-              height="250"
+              height="200"
               :src="$baseUrl + 'files/' + item.imagePath"
             ></v-img>
             <img
@@ -43,9 +43,9 @@
               <br />
               غير متاح
             </div>
-            <v-card-title class="textOverFlow">
+            <div style="height: 30px" class="pa-2">
               {{ item.fullItemName }}
-            </v-card-title>
+            </div>
 
             <v-card-text class="textOverFlow">
               {{ item.itemDescription }}
@@ -113,16 +113,14 @@
               ></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-autocomplete
-                v-model="newItem.itemTypeId"
-                :items="itemTypes"
+              <v-text-field
+                label="نوع المنتج داخل العلبة"
+                type="text"
+                v-model="newItem.itemType"
                 outlined
                 hide-details
                 dense
-                label="نوع المنتج داخل العلبة"
-                item-text="itemTypeName"
-                item-value="idItemType"
-              ></v-autocomplete>
+              ></v-text-field>
             </v-col>
             <v-col cols="6">
               <v-text-field
@@ -376,7 +374,6 @@ export default {
     groups: [],
     sellPrices: [],
     manufactures: [],
-    itemTypes: [],
     brands: [],
     itemWeightSuffixes: ["غرام", "كيلو", "ملي", "لتر"],
     newItemSellPrices: [],
@@ -391,7 +388,8 @@ export default {
       sellPriceId: null,
       image: null,
       manufactureId: null,
-      itemTypeId: null,
+      itemType: null,
+      itemTypeId: 1,
       cartonWidth: null,
       cartonHeight: null,
       cartonLength: null,
@@ -445,12 +443,6 @@ export default {
       this.$http.get(this.$baseUrl + "sellprice").then((res) => {
         this.sellPrices = res.data;
       });
-      this.$http
-        .get(this.$baseUrl + "itemType")
-        .then((res) => {
-          this.itemTypes = res.data;
-        })
-        .finally(() => {});
       this.$http
         .get(this.$baseUrl + "manufacture")
         .then((res) => {
@@ -544,7 +536,8 @@ export default {
                 sellPriceId: null,
                 image: null,
                 manufactureId: null,
-                itemTypeId: null,
+                itemType: null,
+                itemTypeId: 1,
                 cartonWidth: null,
                 cartonHeight: null,
                 cartonLength: null,

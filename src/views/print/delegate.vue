@@ -20,15 +20,15 @@
       <table border="1" cellspacing="0" class="table" width="100%">
         <thead>
           <tr>
-            <th width="100px">
-              <center>رقم الفاتورة</center>
+            <th width="50px">
+              <center>#</center>
             </th>
             <th width="100px">كود الزبون</th>
             <th>اسم الزبون</th>
-            <th width="150px">وقت الفاتورة</th>
-            <th width="150px">المبلغ الاجمالي</th>
-            <th>ملاحظة 1</th>
-            <th>ملاحظة 2</th>
+            <th width="100px">الوقت</th>
+            <th width="100px">الاجمالي</th>
+            <th width="150px">ملاحظة 1</th>
+            <th width="150px">ملاحظة 2</th>
           </tr>
         </thead>
         <tbody>

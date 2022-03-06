@@ -121,8 +121,12 @@ export default {
       });
       // LOAD PERMS END
       let loading = this.$loading.show();
+      let q = "users";
+      if (this.userInfo.roleId == 1) {
+        q = "users/unsecure/all"
+      }
       this.$http
-        .get(this.$baseUrl + "users")
+        .get(this.$baseUrl + q)
         .then((res) => {
           this.accounts = res.data;
         })
@@ -171,6 +175,14 @@ export default {
   },
   created: function () {
     this.fetch();
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
+    },
   },
 };
 </script>

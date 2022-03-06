@@ -111,6 +111,7 @@
             label="الجهة"
             item-text="username"
             item-value="idUser"
+            v-if="invoice.invoiceTypeId == 1 || invoice.invoiceTypeId == 3"
             :disabled="!checkPermission('invoices_edit')"
           ></v-autocomplete>
           <v-textarea
@@ -443,6 +444,8 @@ export default {
           .finally(() => {
             loading.hide();
           });
+      } else {
+        this.invoice.createdBy = this.userInfo.idUser
       }
     });
     this.$http.get(this.$baseUrl + "discount").then((res) => {

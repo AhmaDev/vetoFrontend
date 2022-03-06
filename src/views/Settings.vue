@@ -38,12 +38,12 @@
         </v-icon>
         الماركات
       </v-tab>
-      <v-tab>
+      <!-- <v-tab>
         <v-icon right>
           mdi-format-list-bulleted-type
         </v-icon>
         انواع المواد
-      </v-tab>
+      </v-tab> -->
       <v-tab>
         <v-icon right>
           mdi-sale
@@ -96,9 +96,9 @@
       <v-tab-item>
         <BrandsSettings />
       </v-tab-item>
-      <v-tab-item>
+      <!-- <v-tab-item>
         <ItemTypesSettings />
-      </v-tab-item>
+      </v-tab-item> -->
       <v-tab-item>
         <DiscountSettings />
       </v-tab-item>
@@ -135,7 +135,7 @@ import CustomersClasses from './settings/CustomersClasses.vue'
 import SupervisorDelegates from './settings/supervisorDelegates.vue'
 import DeliveryDelegates from './settings/deliveryDelegates.vue'
 import ProvincesPage from './settings/provinces.vue'
-import ItemTypesSettings from './settings/itemType.vue'
+// import ItemTypesSettings from './settings/itemType.vue'
 import BrandsSettings from './settings/brands.vue'
 export default {
   components: {
@@ -149,7 +149,7 @@ export default {
     SupervisorDelegates,
     DeliveryDelegates,
     ProvincesPage,
-    ItemTypesSettings,
+    // ItemTypesSettings,
     BrandsSettings
   },
   data: () => ({

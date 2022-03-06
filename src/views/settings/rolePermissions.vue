@@ -1,22 +1,38 @@
 <template>
-  <div :key="forceRerender" id="permissionsPage" class="pa-10">
-    <v-row v-if="rolePermissions.length > 0 && permissions.length > 0 && roles.length > 0">
-      <v-col
-        v-for="role in roles.filter((role) => role.idRole < 3)"
-        :key="role.idRole"
+  <div :key="forceRerender" id="permissionsPage" class="pa-5">
+    <v-row
+      v-if="
+        rolePermissions.length > 0 && permissions.length > 0 && roles.length > 0
+      "
+    >
+      <v-divider vertical></v-divider>
+      <template
+        v-for="role in roles.filter(
+          (role) =>
+            role.idRole == 1 ||
+            role.idRole == 2 ||
+            role.idRole == 6 ||
+            role.idRole == 7
+        )"
       >
-        <v-card no-elevation class="pa-10">
-          <h4>{{ role.roleName }}</h4>
-          <v-checkbox
-            :value="getPermissions(role.idRole, permission.idPermission)"
-            :input-value="getPermissions(role.idRole, permission.idPermission)"
-            v-for="permission in permissions"
-            :key="permission.idPermission"
-            :label="permission.permissionName"
-            @change="changePerm(role.idRole, permission.idPermission, $event)"
-          ></v-checkbox>
-        </v-card>
-      </v-col>
+        <v-col :key="role.idRole">
+          <v-card elevation="0" class="pa-0">
+            <h4>{{ role.roleName }}</h4>
+            <v-checkbox
+              dense
+              :value="getPermissions(role.idRole, permission.idPermission)"
+              :input-value="
+                getPermissions(role.idRole, permission.idPermission)
+              "
+              v-for="permission in permissions"
+              :key="permission.idPermission"
+              :label="permission.permissionName"
+              @change="changePerm(role.idRole, permission.idPermission, $event)"
+            ></v-checkbox>
+          </v-card>
+        </v-col>
+        <v-divider :key="'ROLE_' + role.idRole" vertical></v-divider>
+      </template>
     </v-row>
   </div>
 </template>
@@ -28,7 +44,7 @@ export default {
     roles: [],
     permissions: [],
     rolePermissions: [],
-    forceRerender: 0
+    forceRerender: 0,
   }),
   mounted: function () {
     this.fetch();
@@ -40,8 +56,7 @@ export default {
         .get(this.$baseUrl + "users/roles/all")
         .then((res) => {
           this.roles = res.data;
-        this.forceRerender++;
-
+          this.forceRerender++;
         })
         .finally(() => loading.hide());
       this.$http.get(this.$baseUrl + "permissions").then((res) => {
@@ -52,7 +67,6 @@ export default {
         this.rolePermissions = res.data;
         console.log(this.rolePermissions);
         this.forceRerender++;
-
       });
     },
 
@@ -61,16 +75,14 @@ export default {
         (perm) => perm.roleId == roleId && perm.permissionId == permissionId
       );
 
-
       console.log(perms);
       if (perms.length > 0) {
         return true;
       } else {
         return false;
       }
-      
     },
-    
+
     changePerm(roleId, permissionId, e) {
       this.$http.post(this.$baseUrl + "permissions", {
         roleId: roleId,
@@ -79,9 +91,11 @@ export default {
       });
     },
   },
-
 };
 </script>
 
 <style>
+.v-input--checkbox label {
+  font-size: 12px;
+}
 </style>

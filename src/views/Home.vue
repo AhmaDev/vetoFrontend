@@ -1,5 +1,6 @@
 <template>
   <div class="pa-10" id="homePage">
+    <template v-if="checkPermission('home')" >
     <v-row>
       <v-col cols="12" md="3">
         <v-card class="pa-10">
@@ -169,6 +170,10 @@
         </v-card>
       </v-col>
     </v-row>
+    </template>
+    <template v-if="!checkPermission('home')" >
+      <v-alert type="error">لا تملك صلاحيات لمشاهدة الصفحة الرئيسية</v-alert>
+    </template>
   </div>
 </template>
 
@@ -177,6 +182,7 @@ export default {
   name: "Home",
   components: {},
   data: () => ({
+    permissions: [],
     statistics: {
       totalCustomers: 0,
       totalInvoices: 0,
@@ -226,6 +232,12 @@ export default {
   },
   methods: {
     fetch() {
+      // LOAD PERMS START
+      this.auth().then((res) => {
+        this.permissions = res.permissions;
+      });
+      // LOAD PERMS END
+
       this.$http.get(this.$baseUrl + "dashboard/statistics").then((res) => {
         this.statistics = res.data;
         this.statisticsLoading = false;
@@ -241,10 +253,19 @@ export default {
           this.mostItemsSelling.data = res.data;
         });
       this.$http
-        .get(this.$baseUrl + "invoice/filter?order=idInvoice&sort=DESC&limit=20")
+        .get(
+          this.$baseUrl + "invoice/filter?order=idInvoice&sort=DESC&limit=20"
+        )
         .then((res) => {
           this.invoices = res.data;
         });
+    },
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
     },
   },
 };
