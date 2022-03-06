@@ -74,7 +74,7 @@
           ></v-autocomplete>
           <v-autocomplete
             v-model="invoice.customerId"
-            :items="invoice.invoiceTypeId == 2 ? manufactures : customers"
+            :items="invoice.invoiceTypeId == 2 || invoice.invoiceTypeId == 4 || invoice.invoiceTypeId == 5 ? manufactures : customers"
             outlined
             dense
             :label="invoice.invoiceTypeId == 2 ? 'المورد':'الزبون'"
