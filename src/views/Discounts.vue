@@ -6,18 +6,6 @@
     <v-card class="pa-10">
       <v-row>
         <v-col>
-          <v-autocomplete
-            :items="users"
-            item-text="username"
-            item-value="idUser"
-            outlined
-            label="المندوب"
-            dense
-            hide-details
-            v-model="search.userId"
-          ></v-autocomplete>
-        </v-col>
-        <v-col>
           <v-text-field
             outlined
             dense
@@ -81,8 +69,14 @@ export default {
     discountsHeader: [
       { text: "", value: "imagePath" },
       { text: "اسم المادة", value: "fullItemName" },
+      { text: "المندوب", value: "username" },
+      { text: "الزبون", value: "storeName" },
+      { text: "كود الزبون", value: "idCustomer" },
+      { text: "الفاتورة", value: "invoiceId" },
+      { text: "مبلغ الفاتورة", value: "totalPrice" },
       { text: "الكمية", value: "count" },
       { text: "نوع الخصم", value: "discountName" },
+      { text: "الكمية المباعة", value: "notFreeCount" },
       { text: "بتاريخ", value: "creationFixedDate" },
       { text: "الوقت", value: "creationFixedTime" },
       { text: "الاجراءات", value: "actions" },
@@ -90,16 +84,10 @@ export default {
   }),
   created: function () {
     this.getCurrentDate().then((value) => {
-      this.search.from = value;
+      this.search.from = "2021-01-01";
       this.search.to = value;
+      this.fetchSearch();
     });
-    let loading = this.$loading.show();
-    this.$http
-      .get(this.$baseUrl + "users/role/4")
-      .then((res) => {
-        this.users = res.data;
-      })
-      .finally(() => loading.hide());
   },
   methods: {
     fetchSearch() {
@@ -107,8 +95,7 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "discount/users/" +
-            this.search.userId +
+            "discount/items" +
             "?from=" +
             this.search.from +
             "&to=" +

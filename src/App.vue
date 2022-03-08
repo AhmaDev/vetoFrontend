@@ -203,7 +203,7 @@ export default {
         child: null,
       },
       {
-        title: "التقارير",
+        title: "كشف حساب زبون",
         icon: "las la-chart-bar",
         route: "/reports",
         child: null,
