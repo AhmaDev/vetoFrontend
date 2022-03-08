@@ -18,9 +18,8 @@
           &nbsp;&nbsp;&nbsp;&nbsp;
           <v-chip dark color="red" x-small>
             {{
-              accounts.filter(
-                (user) => user.roleId == roles[index].idRole
-              ).length
+              accounts.filter((user) => user.roleId == roles[index].idRole)
+                .length
             }}
           </v-chip>
         </v-tab>
@@ -98,6 +97,11 @@ export default {
     ],
   }),
   methods: {
+    logout(id) {
+      this.$socket.emit('logout', {
+        userId: id,
+      })
+    },
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
         (p) => p.permissionKey == permissionKey
@@ -123,7 +127,7 @@ export default {
       let loading = this.$loading.show();
       let q = "users";
       if (this.userInfo.roleId == 1) {
-        q = "users/unsecure/all"
+        q = "users/unsecure/all";
       }
       this.$http
         .get(this.$baseUrl + q)
@@ -133,6 +137,9 @@ export default {
         .finally(() => loading.hide());
       this.$http.get(this.$baseUrl + "users/roles/all").then((res) => {
         this.roles = res.data;
+        if (this.userInfo.roleId != 1) {
+          this.roles = this.roles.filter(x => x.idRole == 4);
+        }
       });
     },
     changePassword(id) {
@@ -151,6 +158,7 @@ export default {
             message: "تم تغيير كلمة المرور",
             duration: 3000,
           });
+          this.logout(this.selectedUserId);
           this.passwordDialog = false;
           this.selectedUserId = 0;
           this.newPasswordField = "";

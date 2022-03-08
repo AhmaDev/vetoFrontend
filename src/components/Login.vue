@@ -50,6 +50,7 @@ export default {
             }).then(res => {
                 localStorage.setItem('userinfo', JSON.stringify(res.data));
                 this.$store.commit("setLoginInfo", res.data);
+                location.reload();
             }).catch(err => {
                 console.log(err);
                 this.$toast.open({

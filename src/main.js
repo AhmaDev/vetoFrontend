@@ -25,6 +25,9 @@ import VueBottomSheet from "@webzlodimir/vue-bottom-sheet";
 import JsonExcel from "vue-json-excel";
 import '@/util/auth.js';
 import '@/util/date.js';
+import VueSocketIO from 'vue-socket.io'
+import { io } from "socket.io-client";
+
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -33,12 +36,12 @@ Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 Vue.config.productionTip = false
-// Vue.prototype.$baseUrl = 'http://localhost:3000/';
-Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
+Vue.prototype.$baseUrl = 'http://localhost:3000/';
+// Vue.prototype.$baseUrl = 'https://api.mmlka.oveto.app/';
 Vue.prototype.$appVersion = '1.5.0';
 Vue.http = Vue.prototype.$http = axios;
 Vue.prototype.$background = "#007BFF"
-Vue.use(Loading , {
+Vue.use(Loading, {
   color: Vue.prototype.$background,
   blur: "10px",
 });
@@ -50,6 +53,24 @@ Vue.use(VueSweetalert2);
 Vue.use(Print)
 Vue.use(firestorePlugin)
 Vue.use(VueBottomSheet);
+var userInfo = localStorage.getItem('userinfo');
+Vue.use(new VueSocketIO({
+
+  debug: true,
+  connection: io(Vue.prototype.$baseUrl, {
+    transports: ["websocket", "polling", "flashsocket"], query: {
+      userInfo: userInfo,
+    },
+    autoConnect: userInfo ? true : false,
+    reconnection: userInfo ? true : false,
+  }),
+  vuex: {
+    store,
+    actionPrefix: 'SOCKET_',
+    mutationPrefix: 'SOCKET_'
+  },
+  allowEIO3: true
+}))
 
 Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);

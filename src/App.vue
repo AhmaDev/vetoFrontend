@@ -122,6 +122,16 @@ export default {
     Login,
     Logo,
   },
+  sockets: {
+    connect: function () {
+      console.log("socket connected");
+    },
+    logoutEmit: function (data) {
+      console.log(data);
+      alert('تم تغيير كلمة المرور');
+      this.logout()
+    },
+  },
   data: () => ({
     items: [
       { title: "الرئيسية", icon: "las la-home", route: "/home", child: null },

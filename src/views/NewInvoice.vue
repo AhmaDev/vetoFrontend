@@ -74,14 +74,30 @@
           ></v-autocomplete>
           <v-autocomplete
             v-model="invoice.customerId"
-            :items="invoice.invoiceTypeId == 2 || invoice.invoiceTypeId == 4 || invoice.invoiceTypeId == 5 ? manufactures : customers"
+            :items="
+              invoice.invoiceTypeId == 2 ||
+              invoice.invoiceTypeId == 4 ||
+              invoice.invoiceTypeId == 5
+                ? manufactures
+                : customers
+            "
             outlined
             dense
-            :label="invoice.invoiceTypeId == 2 || invoice.invoiceTypeId == 4 || invoice.invoiceTypeId == 5 ? 'المورد':'الزبون'"
+            :label="
+              invoice.invoiceTypeId == 2 ||
+              invoice.invoiceTypeId == 4 ||
+              invoice.invoiceTypeId == 5
+                ? 'المورد'
+                : 'الزبون'
+            "
             item-text="storeName"
             item-value="idCustomer"
-            :suffix="invoice.invoiceTypeId == null ? 'يرجى اختيار نوع الفاتورة' : ''"
-            :disabled="!checkPermission('invoices_edit') || invoice.invoiceTypeId == null"
+            :suffix="
+              invoice.invoiceTypeId == null ? 'يرجى اختيار نوع الفاتورة' : ''
+            "
+            :disabled="
+              !checkPermission('invoices_edit') || invoice.invoiceTypeId == null
+            "
           ></v-autocomplete>
           <v-autocomplete
             v-model="invoice.sellPriceId"
@@ -234,7 +250,6 @@
             height="500"
             fixed-header
           >
-       
             <template v-slot:[`item.options`]="{ item }">
               <v-menu offset-y>
                 <template v-bind:item="item" v-slot:activator="{ on, attrs }">
@@ -445,7 +460,7 @@ export default {
             loading.hide();
           });
       } else {
-        this.invoice.createdBy = this.userInfo.idUser
+        this.invoice.createdBy = this.userInfo.idUser;
       }
     });
     this.$http.get(this.$baseUrl + "discount").then((res) => {
@@ -732,7 +747,7 @@ export default {
             message: "تم استرجاع المواد بنجاح",
             duration: 3000,
           });
-          let indexHistory = []
+          let indexHistory = [];
           for (var i = 0; i < this.selectedItems.length; i++) {
             this.deleteItemFromInvoice(
               this.invoiceContents.contents.findIndex(
