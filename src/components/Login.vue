@@ -9,11 +9,13 @@
           <v-text-field
             label="اسم المستخدم"
             outlined
+            @keypress.enter="login()"
             v-model="loginInfo.username"
           ></v-text-field>
           <v-text-field
             label="كلمة المرور"
             outlined
+            @keypress.enter="login()"
             type="password"
             v-model="loginInfo.password"
           ></v-text-field>

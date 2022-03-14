@@ -147,7 +147,7 @@ export default {
             child: null,
           },
           {
-            title: "الزيارات",
+            title: "كشف المسار",
             icon: "las la-map-marked-alt",
             route: "/visits",
             child: null,

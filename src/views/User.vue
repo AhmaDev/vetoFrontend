@@ -11,75 +11,110 @@
 
     <v-card class="pa-10">
       <v-row>
+        <v-col>
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
+                outlined
+                label="العنوان"
+                v-model="userdata.address"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                outlined
+                hide-details
+                label="رقم الهاتف الاول"
+                v-model="userdata.phoneNumber"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                outlined
+                hide-details
+                label="رقم الهاتف الثاني"
+                v-model="userdata.secondPhoneNumber"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                outlined
+                label="الهدف الشهري للمبيعات"
+                type="number"
+                hide-details
+                v-model="userdata.monthlyTarget"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                outlined
+                label="سعر البيع"
+                hide-details
+                v-model="userdata.sellPriceId"
+                :items="sellPrices"
+                item-text="sellPriceName"
+                item-value="idSellPrice"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="4">
+              <v-btn
+                onclick="document.getElementById('filepicker').click()"
+                block
+              >
+                <v-icon> mdi-cloud-outline </v-icon>
+                &nbsp;&nbsp; تعديل صورة المستخدم
+              </v-btn>
+              <input
+                id="filepicker"
+                style="display: none"
+                type="file"
+                name="uploads"
+                @change="selectFiles($event)"
+                accept="image/png, image/gif, image/jpeg"
+              />
+              <img
+                v-if="userdata.imagePath != null"
+                :src="$baseUrl + 'files/' + userdata.imagePath"
+                width="100%"
+                id="imagePath"
+              />
+              <img
+                v-if="userdata.imagePath == null"
+                src="@/assets/no_image_placeholder.png"
+                width="100%"
+                id="imagePath"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
         <v-col cols="6">
-          <v-text-field
-            outlined
-            label="العنوان"
-            v-model="userdata.address"
-            hide-details
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-            outlined
-            hide-details
-            label="رقم الهاتف الاول"
-            v-model="userdata.phoneNumber"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-            outlined
-            hide-details
-            label="رقم الهاتف الثاني"
-            v-model="userdata.secondPhoneNumber"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-            outlined
-            label="الهدف الشهري للمبيعات"
-            type="number"
-            hide-details
-            v-model="userdata.monthlyTarget"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-autocomplete
-            outlined
-            label="سعر البيع"
-            hide-details
-            v-model="userdata.sellPriceId"
-            :items="sellPrices"
-            item-text="sellPriceName"
-            item-value="idSellPrice"
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="3">
-          <v-btn onclick="document.getElementById('filepicker').click()" block>
-            <v-icon> mdi-cloud-outline </v-icon>
-            &nbsp;&nbsp; تعديل صورة المستخدم
-          </v-btn>
-          <input
-            id="filepicker"
-            style="display: none"
-            type="file"
-            name="uploads"
-            @change="selectFiles($event)"
-            accept="image/png, image/gif, image/jpeg"
-          />
-          <img
-            v-if="userdata.imagePath != null"
-            :src="$baseUrl + 'files/' + userdata.imagePath"
-            width="100%"
-            id="imagePath"
-          />
-          <img
-            v-if="userdata.imagePath == null"
-            src="@/assets/no_image_placeholder.png"
-            width="100%"
-            id="imagePath"
-          />
+          <div v-if="user.roleId == 4">
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة المبيعات الشهرية"
+              v-model="userdata.canViewMonthlySales"
+            ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة الراجع الشهري"
+              v-model="userdata.canViewMonthlyRestores"
+            ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة التالف الشهري"
+              v-model="userdata.canViewMonthlyDamaged"
+            ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة مبيعات المواد اليومية"
+              v-model="userdata.canViewDailyItems"
+            ></v-checkbox>
+          </div>
         </v-col>
       </v-row>
     </v-card>
@@ -98,6 +133,10 @@ export default {
       imagePath: null,
       monthlyTarget: null,
       sellPriceId: 0,
+      canViewMonthlySales: 0,
+      canViewMonthlyRestores: 0,
+      canViewMonthlyDamaged: 0,
+      canViewDailyItems: 0,
     },
     user: null,
     sellPrices: [],
@@ -173,7 +212,12 @@ export default {
           secondPhoneNumber: this.userdata.secondPhoneNumber,
           monthlyTarget: this.userdata.monthlyTarget,
           sellPriceId: this.userdata.sellPriceId,
-        }).then(() => {
+          canViewMonthlySales: this.userdata.canViewMonthlySales,
+          canViewMonthlyRestores: this.userdata.canViewMonthlyRestores,
+          canViewMonthlyDamaged: this.userdata.canViewMonthlyDamaged,
+          canViewDailyItems: this.userdata.canViewDailyItems,
+        })
+        .then(() => {
           this.$toast.open({
             type: "success",
             message: " تم تعديل المعومات",
