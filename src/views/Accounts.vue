@@ -45,7 +45,7 @@
           <v-btn icon @click="changePassword(item.idUser)">
             <v-icon :title="item.idInvoice">mdi-key</v-icon>
           </v-btn>
-          <v-btn icon :to="'/user/' + item.idUser">
+          <v-btn v-if='checkPermission("account_edit")' icon :to="'/user/' + item.idUser">
             <v-icon :title="item.idInvoice">mdi-account-edit-outline</v-icon>
           </v-btn>
         </template>

@@ -2,8 +2,14 @@
   <div id="discountsPage" class="pa-10">
     <v-app-bar app>
       <v-toolbar-title>كشف بهدايا المندوبين</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn @click="$print($refs.print)" color="success" dark>
+        <v-icon>la-print</v-icon>
+        طباعة
+      </v-btn>
     </v-app-bar>
-    <v-card class="pa-10">
+    <v-card ref="print" class="pa-10">
+      <center class="printHeader"><h2>كشف الهدايا</h2></center>
       <v-row>
         <v-col>
           <v-text-field
@@ -31,6 +37,7 @@
       </v-row>
       <v-data-table
         items-per-page="1000"
+        hide-default-footer
         :items="discounts"
         :headers="discountsHeader"
       >
@@ -59,6 +66,7 @@
 <script>
 export default {
   data: () => ({
+    permissions: [],
     users: [],
     search: {
       from: "",
@@ -83,6 +91,20 @@ export default {
     ],
   }),
   created: function () {
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("gifts")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     this.getCurrentDate().then((value) => {
       this.search.from = "2021-01-01";
       this.search.to = value;
@@ -90,6 +112,13 @@ export default {
     });
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetchSearch() {
       let loading = this.$loading.show();
       this.$http
@@ -110,5 +139,28 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.printHeader {
+  display: none !important;
+}
+@media print {
+  @page {
+    size: A4 landscape;
+  }
+  * {
+    direction: rtl !important;
+    color-adjust: exact !important;
+    zoom: 0.9;
+  }
+  .v-btn {
+    display: none !important;
+  }
+  .v-card {
+    box-shadow: none !important;
+  }
+  .printHeader {
+    display: block !important;
+    padding: 10px;
+  }
+}
 </style>

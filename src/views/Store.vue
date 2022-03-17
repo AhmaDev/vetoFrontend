@@ -122,6 +122,20 @@ export default {
     ],
   }),
   created: function () {
+    // LOAD PERMS START
+      this.auth().then((res) => {
+        this.permissions = res.permissions;
+        // CHECK IF CAN SEE THIS PAGE
+        if (!this.checkPermission("store")) {
+          this.$toast.open({
+            type: "error",
+            message: "غير مصرح لك بمشاهدة هذه الصفحة",
+            duration: 3000,
+          });
+          this.$router.go(-1);
+        }
+      });
+      // LOAD PERMS END
     // this.fetch();
     this.getCurrentDate().then((value) => {
       this.search.from = value;
@@ -129,6 +143,13 @@ export default {
     });
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
       let loading = this.$loading.show();
       this.$http

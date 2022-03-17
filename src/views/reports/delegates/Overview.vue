@@ -3,16 +3,18 @@
     <v-app-bar app>
       <v-toolbar-title>تقرير شامل</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn color="success" dark>
-        <v-icon>la-file-excel</v-icon>
-        تحميل ملف EXCEL
+      <v-btn @click="$print($refs.print)" color="success" dark>
+        <v-icon>la-print</v-icon>
+        طباعة
       </v-btn>
       <!-- <download-excel :data="report.data">
         Download Data
       </download-excel> -->
     </v-app-bar>
 
-    <v-card class="pa-10">
+    <v-card ref="print" class="pa-10">
+            <center class="printHeader"><h2>التقرير العام</h2></center>
+
       <v-row>
         <v-col>
           <v-text-field
@@ -63,7 +65,12 @@
         </v-col>
       </v-row>
       <br />
-      <v-data-table :items="report.data" :headers="report.header">
+      <v-data-table
+        :items="report.data"
+        items-per-page="2000"
+        hide-default-footer
+        :headers="report.header"
+      >
         <template v-slot:[`item.totalCustomers`]="{ item }">
           {{ item.totalCustomers.toLocaleString() }}
         </template>
@@ -112,6 +119,7 @@
 export default {
   name: "OverViewReport",
   data: () => ({
+    permissions: [],
     supervisors: [],
     delegates: [],
     startDate: "",
@@ -138,6 +146,20 @@ export default {
     },
   }),
   created: function () {
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("overview")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     this.getCurrentDate().then((value) => {
       this.startDate = value;
       this.endDate = value;
@@ -145,6 +167,13 @@ export default {
     this.fetch();
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
       let loading = this.$loading.show();
       this.$http
@@ -200,8 +229,34 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .footerGrid .col {
   border: 1px grey solid !important;
+}
+ .printHeader {
+    display:none !important;
+  }
+@media print {
+  .printHeader {
+    display: block !important;
+    padding: 10px;
+  }
+  @page {
+    size: A4 landscape;
+  }
+  * {
+    direction: rtl !important;
+    color-adjust: exact !important;
+    zoom: 0.9 !important;
+  }
+  .v-btn {
+    display: none !important;
+  }
+  .v-data-table__wrapper {
+    border: 1px #000000 solid !important;
+  }
+  .v-card {
+    box-shadow: none !important;
+  }
 }
 </style>

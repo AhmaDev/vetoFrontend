@@ -3,9 +3,15 @@
     <v-app-bar app>
       <v-toolbar-title>كشف المسار</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn @click="$print($refs.print)" color="success" dark>
+        <v-icon>la-print</v-icon>
+        طباعة
+      </v-btn>
     </v-app-bar>
 
-    <v-card class="pa-10">
+    <v-card ref="print" class="pa-10">
+      <center class="printHeader"><h2>رسم المسار</h2></center>
+
       <v-row>
         <v-col>
           <v-autocomplete
@@ -206,6 +212,7 @@ export default {
   name: "Visits",
   components: {},
   data: () => ({
+    permissions: [],
     mapDialog: false,
     delegates: [],
     selectedDelegate: 0,
@@ -269,6 +276,20 @@ export default {
     },
   },
   created: function () {
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("visits")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     this.getCurrentDate().then((value) => {
       this.from = value;
       this.to = value;
@@ -279,6 +300,13 @@ export default {
     this.fetch();
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch: function () {
       this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
         this.delegates = res.data;
@@ -398,7 +426,9 @@ export default {
         );
         this.damaged = this.allDamaged.filter((x) => x.creationDayName == day);
         this.visits = this.allVisits.filter((x) => x.creationDayName == day);
-        this.customers = this.allCustomers.filter((x) => x.visitDay == customerDay || x.secondVisitDay == customerDay)
+        this.customers = this.allCustomers.filter(
+          (x) => x.visitDay == customerDay || x.secondVisitDay == customerDay
+        );
       }
     },
     capitalizeFirstLetter(string) {
@@ -427,5 +457,28 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.printHeader {
+  display: none !important;
+}
+@media print {
+  .printHeader {
+    display: block !important;
+    padding: 10px;
+  }
+  @page {
+    size: A4 landscape;
+  }
+  * {
+    direction: rtl !important;
+    color-adjust: exact !important;
+    zoom: 0.9;
+  }
+  .v-btn {
+    display: none !important;
+  }
+  .v-card {
+    box-shadow: none !important;
+  }
+}
 </style>

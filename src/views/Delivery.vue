@@ -4,7 +4,7 @@
       <v-toolbar-title>كشف التوزيع</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <v-card class="pa-10 deliveryStatusTable">
+    <v-card v-if='checkPermission("delivery_add")' class="pa-10 deliveryStatusTable">
       <v-row>
         <v-col>
           <v-autocomplete
@@ -145,6 +145,7 @@
 export default {
   name: "Delivery",
   data: () => ({
+    permissions: [],
     deliveriesStatus: [],
     deliveries: [],
     selectedDeliveries: [],
@@ -165,6 +166,20 @@ export default {
     ],
   }),
   created: function () {
+    // LOAD PERMS START
+      this.auth().then((res) => {
+        this.permissions = res.permissions;
+        // CHECK IF CAN SEE THIS PAGE
+        if (!this.checkPermission("delivery")) {
+          this.$toast.open({
+            type: "error",
+            message: "غير مصرح لك بمشاهدة هذه الصفحة",
+            duration: 3000,
+          });
+          this.$router.go(-1);
+        }
+      });
+      // LOAD PERMS END
     this.getCurrentDate().then((value) => {
       this.selectedDate = value;
     });
@@ -172,6 +187,13 @@ export default {
     this.getData();
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
       this.$http.get(this.$baseUrl + "users/role/5").then((res) => {
         this.deliveries = res.data;

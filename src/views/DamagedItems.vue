@@ -58,6 +58,7 @@ export default {
     this.fetch();
   },
   methods: {
+    
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
         (p) => p.permissionKey == permissionKey
