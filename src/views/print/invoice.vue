@@ -21,14 +21,11 @@
             <td>اسم الزبون : {{ invoice.customerName }}</td>
             <td>كود الزبون : {{ invoice.customerId }}</td>
             <td>رقم الزبون : {{ invoice.customerPhone }}</td>
-            <td rowspan="2">عنوان الزبون : {{ invoice.customerAddress }}</td>
+            <td>عنوان الزبون : {{ invoice.customerAddress }}</td>
           </tr>
           <tr>
             <td colspan="2">اسم المحل : {{ invoice.storeName }}</td>
             <td>رقم الزبون : {{ invoice.secondCustomerPhone }}</td>
-          </tr>
-          <tr>
-            <td colspan="3">عنوان الزبون : {{ invoice.customerAddress }}</td>
             <td>
               وقت وتاريخ : {{ invoice.creationFixedDate }} -
               {{ invoice.creationFixedTime }}
