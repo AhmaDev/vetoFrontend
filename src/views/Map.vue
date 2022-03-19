@@ -64,7 +64,7 @@
           <br />
           <br />
           <br />
-          <v-btn @click="deleteCustomers()" block color="error">حذف</v-btn>
+          <v-btn v-if="userInfo.roleId == 1" @click="deleteCustomers()" block color="error">حذف</v-btn>
         </template>
       </div>
     </v-navigation-drawer>
@@ -382,6 +382,14 @@ export default {
       }
       e.layer.remove();
     });
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
+    },
   },
   firestore: {
     mapData: db.collection("gpsTracking"),
