@@ -4,7 +4,14 @@
       <v-toolbar-title>{{ customer.storeName }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
-
+      <v-btn
+        color="error"
+        @click="deleteCustomer(customer.idCustomer)"
+        v-if="userInfo.roleId == 1"
+        icon
+      >
+        <v-icon>la-trash</v-icon>
+      </v-btn>
       <v-btn v-if="checkPermission('customers_edit')" @click="save()" icon>
         <v-icon>mdi-check</v-icon>
       </v-btn>
@@ -227,7 +234,13 @@
       </v-col>
       <v-col cols="12">
         <h3>صور الموقع</h3>
-        <img style="margin: 10px" v-for="image in customerImages" :key="image.idCustomerImage" :src="$baseUrl + 'files/' + image.imagePath" alt="">
+        <img
+          style="margin: 10px"
+          v-for="image in customerImages"
+          :key="image.idCustomerImage"
+          :src="$baseUrl + 'files/' + image.imagePath"
+          alt=""
+        />
       </v-col>
     </v-row>
   </div>
@@ -328,6 +341,23 @@ export default {
         })
         .finally(() => loading.hide());
     },
+    deleteCustomer(id) {
+      let x = confirm("هل انت متأكد من حذف الزبون");
+      if (x) {
+        let loading = this.$loading.show();
+        this.$http
+          .delete( this.$baseUrl + "customer/delete/" + id)
+          .finally(() => loading.hide())
+          .then(() => {
+            this.$toast.open({
+            type: "success",
+            message: "تم حذف الزبون",
+            duration: 3000,
+          });
+          this.customer = null
+          });
+      }
+    },
     changeLocation(e) {
       this.customer.location = e.lat + "," + e.lng;
     },
@@ -342,6 +372,14 @@ export default {
     this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
       this.delegates = res.data;
     });
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
+    },
   },
 };
 </script>
