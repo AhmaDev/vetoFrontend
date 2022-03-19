@@ -5,6 +5,7 @@
         <v-text-field
           v-model="settingsFields.title"
           outlined
+          :disabled="userInfo.roleId != 1"
           label="عنوان الحساب"
         ></v-text-field>
       </v-col>
@@ -80,6 +81,14 @@ export default {
           });
         })
         .finally(() => loading.hide());
+    },
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
     },
   },
 };

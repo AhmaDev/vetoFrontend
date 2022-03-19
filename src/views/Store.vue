@@ -3,9 +3,15 @@
     <v-app-bar app>
       <v-toolbar-title>المواد</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn @click="$print($refs.print)" color="success" dark>
+        <v-icon>la-print</v-icon>
+        طباعة
+      </v-btn>
     </v-app-bar>
 
-    <v-card class="pa-10">
+    <v-card ref="print" class="pa-10">
+      <center class="printHeader"><h2>اعداد المخزن</h2></center>
+
       <v-row>
         <v-col>
           <v-text-field
@@ -123,19 +129,19 @@ export default {
   }),
   created: function () {
     // LOAD PERMS START
-      this.auth().then((res) => {
-        this.permissions = res.permissions;
-        // CHECK IF CAN SEE THIS PAGE
-        if (!this.checkPermission("store")) {
-          this.$toast.open({
-            type: "error",
-            message: "غير مصرح لك بمشاهدة هذه الصفحة",
-            duration: 3000,
-          });
-          this.$router.go(-1);
-        }
-      });
-      // LOAD PERMS END
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("store")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     // this.fetch();
     this.getCurrentDate().then((value) => {
       this.search.from = value;
@@ -184,5 +190,28 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.printHeader {
+  display: none !important;
+}
+@media print {
+  .printHeader {
+    display: block !important;
+    padding: 10px;
+  }
+  @page {
+    size: A4 landscape;
+  }
+  * {
+    direction: rtl !important;
+    color-adjust: exact !important;
+    zoom: 0.9;
+  }
+  .v-btn {
+    display: none !important;
+  }
+  .v-card {
+    box-shadow: none !important;
+  }
+}
 </style>

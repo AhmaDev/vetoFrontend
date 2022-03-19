@@ -67,7 +67,7 @@
       <br />
       <v-data-table
         :items="report.data"
-        items-per-page="2000"
+        :items-per-page="2000"
         hide-default-footer
         :headers="report.header"
       >
@@ -214,7 +214,7 @@ export default {
         .get(this.$baseUrl + "reports/overview?" + q)
         .then((res) => {
           this.report.data = res.data;
-          console.log(1);
+          console.log(this.report.data);
         })
         .finally(() => loading.hide());
     },
