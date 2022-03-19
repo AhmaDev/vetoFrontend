@@ -3,20 +3,24 @@
     <v-app-bar app>
       <v-toolbar-title>الخريطة</v-toolbar-title>
       <v-spacer></v-spacer>
-      <template v-if='this.checkPermission("map_edit")'>
-      <v-btn
-        @click="editCustomers = true"
-        v-if="!editCustomers"
-        color="primary"
-      >
-        رسم المسار
-      </v-btn>
-      <v-btn @click="editCustomers = false" v-if="editCustomers" color="error">
-        الخروج من رسم المسار
-      </v-btn>
-      <v-btn @click="selectByDrag()" v-if="editCustomers" color="success">
-        تحديد
-      </v-btn>
+      <template v-if="this.checkPermission('map_edit')">
+        <v-btn
+          @click="editCustomers = true"
+          v-if="!editCustomers"
+          color="primary"
+        >
+          رسم المسار
+        </v-btn>
+        <v-btn
+          @click="editCustomers = false"
+          v-if="editCustomers"
+          color="error"
+        >
+          الخروج من رسم المسار
+        </v-btn>
+        <v-btn @click="selectByDrag()" v-if="editCustomers" color="success">
+          تحديد
+        </v-btn>
       </template>
     </v-app-bar>
 
@@ -57,6 +61,10 @@
           <v-btn @click="dialogs.setDelegate = true" block color="primary"
             >تحويل الجهة</v-btn
           >
+          <br />
+          <br />
+          <br />
+          <v-btn @click="deleteCustomers()" block color="error">حذف</v-btn>
         </template>
       </div>
     </v-navigation-drawer>
@@ -72,35 +80,35 @@
         :url="map.url"
         :attribution="map.attribution"
       ></l-tile-layer>
-      <template v-if='this.checkPermission("map_tacking")'>
-      <template v-if="!editCustomers">
-        <l-marker
-          v-for="marker in mapData"
-          :key="marker.id"
-          :lat-lng="JSON.parse(marker.location)"
-        >
-          <l-icon>
-            <div class="userMarker">
-              <b style="color: white"> {{ getUserName(marker.userId) }}</b>
-            </div>
-            <img
-              src="@/assets/user.svg"
-              v-if="checkDate(marker.date)"
-              width="30px"
-              alt=""
-            />
-            <img
-              v-if="!checkDate(marker.date)"
-              src="@/assets/disconnected.png"
-              width="40px"
-              alt=""
-            />
-          </l-icon>
-          <l-popup ref="marker">
-            اخر تحديث للموقع قبل {{ getLocationDate(marker.date) * -1 }} دقيقة
-          </l-popup>
-        </l-marker>
-      </template>
+      <template v-if="this.checkPermission('map_tacking')">
+        <template v-if="!editCustomers">
+          <l-marker
+            v-for="marker in mapData"
+            :key="marker.id"
+            :lat-lng="JSON.parse(marker.location)"
+          >
+            <l-icon>
+              <div class="userMarker">
+                <b style="color: white"> {{ getUserName(marker.userId) }}</b>
+              </div>
+              <img
+                src="@/assets/user.svg"
+                v-if="checkDate(marker.date)"
+                width="30px"
+                alt=""
+              />
+              <img
+                v-if="!checkDate(marker.date)"
+                src="@/assets/disconnected.png"
+                width="40px"
+                alt=""
+              />
+            </l-icon>
+            <l-popup ref="marker">
+              اخر تحديث للموقع قبل {{ getLocationDate(marker.date) * -1 }} دقيقة
+            </l-popup>
+          </l-marker>
+        </template>
       </template>
       <template v-if="editCustomers">
         <l-circle-marker
@@ -130,7 +138,7 @@
             item-value="idUser"
           >
           </v-autocomplete>
-           <v-autocomplete
+          <v-autocomplete
             v-model="selectedVisitDay"
             :items="days"
             item-text="displayName"
@@ -138,7 +146,7 @@
             label="يوم الزيارة الاول"
           >
           </v-autocomplete>
-           <v-autocomplete
+          <v-autocomplete
             v-model="selectedSecondVisitDay"
             :items="days"
             item-text="displayName"
@@ -209,15 +217,15 @@ export default {
       { day: "saturday", displayName: "السبت" },
     ],
     selectedDelegateId: 0,
-    selectedVisitDay: 'sunday',
-    selectedSecondVisitDay: 'sunday',
+    selectedVisitDay: "sunday",
+    selectedSecondVisitDay: "sunday",
     dialogs: {
       setDelegate: false,
     },
   }),
   methods: {
-    selectByDrag(){
-      document.getElementsByClassName('leaflet-draw-draw-rectangle')[0].click();
+    selectByDrag() {
+      document.getElementsByClassName("leaflet-draw-draw-rectangle")[0].click();
     },
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
@@ -319,6 +327,30 @@ export default {
         })
         .finally(() => loading.hide());
     },
+    deleteCustomers() {
+      let x = confirm("هل انت متأكد من حذف الزبائن");
+      if (x) {
+        let loading = this.$loading.show();
+        var customerIds = JSON.stringify(
+          this.selectedCustomers.map((e) => e.idCustomer)
+        );
+        var ids = customerIds.slice(1, -1);
+        this.$http
+          .delete(this.$baseUrl + "customer/delete/" + ids)
+          .finally(() => loading.hide())
+          .then(() => {
+            this.$toast.open({
+              type: "success",
+              message: "تم حذف الزبائن",
+              duration: 3000,
+            });
+            this.searchCustomers();
+            this.selectedCustomers = [];
+            this.dialogs.setDelegate = false;
+            this.selectedDelegateId = 0;
+          });
+      }
+    },
   },
   created: function () {
     // LOAD PERMS START
@@ -345,7 +377,7 @@ export default {
       for (let i = 0; i < this.customers.length; i++) {
         var gps = this.customers[i].location.split(",");
         if (e.layer.getBounds().contains({ lat: gps[0], lon: gps[1] })) {
-          this.selectCustomer(this.customers[i])
+          this.selectCustomer(this.customers[i]);
         }
       }
       e.layer.remove();
@@ -370,7 +402,8 @@ export default {
   position: absolute;
   top: 0px;
 }
-.leaflet-control-toolbar, .leaflet-popup-toolbar  {
+.leaflet-control-toolbar,
+.leaflet-popup-toolbar {
   padding-left: 0px !important;
 }
 
