@@ -60,6 +60,56 @@
             <td></td>
             <td></td>
           </tr>
+          <tr
+            :style="
+              giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0
+                ? 'background-color: red; color: white'
+                : ''
+            "
+            :key="'GIFT_' + i"
+            v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0"
+          >
+            <td>
+              {{
+                getItemName(
+                  giftItems.filter((x) => x.itemId == item.itemId)[0].itemId
+                )
+              }}
+            </td>
+            <td></td>
+            <td></td>
+            <td>
+              {{ giftItems.filter((x) => x.itemId == item.itemId)[0].count }}
+            </td>
+            <td
+              v-if="
+                giftItems.filter((x) => x.itemId == item.itemId)[0]
+                  .discountTypeId > 0
+              "
+            >
+              {{
+                getDiscountName(
+                  giftItems.filter((x) => x.itemId == item.itemId)[0]
+                    .discountTypeId
+                )
+              }}
+            </td>
+            <td v-else>
+              {{
+                giftItems.filter((x) => x.itemId == item.itemId)[0].total /
+                giftItems.filter((x) => x.itemId == item.itemId)[0].count
+              }}
+            </td>
+            <td>
+              {{
+                giftItems
+                  .filter((x) => x.itemId == item.itemId)[0]
+                  .total.toLocaleString()
+              }}
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
         </template>
       </table>
     </v-sheet>
@@ -185,6 +235,7 @@ export default {
   data: () => ({
     deliveryStatusId: 0,
     deliveryStatus: null,
+    giftItems: [],
     discounts: [],
     items: [],
     appData: null,
@@ -222,6 +273,13 @@ export default {
         .get(this.$baseUrl + "deliveryStatus/" + this.deliveryStatusId)
         .then((res) => {
           this.deliveryStatus = res.data;
+          this.giftItems = this.deliveryStatus.invoicesData.filter(
+            (x) => x.discountTypeId > 0
+          );
+          this.deliveryStatus.invoicesData =
+            this.deliveryStatus.invoicesData.filter(
+              (x) => x.discountTypeId == 0
+            );
           this.deliveryStatus.invoicesData =
             this.deliveryStatus.invoicesData.sort((a, b) =>
               a.count < b.count ? 1 : b.count < a.count ? -1 : 0
@@ -316,6 +374,9 @@ th {
   direction: rtl !important;
 }
 @media print {
+  @page {
+    size: A4 portrait;
+  }
   * {
     font-size: 12px !important;
     -webkit-print-color-adjust: exact;

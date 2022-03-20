@@ -4,6 +4,8 @@
       <v-toolbar-title>{{ customer.storeName }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
+      <v-text-field outlined dense hide-details readonly label="خرائط جوجل" :value='"http://maps.google.com/maps?q=loc:" + customer.location +  "&z=17"'></v-text-field>
+      <v-spacer></v-spacer>
       <v-btn
         color="error"
         @click="deleteCustomer(customer.idCustomer)"

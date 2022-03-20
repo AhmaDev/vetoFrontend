@@ -300,6 +300,9 @@ th {
   direction: rtl !important;
 }
 @media print{
+  @page {
+    size: A4 portrait;
+  }
   * {
     font-size:12px !important;
     -webkit-print-color-adjust: exact;

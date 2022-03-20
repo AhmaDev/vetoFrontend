@@ -17,7 +17,7 @@
       <table border="1" cellspacing="0" width="100%" class="table" dir="rtl">
         <tr>
           <td>رقم التوزيع: {{ deliveryStatus.idDeliveryStatus }}</td>
-          <td>اسم الموزع: {{ deliveryStatus.deliveryName }}</td>
+          <!-- <td>اسم الموزع: {{ deliveryStatus.deliveryName }}</td> -->
           <td>
             تاريخ التجهيز: {{ deliveryDate(deliveryStatus.creationFixedDate) }}
           </td>
@@ -47,7 +47,7 @@
             "
             :key="i"
           >
-            <td>{{ item.itemName }}</td>
+            <td>{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
             <td>{{ item.count }}</td>
@@ -58,6 +58,28 @@
               {{ item.total / item.count }}
             </td>
             <td>{{ item.total.toLocaleString() }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr
+            :style="
+              giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0 ? 'background-color: red; color: white' : ''
+            "
+            :key="'GIFT_' + i"
+            v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0"
+          >
+            <td>{{ getItemName(giftItems.filter((x) => x.itemId == item.itemId)[0].itemId) }}</td>
+            <td></td>
+            <td></td>
+            <td>{{ giftItems.filter((x) => x.itemId == item.itemId)[0].count }}</td>
+            <td v-if="giftItems.filter((x) => x.itemId == item.itemId)[0].discountTypeId > 0">
+              {{ getDiscountName(giftItems.filter((x) => x.itemId == item.itemId)[0].discountTypeId) }}
+            </td>
+            <td v-else>
+              {{ giftItems.filter((x) => x.itemId == item.itemId)[0].total / giftItems.filter((x) => x.itemId == item.itemId)[0].count }}
+            </td>
+            <td>{{ giftItems.filter((x) => x.itemId == item.itemId)[0].total.toLocaleString() }}</td>
             <td></td>
             <td></td>
             <td></td>
@@ -172,6 +194,8 @@ export default {
     deliveryStatusId: 0,
     deliveryStatus: null,
     discounts: [],
+    giftItems: [],
+    items: [],
     appData: null,
   }),
   created: function () {
@@ -180,6 +204,9 @@ export default {
 
     this.$http.get(this.$baseUrl + "discount").then((res) => {
       this.discounts = res.data;
+    });
+    this.$http.get(this.$baseUrl + "item").then((res) => {
+      this.items = res.data;
     });
     this.$http.get(this.$baseUrl + "settings").then((res) => {
       this.appData = res.data;
@@ -203,6 +230,17 @@ export default {
         .get(this.$baseUrl + "deliveryStatus/" + this.deliveryStatusId)
         .then((res) => {
           this.deliveryStatus = res.data;
+          this.giftItems = this.deliveryStatus.invoicesData.filter(
+            (x) => x.discountTypeId > 0
+          );
+          this.deliveryStatus.invoicesData =
+            this.deliveryStatus.invoicesData.filter(
+              (x) => x.discountTypeId == 0
+            );
+          this.deliveryStatus.invoicesData =
+            this.deliveryStatus.invoicesData.sort((a, b) =>
+              a.count < b.count ? 1 : b.count < a.count ? -1 : 0
+            );
         })
         .finally(() => loading.hide());
     },
@@ -248,6 +286,9 @@ export default {
         moment(date).locale("ar").format("dddd")
       );
     },
+    getItemName(itemId) {
+      return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
+    },
     deliveryDate(date) {
       if (moment(date).locale("en").format("dddd") == "Thursday") {
         return (
@@ -290,6 +331,9 @@ th {
   direction: rtl !important;
 }
 @media print {
+  @page {
+    size: A4 portrait;
+  }
   * {
     font-size: 10px !important;
     -webkit-print-color-adjust: exact;

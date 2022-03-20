@@ -23,9 +23,11 @@
             <th width="50px">
               <center>#</center>
             </th>
-            <th width="100px">كود الزبون</th>
             <th>اسم الزبون</th>
             <th width="100px">الوقت</th>
+            <th width="100px">رقم اسيا</th>
+            <th width="100px">رقم زين</th>
+            <th>العنوان</th>
             <th width="100px">الاجمالي</th>
             <th width="150px">ملاحظة 1</th>
             <th width="150px">ملاحظة 2</th>
@@ -41,9 +43,11 @@
             <td>
               <center>{{ invoice.idInvoice }}</center>
             </td>
-            <td>{{ invoice.customerId }}</td>
-            <td>{{ invoice.customerName }}</td>
+            <td>{{ invoice.storeName }} - {{ invoice.customerId }}</td>
             <td>{{ invoice.creationFixedTime }}</td>
+            <td>{{ invoice.customerPhone }}</td>
+            <td>{{ invoice.secondCustomerPhone }}</td>
+            <td>{{ invoice.customerAddress }}</td>
             <td>{{ invoice.totalPrice.toLocaleString() }}</td>
             <td></td>
             <td></td>
@@ -116,5 +120,13 @@ export default {
 .sheet {
   page-break-after: always;
   direction: rtl !important;
+}
+@media print {
+  @page {
+    size: A4 landscape;
+  }
+  * {
+    font-size: 12px !important;
+  }
 }
 </style>
