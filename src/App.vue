@@ -10,7 +10,7 @@
       .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px
       {{ this.$background }} solid !important;}
     </component>
-    <v-navigation-drawer permanent app right fixed v-if="isLoggedIn">
+    <v-navigation-drawer class="elevation-10" permanent app right fixed v-if="isLoggedIn">
       <v-list dense>
         <center>
           <br /><br />

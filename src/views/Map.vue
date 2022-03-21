@@ -122,7 +122,7 @@
           @click="selectCustomer(marker)"
           :lat-lng="getCustomerLocation(marker.location)"
         >
-          <l-tooltip>{{ marker.storeName }}</l-tooltip>
+          <l-tooltip>{{ marker.storeName }} - {{ marker.idCustomer }}</l-tooltip>
         </l-circle-marker>
       </template>
     </l-map>

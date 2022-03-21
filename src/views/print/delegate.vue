@@ -12,7 +12,7 @@
         كشف مبيعات المندوب :
         <b>{{ delegates.filter((d) => d.idUser == delegate)[0].username }}</b>
       </center>
-      <br>
+      <br />
       <center>
         بتاريخ : <b>{{ $route.params.date }}</b>
       </center>
@@ -48,23 +48,21 @@
             <td>{{ invoice.customerPhone }}</td>
             <td>{{ invoice.secondCustomerPhone }}</td>
             <td>{{ invoice.customerAddress }}</td>
-            <td>{{ invoice.totalPrice.toLocaleString() }}</td>
+            <td style="text-align:center; font-size: 15px !important; font-weight: bold;">{{ invoice.totalPrice.toLocaleString() }}</td>
             <td></td>
             <td></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="4" style="text-align: left">المجموع</td>
-            <td colspan="3">
-              <b>
+            <td colspan="6" style="text-align: left">المجموع</td>
+            <td style="text-align:right; font-size: 15px !important; font-weight: bold;" colspan="3">
                 {{
                   invoices
                     .filter((invoice) => invoice.createdBy == delegate)
                     .reduce((a, b) => a + b.totalPrice, 0)
                     .toLocaleString()
                 }}
-              </b>
             </td>
           </tr>
         </tfoot>
@@ -91,7 +89,7 @@ export default {
           this.$route.params.id +
           "&date=" +
           this.$route.params.date +
-          "&type=1"
+          "&type=1&order=createdBy&sort=ASC"
       )
       .then((res) => {
         this.invoices = res.data;

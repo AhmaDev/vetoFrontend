@@ -34,11 +34,12 @@
           ></v-text-field>
         </v-col>
         <v-col>
-          <v-btn @click="fetchSearch()" color="primary"> بحث </v-btn>
+          <v-btn @click="fetchSearch();" color="primary"> بحث </v-btn>
         </v-col>
+
       </v-row>
       <br />
-      <v-data-table items-per-page="500" :items="store" :headers="tableHeader">
+      <v-data-table v-if="lastStore.length > 0" :items-per-page="500" :items="store" :headers="tableHeader">
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">
             <img
@@ -61,41 +62,16 @@
                 .totalBuyRestores)
           }}
         </template>
-        <template v-slot:[`item.store`]="{ item }">
+        <template v-slot:[`item.storex`]="{ item }">
           <v-chip
             :color="
-              lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
-                lastStore.filter((s) => s.idItem == item.idItem)[0]
-                  .totalRestores +
-                lastStore.filter((s) => s.idItem == item.idItem)[0]
-                  .totalTempBuy -
-                (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
-                  lastStore.filter((s) => s.idItem == item.idItem)[0]
-                    .totalBuyRestores) -
-                item.totalSell -
-                item.totalBuyRestores +
-                item.totalBuy +
-                item.totalRestores +
-                item.totalTempBuy <
-              1
+              item.storex <
+              0.25
                 ? 'error'
                 : 'success'
             "
           >
-            {{
-              lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
-              lastStore.filter((s) => s.idItem == item.idItem)[0]
-                .totalRestores +
-              lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
-              (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
-                lastStore.filter((s) => s.idItem == item.idItem)[0]
-                  .totalBuyRestores) -
-              item.totalSell -
-              item.totalBuyRestores +
-              item.totalBuy +
-              item.totalRestores +
-              item.totalTempBuy
-            }}</v-chip
+            {{ item.storex }}</v-chip
           >
         </template>
       </v-data-table>
@@ -124,7 +100,7 @@ export default {
       { text: "الراجع", value: "totalRestores" },
       { text: "راجع المشتريات", value: "totalBuyRestores" },
       { text: "شراء مؤقت", value: "totalTempBuy" },
-      { text: "المتبقي", value: "store" },
+      { text: "المتبقي", value: "storex" },
     ],
   }),
   created: function () {
@@ -183,9 +159,31 @@ export default {
         )
         .then((res) => {
           this.lastStore = res.data;
+          setTimeout(() => {
+            this.store = this.store.map(row => (row.storex = this.getTotal(row), row));
+
+          }, 1000);
         })
         .finally(() => loading.hide());
     },
+    getTotal(item) {
+      return (
+        this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
+        this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
+        this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
+        (this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
+          this.lastStore.filter((s) => s.idItem == item.idItem)[0]
+            .totalBuyRestores) -
+        item.totalSell -
+        item.totalBuyRestores +
+        item.totalBuy +
+        item.totalRestores +
+        item.totalTempBuy
+      );
+    },
+    sort() {
+      this.store = this.store.sort((a,b) => a.totalSell.localeCompare(b.totalSell))
+    }
   },
 };
 </script>

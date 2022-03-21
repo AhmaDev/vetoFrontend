@@ -3,7 +3,7 @@
     <v-app-bar app>
       <v-toolbar-title>كشف المسار</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="$print($refs.print)" color="success" dark>
+      <v-btn @click="cols = 12; $print($refs.print);" color="success" dark>
         <v-icon>la-print</v-icon>
         طباعة
       </v-btn>
@@ -116,7 +116,7 @@
       <v-divider></v-divider>
 
       <v-row>
-        <v-col cols="6">
+        <v-col :cols="cols">
           <h4>فواتير البيع</h4>
           <br />
           <v-data-table
@@ -124,13 +124,13 @@
             :items="invoices"
             :headers="invoicesTableHeaders"
             hide-default-footer
-            height="300"
+            :height="cols == 12 ? 'auto' : 300"
           >
           </v-data-table>
         </v-col>
         <v-divider vertical></v-divider>
 
-        <v-col cols="6">
+        <v-col :cols="cols">
           <h4>فواتير الراجع</h4>
           <br />
 
@@ -139,12 +139,12 @@
             :items="restores"
             :headers="restoresTableHeaders"
             hide-default-footer
-            height="300"
+            :height="cols == 12 ? 'auto' : 300"
           >
           </v-data-table>
         </v-col>
         <v-divider vertical></v-divider>
-        <v-col cols="6">
+        <v-col :cols="cols">
           <h4>فواتير التالف</h4>
           <br />
 
@@ -153,12 +153,12 @@
             :items="damaged"
             :headers="damagedTableHeaders"
             hide-default-footer
-            height="300"
+            :height="cols == 12 ? 'auto' : 300"
           >
           </v-data-table>
         </v-col>
         <v-divider vertical></v-divider>
-        <v-col cols="6">
+        <v-col :cols="cols">
           <h4>الزيارات</h4>
           <br />
 
@@ -167,7 +167,7 @@
             :items="visits"
             :headers="tableHeaders"
             hide-default-footer
-            height="300"
+            :height="cols == 12 ? 'auto' : 300"
           >
             <template v-slot:[`item.actions`]="{ item }">
               <v-btn
@@ -215,6 +215,7 @@ export default {
     permissions: [],
     mapDialog: false,
     delegates: [],
+    cols: 12,
     selectedDelegate: 0,
     from: "",
     to: "",
@@ -232,6 +233,7 @@ export default {
     tableHeaders: [
       { text: "الزبون", value: "storeName" },
       { text: "بتاريخ", value: "creationFixedDate" },
+      { text: "سبب الزيارة", value: "visitCauseName" },
       { text: "الاجراءات", value: "actions" },
     ],
     invoicesTableHeaders: [

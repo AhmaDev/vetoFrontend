@@ -58,6 +58,12 @@
             <v-icon :title="item.invoiceId">mdi-magnify</v-icon>
           </v-btn>
         </template>
+        <template v-slot:[`item.totalInvoicesPrice`]="{ item }">
+          <b class="green--text">{{item.totalInvoicesPrice.toLocaleString() }}</b>
+        </template>
+        <template v-slot:[`item.totalPrice`]="{ item }">
+          {{item.totalPrice.toLocaleString() }}
+        </template>
       </v-data-table>
     </v-card>
   </div>
@@ -82,6 +88,7 @@ export default {
       { text: "كود الزبون", value: "idCustomer" },
       { text: "الفاتورة", value: "invoiceId" },
       { text: "مبلغ الفاتورة", value: "totalPrice" },
+      { text: "مبلغ اجمالي", value: "totalInvoicesPrice" },
       { text: "الكمية", value: "count" },
       { text: "نوع الخصم", value: "discountName" },
       { text: "الكمية المباعة", value: "notFreeCount" },
