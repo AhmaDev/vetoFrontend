@@ -62,28 +62,31 @@
             <td></td>
             <td></td>
           </tr>
+          <template  v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0">
           <tr
             :style="
               giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0 ? 'background-color: red; color: white' : ''
             "
-            :key="'GIFT_' + i"
-            v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0"
+            v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
+            :key="'GIFT_' + gift.itemId"
+           
           >
-            <td>{{ getItemName(giftItems.filter((x) => x.itemId == item.itemId)[0].itemId) }}</td>
+            <td>{{ getItemName(gift.itemId) }}</td>
             <td></td>
             <td></td>
-            <td>{{ giftItems.filter((x) => x.itemId == item.itemId)[0].count }}</td>
-            <td v-if="giftItems.filter((x) => x.itemId == item.itemId)[0].discountTypeId > 0">
-              {{ getDiscountName(giftItems.filter((x) => x.itemId == item.itemId)[0].discountTypeId) }}
+            <td>{{ gift.count }}</td>
+            <td v-if="gift.discountTypeId > 0">
+              {{ getDiscountName(gift.discountTypeId) }}
             </td>
             <td v-else>
-              {{ giftItems.filter((x) => x.itemId == item.itemId)[0].total / giftItems.filter((x) => x.itemId == item.itemId)[0].count }}
+              {{ gift.total / gift.count }}
             </td>
-            <td>{{ giftItems.filter((x) => x.itemId == item.itemId)[0].total.toLocaleString() }}</td>
+            <td>{{ gift.total.toLocaleString() }}</td>
             <td></td>
             <td></td>
             <td></td>
           </tr>
+          </template>
         </template>
       </table>
     </v-sheet>
