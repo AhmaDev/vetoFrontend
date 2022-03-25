@@ -82,7 +82,6 @@ export default {
     discounts: [],
     discountsHeader: [
       { text: "", value: "imagePath" },
-      { text: "اسم المادة", value: "itemId" },
       { text: "اسم المادة", value: "fullItemName" },
       { text: "المندوب", value: "username" },
       { text: "الزبون", value: "storeName" },
