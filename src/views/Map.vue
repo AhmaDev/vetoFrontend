@@ -202,7 +202,7 @@ export default {
   },
   data: () => ({
     permissions: [],
-    editCustomers: true,
+    editCustomers: false,
     customers: [],
     selectedCustomers: [],
     forceRerender: 0,
@@ -364,6 +364,7 @@ export default {
       if (customer.length > 0) {
         let cords = customer[0].location.split(",");
         this.$refs.map.mapObject.flyTo([cords[0],cords[1]], 17);
+        this.selectCustomer(customer[0]);
       } else {
         this.$toast.open({
           type: "warning",

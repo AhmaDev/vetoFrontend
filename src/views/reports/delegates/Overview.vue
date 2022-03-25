@@ -46,6 +46,7 @@
             hide-details
             label="المشرف"
             v-model="selectedSuperVisor"
+            @change="setDelegates()"
           ></v-autocomplete>
         </v-col>
         <v-col>
@@ -56,9 +57,11 @@
             outlined
             dense
             hide-details
+            multiple
             label="المندوب"
             v-model="selectedDelegate"
           ></v-autocomplete>
+
         </v-col>
         <v-col>
           <v-btn @click="search()" color="primary" block dark> بحث </v-btn>
@@ -187,7 +190,7 @@ export default {
       this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
         this.supervisors = res.data;
       });
-      this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
+      this.$http.get(this.$baseUrl + "users").then((res) => {
         this.delegates = res.data;
       });
     },
@@ -203,11 +206,8 @@ export default {
       } else {
         q = "from=" + this.startDate + "&to=" + this.endDate;
       }
-      if (this.selectedSuperVisor > 0) {
-        q = q + "&superVisorId=" + this.selectedSuperVisor;
-      }
-      if (this.selectedDelegate > 0) {
-        q = q + "&delegateId=" + this.selectedDelegate;
+      if (this.selectedDelegate.length > 0) {
+        q = q + "&delegateId=" + JSON.stringify(this.selectedDelegate).slice(1, -1);
       }
       let loading = this.$loading.show();
       this.$http
@@ -225,6 +225,12 @@ export default {
       }
       return sum.toLocaleString();
     },
+    setDelegates() {
+      let loading = this.$loading.show();
+      this.$http.get(this.$baseUrl + "supervisorDelegates/userid/" + this.selectedSuperVisor).then((res) => {
+        this.selectedDelegate = res.data.map(e => e.delegateId)
+      }).finally(() => loading.hide())
+    }
   },
 };
 </script>

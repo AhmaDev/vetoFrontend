@@ -106,6 +106,11 @@ export default {
       .get(this.$baseUrl + "customer")
       .then((res) => {
         this.customers = res.data;
+
+          setTimeout(() => {
+            this.searchFields.customerId = this.$route.query.id
+          }, 1000);
+        
       })
       .finally(() => loading.hide());
   },

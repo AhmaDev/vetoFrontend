@@ -113,7 +113,7 @@ export default {
     });
     // LOAD PERMS END
     this.getCurrentDate().then((value) => {
-      this.search.from = "2021-01-01";
+      this.search.from = value;
       this.search.to = value;
       this.fetchSearch();
     });

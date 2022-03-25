@@ -399,7 +399,7 @@ export default {
       this.$http.get(this.$baseUrl + "users/role/5").then((res) => {
         this.users.deliveries = res.data;
       });
-      this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
+      this.$http.get(this.$baseUrl + "users").then((res) => {
         this.users.delegates = res.data;
       });
       this.$http.get(this.$baseUrl + "customer").then((res) => {
