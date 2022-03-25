@@ -21,6 +21,9 @@
         <thead>
           <tr>
             <th width="50px">
+              <center>ت</center>
+            </th>
+            <th width="50px">
               <center>#</center>
             </th>
             <th>اسم الزبون</th>
@@ -41,6 +44,9 @@
             :key="'INVOICE_' + invoice.idInvoice"
           >
             <td>
+              <center>{{ i.filter(x => x.invoiceId == invoice.idInvoice)[0].index + 1 }}</center>
+            </td>
+            <td>
               <center>{{ invoice.idInvoice }}</center>
             </td>
             <td>{{ invoice.storeName }} - {{ invoice.customerId }}</td>
@@ -48,7 +54,15 @@
             <td>{{ invoice.customerPhone }}</td>
             <td>{{ invoice.secondCustomerPhone }}</td>
             <td>{{ invoice.customerAddress }}</td>
-            <td style="text-align:center; font-size: 15px !important; font-weight: bold;">{{ invoice.totalPrice.toLocaleString() }}</td>
+            <td
+              style="
+                text-align: center;
+                font-size: 15px !important;
+                font-weight: bold;
+              "
+            >
+              {{ invoice.totalPrice.toLocaleString() }}
+            </td>
             <td></td>
             <td></td>
           </tr>
@@ -56,13 +70,20 @@
         <tfoot>
           <tr>
             <td colspan="6" style="text-align: left">المجموع</td>
-            <td style="text-align:right; font-size: 15px !important; font-weight: bold;" colspan="3">
-                {{
-                  invoices
-                    .filter((invoice) => invoice.createdBy == delegate)
-                    .reduce((a, b) => a + b.totalPrice, 0)
-                    .toLocaleString()
-                }}
+            <td
+              style="
+                text-align: right;
+                font-size: 15px !important;
+                font-weight: bold;
+              "
+              colspan="3"
+            >
+              {{
+                invoices
+                  .filter((invoice) => invoice.createdBy == delegate)
+                  .reduce((a, b) => a + b.totalPrice, 0)
+                  .toLocaleString()
+              }}
             </td>
           </tr>
         </tfoot>
@@ -75,6 +96,7 @@
 export default {
   name: "DelegateSales",
   data: () => ({
+    i: [],
     delegateIds: [],
     delegates: [],
     invoices: [],
@@ -93,6 +115,22 @@ export default {
       )
       .then((res) => {
         this.invoices = res.data;
+        let index = 0;
+        for (let i = 0; i < this.delegateIds.length; i++) {
+          for (
+            let j = 0;
+            j <
+            this.invoices.filter(
+              (invoice) => invoice.createdBy == this.delegateIds[i]
+            ).length;
+            j++
+          ) {
+            this.i.push({index: index++, invoiceId: this.invoices.filter(
+              (invoice) => invoice.createdBy == this.delegateIds[i]
+            )[j].idInvoice});
+          }
+        }
+        console.log(this.i);
         if (this.$route.query.print == 1) {
           setTimeout(() => {
             this.$print(this.$refs.print);
@@ -107,6 +145,11 @@ export default {
       this.delegates = res.data;
       console.log(this.delegates);
     });
+  },
+  methods: {
+    incrementIndex(key) {
+      return key + 1;
+    },
   },
 };
 </script>

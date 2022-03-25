@@ -16,7 +16,7 @@
       </div>
       <table border="1" cellspacing="0" width="100%" class="table" dir="rtl">
         <tr>
-          <td>رقم التوزيع: {{ deliveryStatus.idDeliveryStatus }}</td>
+          <td>رقم التوزيع: {{ deliveryStatus.counter }}</td>
           <td>اسم الموزع: {{ deliveryStatus.deliveryName }}</td>
           <td>
             تاريخ التجهيز: {{ deliveryDate(deliveryStatus.creationFixedDate) }}

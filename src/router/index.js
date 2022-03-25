@@ -31,6 +31,7 @@ const routes = [
   { path: '/reports', name: 'Reports', component: () => import('../views/Reports.vue') },
   { path: '/reportsOverview', name: 'Overview', component: () => import('../views/reports/delegates/Overview.vue') },
   { path: '/visits', name: 'Visits', component: () => import('../views/Visits.vue') },
+  { path: '/delegateRail', name: 'DelegateRail', component: () => import('../views/DelegateRail.vue') },
   { path: '/map', name: 'Map', component: () => import('../views/Map.vue') },
   { path: '/damagedItems', name: 'DamagedItems', component: () => import('../views/DamagedItems.vue') },
   { path: '/new/damagedItems', name: 'DamagedItems', component: () => import('../views/NewDamagedInvoice.vue') },

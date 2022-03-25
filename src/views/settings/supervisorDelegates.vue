@@ -99,7 +99,7 @@ export default {
       this.supervisors = res.data;
     });
     this.$http
-      .get(this.$baseUrl + "users/role/4")
+      .get(this.$baseUrl + "users")
       .then((res) => {
         this.delegates = res.data;
       })

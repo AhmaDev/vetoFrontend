@@ -1,6 +1,6 @@
 <template>
   <div ref="print" id="homePage" class="pa-10">
-    <template v-for="invoice in invoices">
+    <template v-for="(invoice, index) in invoices">
       <v-sheet
         v-if="invoice.items[0] != null"
         style="margin-bottom: 20px"
@@ -10,6 +10,7 @@
         elevation="4"
       >
         <img src="@/assets/header.jpg" width="100%" alt="" />
+        <small>تسلسل: {{ index + 1 }}</small>
         <table class="table" border="1" cellspacing="0" width="100%">
           <tr>
             <td>رقم الفاتورة : #{{ invoice.idInvoice }}</td>
@@ -65,9 +66,15 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="5"></td>
-              <td>المجموع</td>
-              <td>{{ invoice.totalPrice.toLocaleString() }}</td>
+              <td colspan="2"></td>
+              <td style="background-color: #eee" colspan="1">
+                {{ invoice.items.reduce((a, b) => a + b.count, 0) }}
+              </td>
+              <td colspan="2"></td>
+              <td style="background-color: #eee">المجموع</td>
+              <td style="background-color: #eee">
+                {{ invoice.totalPrice.toLocaleString() }}
+              </td>
               <td></td>
               <td></td>
             </tr>
@@ -124,6 +131,7 @@ export default {
 <style scoped>
 .table td {
   padding: 10px !important;
+  font-size: 14px !important;
 }
 .sheet {
   page-break-after: always;

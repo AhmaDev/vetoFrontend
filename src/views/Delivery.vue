@@ -43,13 +43,16 @@
     </v-card>
     <br />
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7">
 
-        <v-card class="pa-10 deliveryStatusTable">
+        <v-card class="pa-5 deliveryStatusTable">
         <h3>كشف التوزيع</h3>
           <v-data-table :items="deliveriesStatus" :headers="tableHeader">
             <template v-slot:[`item.total`]="{ item }">
               {{ sum(item) }}
+            </template>
+            <template v-slot:[`item.invoices`]="{ item }">
+              {{ item.invoices.length }}
             </template>
             <template v-slot:[`item.actions`]="{ item }">
               <v-btn
@@ -96,8 +99,8 @@
           </v-data-table>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6">
-        <v-card class="pa-10 deliveryStatusTable">
+      <v-col cols="12" md="5">
+        <v-card class="pa-5 deliveryStatusTable">
         <h3>كشف المالية</h3>
           <v-data-table :items="deliveriesStatusMoney" :headers="tableHeaderMoney">
             <template v-slot:[`item.total`]="{ item }">
@@ -152,14 +155,15 @@ export default {
     deliveriesStatusMoney: [],
     selectedDate: null,
     tableHeader: [
-      { text: "رقم التوزيع", value: "idDeliveryStatus" },
+      { text: "رقم التوزيع", value: "counter" },
       { text: "اسم الموزع", value: "deliveryName" },
       { text: "التاريخ", value: "creationFixedDate" },
       { text: "المبلغ", value: "total" },
+      { text: "الفواتير", value: "invoices" },
       { text: "الاجراءات", value: "actions" },
     ],
     tableHeaderMoney: [
-      { text: "رقم الكشف", value: "idDeliveryStatus" },
+      { text: "رقم الكشف", value: "counter" },
       { text: "التاريخ", value: "creationFixedDate" },
       { text: "المبلغ", value: "total" },
       { text: "الاجراءات", value: "actions" },

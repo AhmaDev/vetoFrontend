@@ -36,7 +36,7 @@
           dense
         ></v-autocomplete>
         <v-autocomplete
-          :items="days"
+          :items="searchDays"
           item-text="displayName"
           item-value="day"
           label="يوم الزيارة"
@@ -45,6 +45,16 @@
           dense
         ></v-autocomplete>
         <v-btn @click="searchCustomers()" block color="primary">بحث</v-btn>
+        <br /><br />
+        <v-text-field
+          v-if="customers.length > 0"
+          label="البحث عن كود زبون"
+          outlined
+          type="number"
+          hint="اضغط Enter بعد كتابة كود الزبون"
+          dense
+          @keypress.enter="searchCustomerOnmap($event)"
+        ></v-text-field>
 
         <template v-if="selectedCustomers.length > 0">
           <v-list-item>
@@ -64,7 +74,13 @@
           <br />
           <br />
           <br />
-          <v-btn v-if="userInfo.roleId == 1" @click="deleteCustomers()" block color="error">حذف</v-btn>
+          <v-btn
+            v-if="userInfo.roleId == 1"
+            @click="deleteCustomers()"
+            block
+            color="error"
+            >حذف</v-btn
+          >
         </template>
       </div>
     </v-navigation-drawer>
@@ -122,7 +138,9 @@
           @click="selectCustomer(marker)"
           :lat-lng="getCustomerLocation(marker.location)"
         >
-          <l-tooltip>{{ marker.storeName }} - {{ marker.idCustomer }}</l-tooltip>
+          <l-tooltip
+            >{{ marker.storeName }} - {{ marker.idCustomer }}</l-tooltip
+          >
         </l-circle-marker>
       </template>
     </l-map>
@@ -184,14 +202,14 @@ export default {
   },
   data: () => ({
     permissions: [],
-    editCustomers: false,
+    editCustomers: true,
     customers: [],
     selectedCustomers: [],
     forceRerender: 0,
     users: [],
     search: {
       selectedUser: 0,
-      selectedDay: "",
+      selectedDay: "all",
     },
     map: {
       url: "https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
@@ -207,6 +225,16 @@ export default {
       autoClose: false,
       closeOnClick: false,
     },
+    searchDays: [
+      { day: "all", displayName: "الكل" },
+      { day: "sunday", displayName: "الاحد" },
+      { day: "monday", displayName: "الاثنين" },
+      { day: "tuesday", displayName: "الثلاثاء" },
+      { day: "wednesday", displayName: "الاربعاء" },
+      { day: "thursday", displayName: "الخميس" },
+      { day: "friday", displayName: "الجمعة" },
+      { day: "saturday", displayName: "السبت" },
+    ],
     days: [
       { day: "sunday", displayName: "الاحد" },
       { day: "monday", displayName: "الاثنين" },
@@ -258,11 +286,14 @@ export default {
     },
     searchCustomers() {
       let loading = this.$loading.show();
+      let query = "";
+      if (this.search.selectedDay == "all") {
+        query = `user=${this.search.selectedUser}`;
+      } else {
+        query = `user=${this.search.selectedUser}&visitDay=${this.search.selectedDay}`;
+      }
       this.$http
-        .get(
-          this.$baseUrl +
-            `customer/filter/query?user=${this.search.selectedUser}&visitDay=${this.search.selectedDay}`
-        )
+        .get(this.$baseUrl + `customer/filter/query?${query}`)
         .then((res) => {
           this.customers = res.data;
         })
@@ -326,6 +357,20 @@ export default {
           this.selectedDelegateId = 0;
         })
         .finally(() => loading.hide());
+    },
+    searchCustomerOnmap(e) {
+      let id = parseInt(e.target.value);
+      let customer = this.customers.filter((x) => x.idCustomer == id);
+      if (customer.length > 0) {
+        let cords = customer[0].location.split(",");
+        this.$refs.map.mapObject.flyTo([cords[0],cords[1]], 17);
+      } else {
+        this.$toast.open({
+          type: "warning",
+          message: "لا يوجد نتائج بحث",
+          duration: 3000,
+        });
+      }
     },
     deleteCustomers() {
       let x = confirm("هل انت متأكد من حذف الزبائن");

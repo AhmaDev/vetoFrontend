@@ -152,6 +152,12 @@ export default {
             route: "/visits",
             child: null,
           },
+          {
+            title: "حركة مندوب",
+            icon: "las la-directions",
+            route: "/delegateRail",
+            child: null,
+          },
           { title: "المواد", icon: "las la-box", route: "/items" },
           {
             title: " التوزيع والمالية",
