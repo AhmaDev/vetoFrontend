@@ -4,8 +4,18 @@
       <v-toolbar-title>{{ customer.storeName }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-text-field outlined dense hide-details readonly label="خرائط جوجل" :value='"http://maps.google.com/maps?q=loc:" + customer.location +  "&z=17"'></v-text-field>
+      <v-text-field
+        outlined
+        dense
+        hide-details
+        readonly
+        label="خرائط جوجل"
+        :value="
+          'http://maps.google.com/maps?q=loc:' + customer.location + '&z=17'
+        "
+      ></v-text-field>
       <v-spacer></v-spacer>
+      <v-btn color="primary" :to="'/customerRail/' + customer.idCustomer" target="_BLANK"> كشف حساب الزبون </v-btn>
       <v-btn
         color="error"
         @click="deleteCustomer(customer.idCustomer)"
@@ -348,15 +358,15 @@ export default {
       if (x) {
         let loading = this.$loading.show();
         this.$http
-          .delete( this.$baseUrl + "customer/delete/" + id)
+          .delete(this.$baseUrl + "customer/delete/" + id)
           .finally(() => loading.hide())
           .then(() => {
             this.$toast.open({
-            type: "success",
-            message: "تم حذف الزبون",
-            duration: 3000,
-          });
-          this.customer = null
+              type: "success",
+              message: "تم حذف الزبون",
+              duration: 3000,
+            });
+            this.customer = null;
           });
       }
     },

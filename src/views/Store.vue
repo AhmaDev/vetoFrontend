@@ -34,12 +34,16 @@
           ></v-text-field>
         </v-col>
         <v-col>
-          <v-btn @click="fetchSearch();" color="primary"> بحث </v-btn>
+          <v-btn @click="fetchSearch()" color="primary"> بحث </v-btn>
         </v-col>
-
       </v-row>
       <br />
-      <v-data-table v-if="lastStore.length > 0" :items-per-page="500" :items="store" :headers="tableHeader">
+      <v-data-table
+        v-if="lastStore.length > 0"
+        :items-per-page="500"
+        :items="store"
+        :headers="tableHeader"
+      >
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">
             <img
@@ -63,14 +67,7 @@
           }}
         </template>
         <template v-slot:[`item.storex`]="{ item }">
-          <v-chip
-            :color="
-              item.storex <
-              0.25
-                ? 'error'
-                : 'success'
-            "
-          >
+          <v-chip :color="item.storex < 0.25 ? 'error' : 'success'">
             {{ item.storex }}</v-chip
           >
         </template>
@@ -150,21 +147,21 @@ export default {
         )
         .then((res) => {
           this.store = res.data;
-        })
-        .finally(() => loading.hide());
-      this.$http
-        .get(
-          this.$baseUrl +
-            `item/detailedStore?from=2020-01-01&to=${this.search.from}`
-        )
-        .then((res) => {
-          this.lastStore = res.data;
-          setTimeout(() => {
-            this.store = this.store.map(row => (row.storex = this.getTotal(row), row));
+          this.$http
+            .get(
+              this.$baseUrl +
+                `item/detailedStore?from=2020-01-01&to=${this.search.from}`
+            )
+            .then((res) => {
+              this.lastStore = res.data;
 
-          }, 1000);
+              this.store = this.store.map(
+                (row) => ((row.storex = this.getTotal(row)), row)
+              );
+            })
+            .finally(() => loading.hide());
         })
-        .finally(() => loading.hide());
+
     },
     getTotal(item) {
       return (
@@ -182,8 +179,10 @@ export default {
       );
     },
     sort() {
-      this.store = this.store.sort((a,b) => a.totalSell.localeCompare(b.totalSell))
-    }
+      this.store = this.store.sort((a, b) =>
+        a.totalSell.localeCompare(b.totalSell)
+      );
+    },
   },
 };
 </script>
@@ -196,6 +195,9 @@ export default {
   .printHeader {
     display: block !important;
     padding: 10px;
+  }
+  .v-chip {
+    color: black !important;
   }
   @page {
     size: A4 landscape;

@@ -229,6 +229,7 @@ export default {
       let loading = this.$loading.show();
       this.$http.get(this.$baseUrl + "supervisorDelegates/userid/" + this.selectedSuperVisor).then((res) => {
         this.selectedDelegate = res.data.map(e => e.delegateId)
+        this.selectedDelegate.push(this.selectedSuperVisor)
       }).finally(() => loading.hide())
     }
   },

@@ -44,7 +44,7 @@ const routes = [
   { path: '/money/:id', name: 'DeliveryStatus', component: () => import('../components/MoneyStatus.vue') },
   { path: '/store', name: 'Store', component: () => import('../views/Store.vue') },
   { path: '/discounts', name: 'Store', component: () => import('../views/Discounts.vue') },
-  { path: '/customerRail', name: 'CustomerRail', component: () => import('../views/reports/customers/check.vue') },
+  { path: '/customerRail/:id', name: 'CustomerRail', component: () => import('../views/reports/customers/check.vue') },
 ]
 
 const router = new VueRouter({

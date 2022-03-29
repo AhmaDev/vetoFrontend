@@ -1,5 +1,5 @@
 <template>
-  <div id="CustomerCheckReportPage">
+  <div class="pa-5" id="CustomerCheckReportPage">
     <v-row>
       <v-col>
         <v-autocomplete
@@ -7,11 +7,16 @@
           item-text="storeName"
           item-value="idCustomer"
           outlined
+          v-if="!$route.params.id"
           hide-details
+          :key="forceRerender"
           dense
           v-model="searchFields.customerId"
           label="اسم الزبون"
         ></v-autocomplete>
+        <v-alert color="primary" dark dense v-if="$route.params.id && customers.length > 0">
+          {{customers.filter(x => x.idCustomer == $route.params.id)[0].storeName}}
+        </v-alert>
       </v-col>
       <v-col>
         <v-text-field
@@ -77,6 +82,7 @@ export default {
   },
   data: () => ({
     customers: [],
+    forceRerender:0,
     searchFields: {
       customerId: 0,
       startDate: null,
@@ -106,11 +112,11 @@ export default {
       .get(this.$baseUrl + "customer")
       .then((res) => {
         this.customers = res.data;
-
-          setTimeout(() => {
-            this.searchFields.customerId = this.$route.query.id
-          }, 1000);
-        
+        if (this.$route.params.id != undefined && this.$route.params.id != null) {
+          this.searchFields.customerId = this.$route.params.id;
+          this.searchFields.startDate = "2022-01-01"
+          this.search();
+        }
       })
       .finally(() => loading.hide());
   },
