@@ -146,11 +146,21 @@ export default {
             `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
         )
         .then((res) => {
+          var secondDate = new Date(this.search.from); 
+          var x = 1;
+          secondDate.setDate(secondDate.getDate() - x);
+          var secondDateString =
+            secondDate.getFullYear() +
+            "-" +
+            (secondDate.getMonth() + 1) +
+            "-" +
+            (secondDate.getDate());
+            console.log(secondDateString);
           this.store = res.data;
           this.$http
             .get(
               this.$baseUrl +
-                `item/detailedStore?from=2020-01-01&to=${this.search.from}`
+                `item/detailedStore?from=2020-01-01&to=${secondDateString}`
             )
             .then((res) => {
               this.lastStore = res.data;
@@ -160,8 +170,7 @@ export default {
               );
             })
             .finally(() => loading.hide());
-        })
-
+        });
     },
     getTotal(item) {
       return (
