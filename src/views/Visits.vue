@@ -310,7 +310,7 @@ export default {
       else return false;
     },
     fetch: function () {
-      this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
+      this.$http.get(this.$baseUrl + "users").then((res) => {
         this.delegates = res.data;
       });
     },
