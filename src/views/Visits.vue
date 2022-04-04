@@ -411,7 +411,6 @@ export default {
         .then((res) => {
           this.visits = res.data;
           this.allVisits = res.data;
-          this.filterData(dayname);
         })
         .finally(() => loading.hide());
 
@@ -429,7 +428,6 @@ export default {
         .then((res) => {
           this.invoices = res.data;
           this.allInvoices = res.data;
-          this.filterData(dayname);
         });
       this.$http
         .get(
@@ -445,7 +443,6 @@ export default {
         .then((res) => {
           this.restores = res.data;
           this.allRestores = res.data;
-          this.filterData(dayname);
         });
       this.$http
         .get(
@@ -460,7 +457,6 @@ export default {
         .then((res) => {
           this.damaged = res.data;
           this.allDamaged = res.data;
-          this.filterData(dayname);
         });
 
       this.$http
