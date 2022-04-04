@@ -510,7 +510,7 @@ export default {
         itemId: this.inputFields.itemId,
         itemName: this.items.filter(
           (item) => item.idItem == this.inputFields.itemId
-        )[0].itemName,
+        )[0].fullItemName,
         itemPrice: this.inputFields.price,
         quantity: this.inputFields.quantity,
         discount: this.inputFields.discount,

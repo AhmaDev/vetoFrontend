@@ -66,7 +66,17 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="2"></td>
+              <td colspan="9">
+                <h2>يتبع</h2>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+        <table class="table" border="1" cellspacing="0" width="100%">
+          <tbody>
+            <tr>
+              <td width="50%" colspan="2"></td>
+              <td>مجموع الاعداد</td>
               <td style="background-color: #eee" colspan="1">
                 {{ invoice.items.reduce((a, b) => a + b.count, 0) }}
               </td>
@@ -75,10 +85,8 @@
               <td style="background-color: #eee">
                 {{ invoice.totalPrice.toLocaleString() }}
               </td>
-              <td></td>
-              <td></td>
             </tr>
-          </tfoot>
+          </tbody>
         </table>
         <br />
         <pre style="text-align: right; white-space: pre-wrap; width: 100%">
@@ -138,9 +146,22 @@ export default {
   direction: rtl !important;
   display: none;
 }
+
+#pageFooter {
+  display: table-footer-group;
+}
+
+#pageFooter:after {
+  counter-increment: page;
+  content: counter(page);
+}
+
 @media print {
   @page {
     size: A4;
+    @bottom-left {
+      content: counter(page) " of " counter(pages);
+    }
   }
   * {
     font-size: 12px !important;

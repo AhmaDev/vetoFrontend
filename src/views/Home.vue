@@ -200,7 +200,7 @@ export default {
     mostItemsSelling: {
       data: [],
       header: [
-        { text: "اسم المادة", value: "itemName" },
+        { text: "اسم المادة", value: "fullItemName" },
         { text: "المبلغ", value: "total" },
       ],
     },

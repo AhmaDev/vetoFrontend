@@ -122,6 +122,7 @@
             :headers="tableHeaders"
             hide-default-footer
             :height="cols == 12 ? 'auto' : 300"
+            multi-sort
           >
             <template v-slot:[`item.visitDay`]="{ item }">
               {{ getDayName(item.visitDay) }}

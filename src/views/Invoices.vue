@@ -373,28 +373,28 @@ export default {
       });
       // LOAD PERMS END
 
-      let loading = this.$loading.show();
-      if (
-        localStorage.getItem("searchInvoicesHistory") == undefined ||
-        localStorage.getItem("searchInvoicesHistory") == null
-      ) {
-        this.$http
-          .get(this.$baseUrl + "invoice/filter?order=idInvoice&sort=DESC")
-          .then((res) => {
-            this.invoices = res.data;
-          })
-          .finally(() => {
-            loading.hide();
-            console.log(1111);
-          });
-      } else {
-        this.invoices = JSON.parse(
-          localStorage.getItem("searchInvoicesHistory")
-        );
-        this.search = JSON.parse(localStorage.getItem("searchFormHistory"));
-        this.performSearch();
-        loading.hide();
-      }
+      // let loading = this.$loading.show();
+      // if (
+      //   localStorage.getItem("searchInvoicesHistory") == undefined ||
+      //   localStorage.getItem("searchInvoicesHistory") == null
+      // ) {
+      //   this.$http
+      //     .get(this.$baseUrl + "invoice/filter?order=idInvoice&sort=DESC")
+      //     .then((res) => {
+      //       this.invoices = res.data;
+      //     })
+      //     .finally(() => {
+      //       loading.hide();
+      //       console.log(1111);
+      //     });
+      // } else {
+      //   this.invoices = JSON.parse(
+      //     localStorage.getItem("searchInvoicesHistory")
+      //   );
+      //   this.search = JSON.parse(localStorage.getItem("searchFormHistory"));
+      //   this.performSearch();
+      //   loading.hide();
+      // }
 
       this.$http.get(this.$baseUrl + "users/role/5").then((res) => {
         this.users.deliveries = res.data;

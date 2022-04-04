@@ -3,7 +3,14 @@
     <v-app-bar app>
       <v-toolbar-title>كشف المسار</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="cols = 12; $print($refs.print);" color="success" dark>
+      <v-btn
+        @click="
+          cols = 12;
+          $print($refs.print);
+        "
+        color="success"
+        dark
+      >
         <v-icon>la-print</v-icon>
         طباعة
       </v-btn>
@@ -26,15 +33,23 @@
           </v-autocomplete>
         </v-col>
         <v-col>
-          <v-text-field dense v-model="from" outlined label="من" type="date">
+          <v-text-field dense v-model="from" outlined label="بتاريخ" type="date">
           </v-text-field>
         </v-col>
-        <v-col>
-          <v-text-field dense v-model="to" outlined label="الى" type="date">
-          </v-text-field>
+        <v-col class="no-print" cols="8">
+          <v-btn width="200" @click="selectDelegate()" color="primary"> بحث </v-btn>
         </v-col>
-        <v-col cols="2">
-          <v-btn block @click="selectDelegate()" color="primary"> بحث </v-btn>
+        <v-col class="no-print" cols="3">
+          <v-checkbox v-model="show.invoices" label="عرض المبيعات"></v-checkbox>
+        </v-col>
+        <v-col class="no-print" cols="3">
+          <v-checkbox v-model="show.visits" label="عرض الزيارات"></v-checkbox>
+        </v-col>
+        <v-col class="no-print" cols="3">
+          <v-checkbox v-model="show.restores" label="عرض الراجع"></v-checkbox>
+        </v-col>
+        <v-col class="no-print" cols="3">
+          <v-checkbox v-model="show.damaged" label="عرض التالف"></v-checkbox>
         </v-col>
         <v-col cols="12">
           <v-btn-toggle v-model="selectedDay">
@@ -107,8 +122,20 @@
         </v-col>
         <v-col>
           <h3>
+            عدد الفواتير :
+            {{ invoices.length }}
+          </h3>
+        </v-col>
+        <v-col>
+          <h3>
             تم زيارتهم :
             {{ visits.length }}
+          </h3>
+        </v-col>
+        <v-col>
+          <h3>
+            المتبقي :
+            {{ customers.length - visits.length - invoices.length }}
           </h3>
         </v-col>
       </v-row>
@@ -116,7 +143,7 @@
       <v-divider></v-divider>
 
       <v-row>
-        <v-col :cols="cols">
+        <v-col v-if="show.invoices" :cols="cols">
           <h4>فواتير البيع</h4>
           <br />
           <v-data-table
@@ -125,12 +152,17 @@
             :headers="invoicesTableHeaders"
             hide-default-footer
             :height="cols == 12 ? 'auto' : 300"
+            multi-sort
           >
+          <template v-slot:[`item.totalPrice`]="{ item }">
+              {{item.totalPrice.toLocaleString()}}
+            </template>
           </v-data-table>
+          <hr style="border: 2px #000000 solid" />
         </v-col>
         <v-divider vertical></v-divider>
 
-        <v-col :cols="cols">
+        <v-col  v-if="show.restores"  :cols="cols">
           <h4>فواتير الراجع</h4>
           <br />
 
@@ -140,11 +172,16 @@
             :headers="restoresTableHeaders"
             hide-default-footer
             :height="cols == 12 ? 'auto' : 300"
+            multi-sort
           >
+            <template v-slot:[`item.totalPrice`]="{ item }">
+              {{item.totalPrice.toLocaleString()}}
+            </template>
           </v-data-table>
+          <hr style="border: 2px #000000 solid" />
         </v-col>
         <v-divider vertical></v-divider>
-        <v-col :cols="cols">
+        <v-col  v-if="show.damaged"  :cols="cols">
           <h4>فواتير التالف</h4>
           <br />
 
@@ -154,11 +191,13 @@
             :headers="damagedTableHeaders"
             hide-default-footer
             :height="cols == 12 ? 'auto' : 300"
+            multi-sort
           >
           </v-data-table>
+          <hr style="border: 2px #000000 solid" />
         </v-col>
         <v-divider vertical></v-divider>
-        <v-col :cols="cols">
+        <v-col  v-if="show.visits"  :cols="cols">
           <h4>الزيارات</h4>
           <br />
 
@@ -168,6 +207,7 @@
             :headers="tableHeaders"
             hide-default-footer
             :height="cols == 12 ? 'auto' : 300"
+            multi-sort
           >
             <template v-slot:[`item.actions`]="{ item }">
               <v-btn
@@ -180,6 +220,7 @@
               </v-btn>
             </template>
           </v-data-table>
+          <hr style="border: 2px #000000 solid" />
         </v-col>
       </v-row>
     </v-card>
@@ -229,28 +270,38 @@ export default {
     allRestores: [],
     customers: [],
     allCustomers: [],
+    show: {
+      invoices: true,
+      visits: true,
+      restores: true,
+      damaged: true,
+    },
     selectedDay: 0,
     tableHeaders: [
       { text: "الزبون", value: "storeName" },
-      { text: "بتاريخ", value: "creationFixedDate" },
+      { text: "كود الزبون", value: "customerId" },
+      { text: "اسم الزبون", value: "customerName" },
       { text: "سبب الزيارة", value: "visitCauseName" },
       { text: "الاجراءات", value: "actions" },
     ],
     invoicesTableHeaders: [
-      { text: "الزبون", value: "customerName" },
-      { text: "بتاريخ", value: "creationFixedDate" },
+      { text: "الزبون", value: "storeName" },
+      { text: "كود الزبون", value: "customerId" },
+      { text: "اسم الزبون", value: "customerName" },
       { text: "الوقت", value: "creationFixedTime" },
       { text: "المبلغ", value: "totalPrice" },
     ],
     restoresTableHeaders: [
-      { text: "الزبون", value: "customerName" },
-      { text: "بتاريخ", value: "creationFixedDate" },
+      { text: "الزبون", value: "storeName" },
+      { text: "كود الزبون", value: "customerId" },
+      { text: "اسم الزبون", value: "customerName" },
       { text: "الوقت", value: "creationFixedTime" },
       { text: "المبلغ", value: "totalPrice" },
     ],
     damagedTableHeaders: [
-      { text: "الزبون", value: "customerName" },
-      { text: "بتاريخ", value: "creationFixedDate" },
+      { text: "الزبون", value: "storeName" },
+      { text: "كود الزبون", value: "customerId" },
+      { text: "اسم الزبون", value: "customerName" },
       { text: "الوقت", value: "creationFixedTime" },
       { text: "المبلغ", value: "total" },
     ],
@@ -350,7 +401,7 @@ export default {
             "?dateFrom=" +
             this.from +
             "&dateTo=" +
-            this.to
+            this.from
         )
         .then((res) => {
           this.visits = res.data;
@@ -468,8 +519,11 @@ export default {
     display: block !important;
     padding: 10px;
   }
+  .no-print {
+    display: none !important;
+  }
   @page {
-    size: A4 landscape;
+    size: A4 portrait;
   }
   * {
     direction: rtl !important;

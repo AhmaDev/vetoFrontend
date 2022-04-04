@@ -47,17 +47,17 @@
             "
             :key="i"
           >
-            <td>{{ getItemName(item.itemId) }}</td>
+            <td style="font-size: 14px !important; font-weight: bold !important;">{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
-            <td>{{ item.count }}</td>
+            <td style="font-size: 14px !important; font-weight: bold !important;">{{ item.count }}</td>
             <td v-if="item.discountTypeId > 0">
               {{ getDiscountName(item.discountTypeId) }}
             </td>
             <td v-else>
               {{ item.total / item.count }}
             </td>
-            <td>{{ item.total.toLocaleString() }}</td>
+            <td style="font-size: 14px !important; font-weight: bold !important;">{{ item.total.toLocaleString() }}</td>
             <td></td>
             <td></td>
             <td></td>
@@ -71,10 +71,10 @@
             :key="'GIFT_' + gift.itemId"
            
           >
-            <td>{{ getItemName(gift.itemId) }}</td>
+            <td style="font-size: 14px !important; font-weight: bold !important;">{{ getItemName(gift.itemId) }}</td>
             <td></td>
             <td></td>
-            <td>{{ gift.count }}</td>
+            <td style="font-size: 14px !important; font-weight: bold !important;">{{ gift.count }}</td>
             <td v-if="gift.discountTypeId > 0">
               {{ getDiscountName(gift.discountTypeId) }}
             </td>
@@ -266,7 +266,7 @@ export default {
     },
     sumQty2() {
       let qty = 0;
-      let items = this.deliveryStatus.invoicesData.filter(
+      let items = this.giftItems.filter(
         (d) => d.discountTypeId > 0
       );
       for (let i = 0; i < items.length; i++) {

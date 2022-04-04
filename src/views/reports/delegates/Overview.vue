@@ -73,6 +73,7 @@
         :items-per-page="2000"
         hide-default-footer
         :headers="report.header"
+        multi-sort
       >
         <template v-slot:[`item.totalCustomers`]="{ item }">
           {{ item.totalCustomers.toLocaleString() }}

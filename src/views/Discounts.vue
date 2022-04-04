@@ -40,6 +40,7 @@
         hide-default-footer
         :items="discounts"
         :headers="discountsHeader"
+        multi-sort
       >
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">

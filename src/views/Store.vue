@@ -43,6 +43,7 @@
         :items-per-page="500"
         :items="store"
         :headers="tableHeader"
+        multi-sort
       >
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">
