@@ -51,7 +51,7 @@
         <v-col class="no-print" cols="3">
           <v-checkbox v-model="show.damaged" label="عرض التالف"></v-checkbox>
         </v-col>
-        <v-col cols="12">
+        <!-- <v-col cols="12">
           <v-btn-toggle v-model="selectedDay">
             <v-btn @click="filterData('all')">الكل</v-btn>
             <v-btn @click="filterData('sunday')">
@@ -91,52 +91,54 @@
               </v-chip></v-btn
             >
           </v-btn-toggle>
-        </v-col>
+        </v-col> -->
+      </v-row>
+      <v-row>
         <v-col>
-          <h3>
+          <h5>
             المبيعات :
             {{
               invoices.reduce((a, b) => a + b.totalPrice, 0).toLocaleString()
             }}
-          </h3>
+          </h5>
         </v-col>
         <v-col>
-          <h3>
+          <h5>
             الراجع :
             {{
               restores.reduce((a, b) => a + b.totalPrice, 0).toLocaleString()
             }}
-          </h3>
+          </h5>
         </v-col>
         <v-col>
-          <h3>
+          <h5>
             التالف :
             {{ damaged.reduce((a, b) => a + b.total, 0).toLocaleString() }}
-          </h3>
+          </h5>
         </v-col>
         <v-col>
-          <h3>
+          <h5>
             الزبائن :
             {{ customers.length }}
-          </h3>
+          </h5>
         </v-col>
         <v-col>
-          <h3>
+          <h5>
             عدد الفواتير :
             {{ invoices.length }}
-          </h3>
+          </h5>
         </v-col>
         <v-col>
-          <h3>
+          <h5>
             تم زيارتهم :
             {{ visits.length }}
-          </h3>
+          </h5>
         </v-col>
         <v-col>
-          <h3>
+          <h5>
             المتبقي :
             {{ customers.length - visits.length - invoices.length }}
-          </h3>
+          </h5>
         </v-col>
       </v-row>
       <br />
@@ -153,6 +155,8 @@
             hide-default-footer
             :height="cols == 12 ? 'auto' : 300"
             multi-sort
+            class="table-striped"
+            
           >
           <template v-slot:[`item.totalPrice`]="{ item }">
               {{item.totalPrice.toLocaleString()}}
@@ -392,6 +396,7 @@ export default {
         });
         return;
       }
+      let dayname = new Date(this.from).toLocaleDateString('us-EN', { weekday: 'long' }).toLowerCase();
       let loading = this.$loading.show();
       this.$http
         .get(
@@ -406,6 +411,7 @@ export default {
         .then((res) => {
           this.visits = res.data;
           this.allVisits = res.data;
+          this.filterData(dayname);
         })
         .finally(() => loading.hide());
 
@@ -423,6 +429,7 @@ export default {
         .then((res) => {
           this.invoices = res.data;
           this.allInvoices = res.data;
+          this.filterData(dayname);
         });
       this.$http
         .get(
@@ -438,6 +445,7 @@ export default {
         .then((res) => {
           this.restores = res.data;
           this.allRestores = res.data;
+          this.filterData(dayname);
         });
       this.$http
         .get(
@@ -452,6 +460,7 @@ export default {
         .then((res) => {
           this.damaged = res.data;
           this.allDamaged = res.data;
+          this.filterData(dayname);
         });
 
       this.$http
@@ -459,6 +468,7 @@ export default {
         .then((res) => {
           this.customers = res.data;
           this.allCustomers = res.data;
+          this.filterData(dayname);
         });
     },
     filterData(day) {
@@ -511,6 +521,9 @@ export default {
 </script>
 
 <style scoped>
+td {
+  border-bottom: thin solid rgba(0,0,0,1) !important;
+}
 .printHeader {
   display: none !important;
 }
@@ -528,7 +541,7 @@ export default {
   * {
     direction: rtl !important;
     color-adjust: exact !important;
-    zoom: 0.9;
+
   }
   .v-btn {
     display: none !important;

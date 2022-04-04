@@ -64,13 +64,6 @@
               <td></td>
             </tr>
           </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="9">
-                <h2>يتبع</h2>
-              </td>
-            </tr>
-          </tfoot>
         </table>
         <table class="table" border="1" cellspacing="0" width="100%">
           <tbody>
