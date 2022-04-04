@@ -68,7 +68,8 @@
         <table class="table" border="1" cellspacing="0" width="100%">
           <tbody>
             <tr>
-              <td width="50%" colspan="2"></td>
+              <td width="25%" colspan="1">رقم الفاتورة : {{invoice.idInvoice}}</td>
+              <td width="25%" colspan="1">كود الزبون : {{invoice.customerId}}</td>
               <td>مجموع الاعداد</td>
               <td style="background-color: #eee" colspan="1">
                 {{ invoice.items.reduce((a, b) => a + b.count, 0) }}
