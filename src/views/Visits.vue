@@ -396,7 +396,8 @@ export default {
         });
         return;
       }
-      let dayname = new Date(this.from).toLocaleDateString('us-EN', { weekday: 'long' }).toLowerCase();
+      var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      let dayname = days[new Date(this.from).getDay()].toLowerCase();
       let loading = this.$loading.show();
       this.$http
         .get(
@@ -428,6 +429,8 @@ export default {
         .then((res) => {
           this.invoices = res.data;
           this.allInvoices = res.data;
+          this.filterData(dayname);
+
         });
       this.$http
         .get(
@@ -443,6 +446,8 @@ export default {
         .then((res) => {
           this.restores = res.data;
           this.allRestores = res.data;
+          this.filterData(dayname);
+
         });
       this.$http
         .get(
@@ -457,6 +462,8 @@ export default {
         .then((res) => {
           this.damaged = res.data;
           this.allDamaged = res.data;
+          this.filterData(dayname);
+
         });
 
       this.$http
