@@ -18,6 +18,7 @@
             outlined
             dense
             clearable
+            :disabled="userInfo.roleId == 2"
             v-model="search.invoiceType"
             label="نوع الفاتورة"
             :items="invoiceTypes"
@@ -410,6 +411,10 @@ export default {
       });
       this.$http.get(this.$baseUrl + "invoice/type").then((res) => {
         this.invoiceTypes = res.data;
+        if (this.userInfo.roleId == 2) {
+          this.invoiceTypes = res.data.filter((e) => e.idInvoiceType == 3);
+          this.search.invoiceType = 3;
+        }
       });
       this.$http.get(this.$baseUrl + "selltype").then((res) => {
         this.sellTypes = res.data;
@@ -562,6 +567,14 @@ export default {
           );
         })
         .finally(() => loading.hide());
+    },
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
     },
   },
 };
