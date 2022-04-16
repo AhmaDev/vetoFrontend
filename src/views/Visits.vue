@@ -33,65 +33,48 @@
           </v-autocomplete>
         </v-col>
         <v-col>
-          <v-text-field dense v-model="from" outlined label="بتاريخ" type="date">
+          <v-text-field
+            dense
+            v-model="from"
+            outlined
+            label="بتاريخ"
+            type="date"
+          >
           </v-text-field>
         </v-col>
         <v-col class="no-print" cols="8">
-          <v-btn width="200" @click="selectDelegate()" color="primary"> بحث </v-btn>
+          <v-btn width="200" @click="selectDelegate()" color="primary">
+            بحث
+          </v-btn>
         </v-col>
         <v-col class="no-print" cols="3">
-          <v-checkbox v-model="show.invoices" label="عرض المبيعات"></v-checkbox>
+          <v-checkbox
+            @change="checkView()"
+            v-model="show.invoices"
+            label="عرض المبيعات"
+          ></v-checkbox>
         </v-col>
         <v-col class="no-print" cols="3">
-          <v-checkbox v-model="show.visits" label="عرض الزيارات"></v-checkbox>
+          <v-checkbox
+            @change="checkView()"
+            v-model="show.visits"
+            label="عرض الزيارات"
+          ></v-checkbox>
         </v-col>
         <v-col class="no-print" cols="3">
-          <v-checkbox v-model="show.restores" label="عرض الراجع"></v-checkbox>
+          <v-checkbox
+            @change="checkView()"
+            v-model="show.restores"
+            label="عرض الراجع"
+          ></v-checkbox>
         </v-col>
         <v-col class="no-print" cols="3">
-          <v-checkbox v-model="show.damaged" label="عرض التالف"></v-checkbox>
+          <v-checkbox
+            @change="checkView()"
+            v-model="show.damaged"
+            label="عرض التالف"
+          ></v-checkbox>
         </v-col>
-        <!-- <v-col cols="12">
-          <v-btn-toggle v-model="selectedDay">
-            <v-btn @click="filterData('all')">الكل</v-btn>
-            <v-btn @click="filterData('sunday')">
-              الاحد
-              <v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(0) }}
-              </v-chip>
-            </v-btn>
-            <v-btn @click="filterData('monday')"
-              >الاثنين<v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(1) }}
-              </v-chip></v-btn
-            >
-            <v-btn @click="filterData('tuesday')"
-              >الثلاثاء<v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(2) }}
-              </v-chip></v-btn
-            >
-            <v-btn @click="filterData('wednesday')"
-              >الاربعاء<v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(3) }}
-              </v-chip></v-btn
-            >
-            <v-btn @click="filterData('thursday')"
-              >الخميس<v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(4) }}
-              </v-chip></v-btn
-            >
-            <v-btn @click="filterData('friday')"
-              >الجمعة<v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(5) }}
-              </v-chip></v-btn
-            >
-            <v-btn @click="filterData('saturday')"
-              >السبت<v-chip class="mx-2" color="primary" small>
-                {{ getNumberOfWeekDays(6) }}
-              </v-chip></v-btn
-            >
-          </v-btn-toggle>
-        </v-col> -->
       </v-row>
       <v-row>
         <v-col>
@@ -143,90 +126,85 @@
       </v-row>
       <br />
       <v-divider></v-divider>
-
-      <v-row>
-        <v-col v-if="show.invoices" :cols="cols">
-          <h4>فواتير البيع</h4>
-          <br />
-          <v-data-table
-            :items-per-page="300"
-            :items="invoices"
-            :headers="invoicesTableHeaders"
-            hide-default-footer
-            :height="cols == 12 ? 'auto' : 300"
-            multi-sort
-            class="table-striped"
-            
-          >
-          <template v-slot:[`item.totalPrice`]="{ item }">
-              {{item.totalPrice.toLocaleString()}}
-            </template>
-          </v-data-table>
-          <hr style="border: 2px #000000 solid" />
-        </v-col>
-        <v-divider vertical></v-divider>
-
-        <v-col  v-if="show.restores"  :cols="cols">
-          <h4>فواتير الراجع</h4>
-          <br />
-
-          <v-data-table
-            :items-per-page="300"
-            :items="restores"
-            :headers="restoresTableHeaders"
-            hide-default-footer
-            :height="cols == 12 ? 'auto' : 300"
-            multi-sort
-          >
-            <template v-slot:[`item.totalPrice`]="{ item }">
-              {{item.totalPrice.toLocaleString()}}
-            </template>
-          </v-data-table>
-          <hr style="border: 2px #000000 solid" />
-        </v-col>
-        <v-divider vertical></v-divider>
-        <v-col  v-if="show.damaged"  :cols="cols">
-          <h4>فواتير التالف</h4>
-          <br />
-
-          <v-data-table
-            :items-per-page="300"
-            :items="damaged"
-            :headers="damagedTableHeaders"
-            hide-default-footer
-            :height="cols == 12 ? 'auto' : 300"
-            multi-sort
-          >
-          </v-data-table>
-          <hr style="border: 2px #000000 solid" />
-        </v-col>
-        <v-divider vertical></v-divider>
-        <v-col  v-if="show.visits"  :cols="cols">
-          <h4>الزيارات</h4>
-          <br />
-
-          <v-data-table
-            :items-per-page="300"
-            :items="visits"
-            :headers="tableHeaders"
-            hide-default-footer
-            :height="cols == 12 ? 'auto' : 300"
-            multi-sort
-          >
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-btn
-                @click="setMarker(item)"
-                small
-                color="primary"
-                :key="item.idVisit"
-              >
-                عرض على الخريطة
-              </v-btn>
-            </template>
-          </v-data-table>
-          <hr style="border: 2px #000000 solid" />
-        </v-col>
-      </v-row>
+      <v-simple-table>
+        <thead>
+          <tr>
+            <th>الحركة</th>
+            <th>كود الزبون</th>
+            <th>اسم الزبون</th>
+            <th>اسم المحل</th>
+            <th>المبلغ</th>
+            <th>سبب الزيارة</th>
+            <th>الوقت</th>
+            <th>الاجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(data, i) in allData">
+            <tr :key="i">
+              <td>
+                <v-chip
+                  outlined
+                  small
+                  color="success"
+                  v-if="data.idInvoiceType == 1"
+                  >فاتورة</v-chip
+                >
+                <v-chip
+                  outlined
+                  small
+                  color="primary"
+                  v-if="data.idVisit != undefined"
+                  >زيارة</v-chip
+                >
+                <v-chip
+                  outlined
+                  small
+                  color="warning"
+                  v-if="data.idInvoiceType == 3"
+                  >راجع</v-chip
+                >
+                <v-chip
+                  outlined
+                  small
+                  color="error"
+                  v-if="data.idDamagedInvoice != undefined"
+                  >تالف</v-chip
+                >
+              </td>
+              <td>
+                <span>
+                  {{ data.customerId }}
+                </span>
+                <v-chip class="mr-5" outlined color="error" small v-if="data.visitDay != dayName">
+                  خارج المسار
+                </v-chip>
+              </td>
+              <td>{{ data.customerName }}</td>
+              <td>{{ data.storeName }}</td>
+              <td>{{ data.totalPrice }}</td>
+              <td>{{ data.visitCauseName }}</td>
+              <td>
+                <span v-if="data.idVisit != undefined">{{
+                  data.creationFixedDate.substring(11)
+                }}</span>
+                <span v-if="data.idVisit == undefined">{{
+                  data.creationFixedTime
+                }}</span>
+              </td>
+              <td>
+                <v-btn
+                  small
+                  color="primary"
+                  v-if="data.idVisit != undefined"
+                  @click="setMarker(data)"
+                  >الخريطة</v-btn
+                >
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </v-simple-table>
     </v-card>
 
     <v-dialog v-model="mapDialog" width="500">
@@ -264,6 +242,7 @@ export default {
     selectedDelegate: 0,
     from: "",
     to: "",
+    dayName: "",
     visits: [],
     invoices: [],
     damaged: [],
@@ -286,6 +265,7 @@ export default {
       { text: "كود الزبون", value: "customerId" },
       { text: "اسم الزبون", value: "customerName" },
       { text: "سبب الزيارة", value: "visitCauseName" },
+      { text: "وقت الزيارة", value: "creationFixedDate" },
       { text: "الاجراءات", value: "actions" },
     ],
     invoicesTableHeaders: [
@@ -309,6 +289,7 @@ export default {
       { text: "الوقت", value: "creationFixedTime" },
       { text: "المبلغ", value: "total" },
     ],
+    allData: [],
     map: {
       url: "https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
       attribution: "veto",
@@ -396,83 +377,114 @@ export default {
         });
         return;
       }
-      var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      var days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
       let dayname = days[new Date(this.from).getDay()].toLowerCase();
+      this.dayName = dayname;
       let loading = this.$loading.show();
-      this.$http
-        .get(
-          this.$baseUrl +
-            "visit/user/" +
-            this.selectedDelegate +
-            "?dateFrom=" +
-            this.from +
-            "&dateTo=" +
-            this.from
-        )
-        .then((res) => {
-          this.visits = res.data;
-          this.allVisits = res.data;
+      let visits = this.$http.get(
+        this.$baseUrl +
+          "visit/user/" +
+          this.selectedDelegate +
+          "?dateFrom=" +
+          this.from +
+          "&dateTo=" +
+          this.from
+      );
+
+      let invoices = this.$http.get(
+        this.$baseUrl +
+          "invoice/filter?user=" +
+          this.selectedDelegate +
+          "&dateRangeFrom=" +
+          this.from +
+          "&dateRangeTo=" +
+          this.to +
+          "&type=1"
+      );
+      let restores = this.$http.get(
+        this.$baseUrl +
+          "invoice/filter?user=" +
+          this.selectedDelegate +
+          "&dateRangeFrom=" +
+          this.from +
+          "&dateRangeTo=" +
+          this.to +
+          "&type=3"
+      );
+      let damaged = this.$http.get(
+        this.$baseUrl +
+          "damagedInvoice/userDateRange/" +
+          this.selectedDelegate +
+          "?from=" +
+          this.from +
+          "&to=" +
+          this.to
+      );
+
+      let customers = this.$http.get(
+        this.$baseUrl + "customer/user/" + this.selectedDelegate
+      );
+
+      Promise.allSettled([invoices, restores, damaged, visits, customers])
+        .then((values) => {
+          this.invoices =
+            values[0].status != "rejected" ? values[0].value.data : [];
+          this.allInvoices =
+            values[0].status != "rejected" ? values[0].value.data : [];
+          this.restores =
+            values[1].status != "rejected" ? values[1].value.data : [];
+          this.allRestores =
+            values[1].status != "rejected" ? values[1].value.data : [];
+          this.damaged =
+            values[2].status != "rejected" ? values[2].value.data : [];
+          this.allDamaged =
+            values[2].status != "rejected" ? values[2].value.data : [];
+          this.visits =
+            values[3].status != "rejected" ? values[3].value.data : [];
+          this.allVisits =
+            values[3].status != "rejected" ? values[3].value.data : [];
+          this.customers =
+            values[4].status != "rejected" ? values[4].value.data : [];
+          this.allCustomers =
+            values[4].status != "rejected" ? values[4].value.data : [];
+          this.allData = [
+            ...this.invoices,
+            ...this.restores,
+            ...this.damaged,
+            ...this.visits,
+          ];
+          this.filterData(this.dayName);
+          this.allData.sort(function (a, b) {
+            return new Date(a.createdAt) - new Date(b.createdAt);
+          });
         })
         .finally(() => loading.hide());
-
-      this.$http
-        .get(
-          this.$baseUrl +
-            "invoice/filter?user=" +
-            this.selectedDelegate +
-            "&dateRangeFrom=" +
-            this.from +
-            "&dateRangeTo=" +
-            this.to +
-            "&type=1"
-        )
-        .then((res) => {
-          this.invoices = res.data;
-          this.allInvoices = res.data;
-          this.filterData(dayname);
-
-        });
-      this.$http
-        .get(
-          this.$baseUrl +
-            "invoice/filter?user=" +
-            this.selectedDelegate +
-            "&dateRangeFrom=" +
-            this.from +
-            "&dateRangeTo=" +
-            this.to +
-            "&type=3"
-        )
-        .then((res) => {
-          this.restores = res.data;
-          this.allRestores = res.data;
-          this.filterData(dayname);
-
-        });
-      this.$http
-        .get(
-          this.$baseUrl +
-            "damagedInvoice/userDateRange/" +
-            this.selectedDelegate +
-            "?from=" +
-            this.from +
-            "&to=" +
-            this.to
-        )
-        .then((res) => {
-          this.damaged = res.data;
-          this.allDamaged = res.data;
-          this.filterData(dayname);
-
-        });
-
-      this.$http
-        .get(this.$baseUrl + "customer/user/" + this.selectedDelegate)
-        .then((res) => {
-          this.customers = res.data;
-          this.allCustomers = res.data;
-          this.filterData(dayname);
-        });
+    },
+    checkView() {
+      this.allData = [];
+      if (this.show.invoices) {
+        this.allData.push(...this.invoices);
+      }
+      if (this.show.restores) {
+        this.allData.push(...this.restores);
+      }
+      if (this.show.damaged) {
+        this.allData.push(...this.damaged);
+      }
+      if (this.show.visits) {
+        this.allData.push(...this.visits);
+      }
+      this.allData.sort(function (a, b) {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      });
     },
     filterData(day) {
       let customerDay = day;
@@ -525,7 +537,7 @@ export default {
 
 <style scoped>
 td {
-  border-bottom: thin solid rgba(0,0,0,1) !important;
+  border-bottom: thin solid rgba(0, 0, 0, 1) !important;
 }
 .printHeader {
   display: none !important;
@@ -544,7 +556,6 @@ td {
   * {
     direction: rtl !important;
     color-adjust: exact !important;
-
   }
   .v-btn {
     display: none !important;

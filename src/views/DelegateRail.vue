@@ -128,7 +128,7 @@
               {{ getDayName(item.visitDay) }}
             </template>
             <template v-slot:[`item.lastInvoice`]="{ item }">
-              {{ item.lastInvoice == null ? "لا يوجد" : item.lastInvoice }}
+              {{ item.lastInvoice == null ? "لا يوجد" : parseDate(item.lastInvoice) }}
             </template>
           </v-data-table>
         </v-col>
@@ -159,6 +159,7 @@
 </template>
 
 <script>
+import * as moment from "moment";
 export default {
   name: "Visits",
   components: {},
@@ -175,7 +176,12 @@ export default {
     selectedDay: 0,
     tableHeaders: [
       { text: "كود الزبون", value: "idCustomer" },
-      { text: "الزبون", value: "storeName" },
+      { text: "اسم المحل", value: "storeName" },
+      { text: "اسم الزبون", value: "customerName" },
+      { text: "نوع الزبون", value: "sellPriceName" },
+      { text: "تاريخ اضافة الزبون", value: "customerCreatedAt" },
+      { text: "رقم اسيا", value: "phone" },
+      { text: "رقم زين", value: "secondPhone" },
       { text: "المبلغ", value: "totalSell" },
       { text: "اخر فاتورة", value: "lastInvoice" },
       { text: "عدد الفواتير", value: "totalInvoiceCount" },
@@ -347,6 +353,10 @@ export default {
         }
       }
     },
+    parseDate(date) {
+      moment.locale('ar-kw');  
+      return moment(date).fromNow();
+    }
   },
 };
 </script>

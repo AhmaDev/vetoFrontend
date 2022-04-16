@@ -52,7 +52,7 @@
             outlined
             dense
             label="تاريخ الفاتورة"
-            disabled
+            :disabled="invoice.invoiceTypeId != 3"
           />
           <v-text-field
             type="time"
@@ -423,7 +423,7 @@ export default {
     this.$http.get(this.$baseUrl + "invoice/type").then((res) => {
       this.invoiceTypes = res.data;
       if (this.userInfo.roleId == 2) {
-        this.invoiceTypes = res.data.filter(e => e.idInvoiceType == 3);
+        this.invoiceTypes = res.data.filter((e) => e.idInvoiceType == 3);
       }
     });
     this.$http.get(this.$baseUrl + "selltype").then((res) => {
@@ -570,18 +570,23 @@ export default {
         });
       }
       let loading = this.$loading.show();
+
+      let invoiceValues = {
+        invoiceTypeId: this.invoice.invoiceTypeId,
+        customerId: this.invoice.customerId,
+        createdBy: this.invoice.createdBy,
+        storeId: 1,
+        notice: this.invoice.notice,
+        sellPriceId: this.invoice.sellPriceId,
+        sellTypeId: this.invoice.sellTypeId,
+        deliveryId: 0,
+      };
+      if (this.invoice.invoiceTypeId == 3) {
+        invoiceValues.createdAt = this.invoice.creationFixedDate
+      }
       this.$http
         .post(this.$baseUrl + "invoice/new", {
-          invoice: {
-            invoiceTypeId: this.invoice.invoiceTypeId,
-            customerId: this.invoice.customerId,
-            createdBy: this.invoice.createdBy,
-            storeId: 1,
-            notice: this.invoice.notice,
-            sellPriceId: this.invoice.sellPriceId,
-            sellTypeId: this.invoice.sellTypeId,
-            deliveryId: 0,
-          },
+          invoice: invoiceValues,
           invoiceContents: items,
         })
         .then((res) => {
