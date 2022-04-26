@@ -52,6 +52,7 @@
             outlined
             dense
             label="تاريخ الفاتورة"
+            @change="calculateDate()"
             :disabled="invoice.invoiceTypeId != 3"
           />
           <v-text-field
@@ -582,7 +583,7 @@ export default {
         deliveryId: 0,
       };
       if (this.invoice.invoiceTypeId == 3) {
-        invoiceValues.createdAt = this.invoice.creationFixedDate
+        invoiceValues.createdAt = this.invoice.creationFixedDate;
       }
       this.$http
         .post(this.$baseUrl + "invoice/new", {
@@ -773,6 +774,20 @@ export default {
         .finally(() => {
           loading.hide();
         });
+    },
+    calculateDate() {
+      let selectedDate = new Date(this.invoice.creationFixedDate);
+      let date = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+      console.log('CURRENT: ' + selectedDate.getTime());
+      console.log('DATE: ' + date.getTime());
+      if (selectedDate.getTime() < date.getTime()) {
+        this.invoice.creationFixedDate = null;
+        this.$toast.open({
+          type: "error",
+          message: "التاريخ لا يمكن ان يكون قبل 3 ايام",
+          duration: 3000,
+        });
+      }
     },
   },
   computed: {

@@ -14,6 +14,18 @@
 
       <v-row>
         <v-col>
+          <v-autocomplete
+            :items="users"
+            item-text="username"
+            item-value="idUser"
+            v-model="selectedUser"
+            outlined
+            dense
+            hide-details
+            label="المندوب"
+          ></v-autocomplete>
+        </v-col>
+        <v-col>
           <v-text-field
             outlined
             dense
@@ -39,10 +51,10 @@
       </v-row>
       <br />
       <v-data-table
-        v-if="lastStore.length > 0"
+
         :items-per-page="500"
         :items="store"
-        :headers="tableHeader"
+        :headers="selectedUser == 0 ? tableHeader : tableHeader2"
         multi-sort
       >
         <template v-slot:[`item.imagePath`]="{ item }">
@@ -72,6 +84,15 @@
             {{ item.storex }}</v-chip
           >
         </template>
+        <template v-slot:[`item.actions`]="{ item }">
+          <v-btn
+            target="_BLANK"
+            :to="'/itemRail/' + item.idItem + '?name=' + item.fullItemName"
+            icon
+          >
+            <v-icon>la-eye</v-icon>
+          </v-btn>
+        </template>
       </v-data-table>
     </v-card>
   </div>
@@ -83,6 +104,13 @@ export default {
   data: () => ({
     store: [],
     lastStore: [],
+    selectedUser: 0,
+    users: [
+      {
+        idUser: 0,
+        username: "لا يوجد",
+      },
+    ],
     search: {
       from: "",
       to: "",
@@ -99,6 +127,14 @@ export default {
       { text: "راجع المشتريات", value: "totalBuyRestores" },
       { text: "شراء مؤقت", value: "totalTempBuy" },
       { text: "المتبقي", value: "storex" },
+      { text: "الاجراءات", value: "actions" },
+    ],
+    tableHeader2: [
+      { text: "", value: "imagePath" },
+      { text: "اسم المادة", value: "fullItemName" },
+      { text: "المورد", value: "manufactureName" },
+      { text: "المجموعة", value: "itemGroupName" },
+      { text: "المبيعات", value: "totalSell" },
     ],
   }),
   created: function () {
@@ -121,6 +157,10 @@ export default {
       this.search.from = value;
       this.search.to = value;
     });
+
+    this.$http.get(this.$baseUrl + "users").then((res) => {
+      this.users.push(...res.data);
+    });
   },
   methods: {
     checkPermission(permissionKey) {
@@ -141,37 +181,50 @@ export default {
     },
     fetchSearch() {
       let loading = this.$loading.show();
-      this.$http
-        .get(
-          this.$baseUrl +
-            `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
-        )
-        .then((res) => {
-          var secondDate = new Date(this.search.from); 
-          var x = 1;
-          secondDate.setDate(secondDate.getDate() - x);
-          var secondDateString =
-            secondDate.getFullYear() +
-            "-" +
-            (secondDate.getMonth() + 1) +
-            "-" +
-            (secondDate.getDate());
+      if (this.selectedUser == 0) {
+        this.$http
+          .get(
+            this.$baseUrl +
+              `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
+          )
+          .then((res) => {
+            var secondDate = new Date(this.search.from);
+            var x = 1;
+            secondDate.setDate(secondDate.getDate() - x);
+            var secondDateString =
+              secondDate.getFullYear() +
+              "-" +
+              (secondDate.getMonth() + 1) +
+              "-" +
+              secondDate.getDate();
             console.log(secondDateString);
-          this.store = res.data;
-          this.$http
-            .get(
-              this.$baseUrl +
-                `item/detailedStore?from=2020-01-01&to=${secondDateString}`
-            )
-            .then((res) => {
-              this.lastStore = res.data;
+            this.store = res.data;
+            this.$http
+              .get(
+                this.$baseUrl +
+                  `item/detailedStore?from=2020-01-01&to=${secondDateString}`
+              )
+              .then((res) => {
+                this.lastStore = res.data;
 
-              this.store = this.store.map(
-                (row) => ((row.storex = this.getTotal(row)), row)
-              );
-            })
-            .finally(() => loading.hide());
-        });
+                this.store = this.store.map(
+                  (row) => ((row.storex = this.getTotal(row)), row)
+                );
+              })
+              .finally(() => loading.hide());
+          });
+      } else {
+        this.$http
+          .get(
+            this.$baseUrl +
+              `item/detailedStoreByUser/${this.selectedUser}?from=${this.search.from}&to=${this.search.to}`
+          )
+          .then((res) => {
+            this.store = res.data;
+            console.log(this.store);
+          })
+          .finally(() => loading.hide());
+      }
     },
     getTotal(item) {
       return (

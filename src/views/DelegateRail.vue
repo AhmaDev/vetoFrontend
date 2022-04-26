@@ -130,6 +130,11 @@
             <template v-slot:[`item.lastInvoice`]="{ item }">
               {{ item.lastInvoice == null ? "لا يوجد" : parseDate(item.lastInvoice) }}
             </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-btn :to="'/customerRail/' + item.idCustomer" target="_BLANK" icon>
+                <v-icon>la-eye</v-icon>
+              </v-btn>
+            </template>
           </v-data-table>
         </v-col>
       </v-row>
@@ -178,7 +183,7 @@ export default {
       { text: "كود الزبون", value: "idCustomer" },
       { text: "اسم المحل", value: "storeName" },
       { text: "اسم الزبون", value: "customerName" },
-      { text: "نوع الزبون", value: "sellPriceName" },
+      { text: "نوع الزبون", value: "customerClassName" },
       { text: "تاريخ اضافة الزبون", value: "customerCreatedAt" },
       { text: "رقم اسيا", value: "phone" },
       { text: "رقم زين", value: "secondPhone" },
@@ -187,6 +192,7 @@ export default {
       { text: "عدد الفواتير", value: "totalInvoiceCount" },
       { text: "عدد الزيارات", value: "visitCount" },
       { text: "يوم الزيارة الرسمي", value: "visitDay" },
+      { text: "الاجراءات", value: "actions" },
     ],
     map: {
       url: "https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",

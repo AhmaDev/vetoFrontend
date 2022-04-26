@@ -44,6 +44,11 @@
           outlined
           dense
         ></v-autocomplete>
+        <v-list-item>
+            <v-list-item-content>
+              الزبائن : {{ customers.length }}
+            </v-list-item-content>
+          </v-list-item>
         <v-btn @click="searchCustomers()" block color="primary">بحث</v-btn>
         <br /><br />
         <v-text-field
@@ -59,7 +64,7 @@
         <template v-if="selectedCustomers.length > 0">
           <v-list-item>
             <v-list-item-content>
-              الزبائن : {{ selectedCustomers.length }}
+              الزبائن المحددين : {{ selectedCustomers.length }}
             </v-list-item-content>
             <v-list-item-action>
               <v-btn @click="selectedCustomers = []" icon>
