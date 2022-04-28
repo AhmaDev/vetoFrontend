@@ -222,7 +222,7 @@ export default {
     this.auth().then((res) => {
       this.permissions = res.permissions;
       // CHECK IF CAN SEE THIS PAGE
-      if (!this.checkPermission("visits")) {
+      if (!this.checkPermission("delegate_rail")) {
         this.$toast.open({
           type: "error",
           message: "غير مصرح لك بمشاهدة هذه الصفحة",

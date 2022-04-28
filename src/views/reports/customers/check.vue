@@ -83,6 +83,7 @@ export default {
   data: () => ({
     customers: [],
     forceRerender:0,
+    permissions: [],
     searchFields: {
       customerId: 0,
       startDate: null,
@@ -103,6 +104,18 @@ export default {
     },
   }),
   created: function () {
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("customer_rail")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.push('/');
+      }
+    });
     this.getCurrentDate().then((value) => {
       this.searchFields.startDate = value;
       this.searchFields.endDate = value;
@@ -121,6 +134,13 @@ export default {
       .finally(() => loading.hide());
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     search() {
       let query = "performSearch&";
       if (this.searchFields.customerId != 0) {

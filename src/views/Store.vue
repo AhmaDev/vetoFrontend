@@ -86,6 +86,7 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn
+          v-if="checkPermission('item_rail')"
             target="_BLANK"
             :to="'/itemRail/' + item.idItem + '?name=' + item.fullItemName"
             icon
