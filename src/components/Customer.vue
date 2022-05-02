@@ -1,5 +1,5 @@
 <template>
-  <div v-if="customer != null" id="CustomerPage" class="pa-10">
+  <div v-if="customer != null" id="CustomerPage" class="pa-10 white">
     <v-app-bar app>
       <v-toolbar-title>{{ customer.storeName }}</v-toolbar-title>
 
@@ -15,7 +15,13 @@
         "
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn color="primary" :to="'/customerRail/' + customer.idCustomer" target="_BLANK"> كشف حساب الزبون </v-btn>
+      <v-btn
+        color="primary"
+        :to="'/customerRail/' + customer.idCustomer"
+        target="_BLANK"
+      >
+        كشف حساب الزبون
+      </v-btn>
       <v-btn
         color="error"
         @click="deleteCustomer(customer.idCustomer)"
@@ -375,6 +381,11 @@ export default {
     },
   },
   created: function () {
+    if (this.$route.params.id != undefined) {
+      this.customerId = this.$route.params.id;
+      console.log(this.$route.params.id);
+      this.fetch();
+    }
     this.$http.get(this.$baseUrl + "sellprice").then((res) => {
       this.sellPrices = res.data;
     });

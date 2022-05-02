@@ -101,13 +101,13 @@
         <v-col>
           <h3>
             تم زيارتهم :
-            {{ customers.filter(x => x.visitCount > 0).length }}
+            {{ customers.filter((x) => x.visitCount > 0).length }}
           </h3>
         </v-col>
         <v-col>
           <h3>
             لم تتم زيارتهم :
-            {{ customers.filter(x => x.visitCount == 0).length }}
+            {{ customers.filter((x) => x.visitCount == 0).length }}
           </h3>
         </v-col>
       </v-row>
@@ -128,11 +128,22 @@
               {{ getDayName(item.visitDay) }}
             </template>
             <template v-slot:[`item.lastInvoice`]="{ item }">
-              {{ item.lastInvoice == null ? "لا يوجد" : parseDate(item.lastInvoice) }}
+              {{
+                item.lastInvoice == null
+                  ? "لا يوجد"
+                  : parseDate(item.lastInvoice)
+              }}
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-              <v-btn :to="'/customerRail/' + item.idCustomer" target="_BLANK" icon>
+              <v-btn
+                :to="'/customerRail/' + item.idCustomer"
+                target="_BLANK"
+                icon
+              >
                 <v-icon>la-eye</v-icon>
+              </v-btn>
+              <v-btn :to="'/customer/' + item.idCustomer" target="_BLANK" icon>
+                <v-icon>la-user</v-icon>
               </v-btn>
             </template>
           </v-data-table>
@@ -360,9 +371,9 @@ export default {
       }
     },
     parseDate(date) {
-      moment.locale('ar-kw');  
+      moment.locale("ar-kw");
       return moment(date).fromNow();
-    }
+    },
   },
 };
 </script>
