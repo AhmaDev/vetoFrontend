@@ -43,6 +43,7 @@ const routes = [
   { path: '/delivery/:id', name: 'DeliveryStatus', component: () => import('../components/DeliveryStatus.vue') },
   { path: '/money/:id', name: 'DeliveryStatus', component: () => import('../components/MoneyStatus.vue') },
   { path: '/store', name: 'Store', component: () => import('../views/Store.vue') },
+  { path: '/deletedCustomers', name: 'Store', component: () => import('../views/DeletedCustomers.vue') },
   { path: '/discounts', name: 'Store', component: () => import('../views/Discounts.vue') },
   { path: '/customerRail/:id', name: 'CustomerRail', component: () => import('../views/reports/customers/check.vue') },
   { path: '/itemRail/:id', name: 'CustomerRail', component: () => import('../views/itemRail.vue') },

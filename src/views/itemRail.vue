@@ -100,7 +100,9 @@ export default {
     fetch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "reports/itemRail/" + this.$route.params.id)
+        .get(this.$baseUrl + "reports/itemRail/" + this.$route.params.id  +
+              "?date1=" + this.$route.query.from +
+              "&date2=" + this.$route.query.to )
         .then((res) => {
           this.tableData = res.data;
           this.allTableData = res.data;

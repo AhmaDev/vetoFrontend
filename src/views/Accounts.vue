@@ -45,8 +45,20 @@
           <v-btn icon @click="changePassword(item.idUser)">
             <v-icon :title="item.idInvoice">mdi-key</v-icon>
           </v-btn>
-          <v-btn v-if='checkPermission("account_edit")' icon :to="'/user/' + item.idUser">
+          <v-btn
+            v-if="checkPermission('account_edit')"
+            icon
+            :to="'/user/' + item.idUser"
+          >
             <v-icon :title="item.idInvoice">mdi-account-edit-outline</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="checkPermission('account_edit')"
+            plain
+            small
+            @click="unblock(item.idUser)"
+          >
+            فتح الحظر
           </v-btn>
         </template>
       </v-data-table>
@@ -98,9 +110,9 @@ export default {
   }),
   methods: {
     logout(id) {
-      this.$socket.emit('logout', {
+      this.$socket.emit("logout", {
         userId: id,
-      })
+      });
     },
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
@@ -138,7 +150,7 @@ export default {
       this.$http.get(this.$baseUrl + "users/roles/all").then((res) => {
         this.roles = res.data;
         if (this.userInfo.roleId != 1) {
-          this.roles = this.roles.filter(x => x.idRole == 4);
+          this.roles = this.roles.filter((x) => x.idRole == 4);
         }
       });
     },
@@ -162,6 +174,21 @@ export default {
           this.passwordDialog = false;
           this.selectedUserId = 0;
           this.newPasswordField = "";
+        })
+        .finally(() => loading.hide());
+    },
+    unblock(id) {
+      let loading = this.$loading.show();
+      this.$http
+        .put(this.$baseUrl + "users/edit/" + id, {
+          email: "0",
+        })
+        .then(() => {
+          this.$toast.open({
+            type: "success",
+            message: "تم فتح الحظر",
+            duration: 3000,
+          });
         })
         .finally(() => loading.hide());
     },

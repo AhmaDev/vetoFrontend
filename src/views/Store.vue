@@ -15,15 +15,30 @@
       <v-row>
         <v-col>
           <v-autocomplete
-            :items="users"
+            :items="supervisors"
             item-text="username"
             item-value="idUser"
-            v-model="selectedUser"
             outlined
             dense
             hide-details
-            label="المندوب"
+            label="المشرف"
+            v-model="selectedSuperVisor"
+            @change="setDelegates()"
           ></v-autocomplete>
+        </v-col>
+        <v-col>
+          <v-autocomplete
+            :items="delegates"
+            item-text="username"
+            item-value="idUser"
+            outlined
+            dense
+            hide-details
+            multiple
+            label="المندوب"
+            v-model="selectedDelegate"
+          ></v-autocomplete>
+
         </v-col>
         <v-col>
           <v-text-field
@@ -54,7 +69,7 @@
 
         :items-per-page="500"
         :items="store"
-        :headers="selectedUser == 0 ? tableHeader : tableHeader2"
+        :headers="selectedDelegate.length == 0 ? tableHeader : tableHeader2"
         multi-sort
       >
         <template v-slot:[`item.imagePath`]="{ item }">
@@ -88,7 +103,7 @@
           <v-btn
           v-if="checkPermission('item_rail')"
             target="_BLANK"
-            :to="'/itemRail/' + item.idItem + '?name=' + item.fullItemName"
+            :to="'/itemRail/' + item.idItem + '?name=' + item.fullItemName + '&from=' + search.from + '&to=' + search.to"
             icon
           >
             <v-icon>la-eye</v-icon>
@@ -105,7 +120,10 @@ export default {
   data: () => ({
     store: [],
     lastStore: [],
-    selectedUser: 0,
+    delegates: [],
+    supervisors: [],
+    selectedSuperVisor: null,
+    selectedDelegate: [],
     users: [
       {
         idUser: 0,
@@ -136,6 +154,7 @@ export default {
       { text: "المورد", value: "manufactureName" },
       { text: "المجموعة", value: "itemGroupName" },
       { text: "المبيعات", value: "totalSell" },
+      { text: "المبلغ الاجمالي", value: "totalSellPrice" },
     ],
   }),
   created: function () {
@@ -159,9 +178,12 @@ export default {
       this.search.to = value;
     });
 
-    this.$http.get(this.$baseUrl + "users").then((res) => {
-      this.users.push(...res.data);
-    });
+    this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
+        this.supervisors = res.data;
+      });
+      this.$http.get(this.$baseUrl + "users").then((res) => {
+        this.delegates = res.data;
+      });
   },
   methods: {
     checkPermission(permissionKey) {
@@ -180,9 +202,16 @@ export default {
         })
         .finally(() => loading.hide());
     },
+    setDelegates() {
+      let loading = this.$loading.show();
+      this.$http.get(this.$baseUrl + "supervisorDelegates/userid/" + this.selectedSuperVisor).then((res) => {
+        this.selectedDelegate = res.data.map(e => e.delegateId)
+        this.selectedDelegate.push(this.selectedSuperVisor)
+      }).finally(() => loading.hide())
+    },
     fetchSearch() {
       let loading = this.$loading.show();
-      if (this.selectedUser == 0) {
+      if (this.selectedDelegate.length == 0) {
         this.$http
           .get(
             this.$baseUrl +
@@ -218,7 +247,7 @@ export default {
         this.$http
           .get(
             this.$baseUrl +
-              `item/detailedStoreByUser/${this.selectedUser}?from=${this.search.from}&to=${this.search.to}`
+              `item/detailedStoreByUser/${JSON.stringify(this.selectedDelegate).slice(1, -1)}?from=${this.search.from}&to=${this.search.to}`
           )
           .then((res) => {
             this.store = res.data;

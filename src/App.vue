@@ -10,7 +10,14 @@
       .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px
       {{ this.$background }} solid !important;}
     </component>
-    <v-navigation-drawer class="elevation-10" permanent app right fixed v-if="isLoggedIn">
+    <v-navigation-drawer
+      class="elevation-10"
+      permanent
+      app
+      right
+      fixed
+      v-if="isLoggedIn"
+    >
       <v-list dense>
         <center>
           <br /><br />
@@ -73,6 +80,14 @@
 
       <template v-slot:append>
         <v-list dense>
+          <v-list-item v-if="userInfo.roleId == 1" to="/deletedCustomers">
+            <v-list-item-content>
+              <v-list-item-title>
+                <i class="la la-trash homePageNavBarIcons"></i>
+                <span>سلة الحذف</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item @click="darkMode()">
             <v-list-item-content>
               <v-list-item-title>
@@ -128,8 +143,8 @@ export default {
     },
     logoutEmit: function (data) {
       console.log(data);
-      alert('تم تغيير كلمة المرور');
-      this.logout()
+      alert("تم تغيير كلمة المرور");
+      this.logout();
     },
   },
   data: () => ({

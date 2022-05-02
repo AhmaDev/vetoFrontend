@@ -45,10 +45,10 @@
           dense
         ></v-autocomplete>
         <v-list-item>
-            <v-list-item-content>
-              الزبائن : {{ customers.length }}
-            </v-list-item-content>
-          </v-list-item>
+          <v-list-item-content>
+            الزبائن : {{ customers.length }}
+          </v-list-item-content>
+        </v-list-item>
         <v-btn @click="searchCustomers()" block color="primary">بحث</v-btn>
         <br /><br />
         <v-text-field
@@ -330,6 +330,10 @@ export default {
       }
     },
     setDelegate() {
+      let c = confirm("هل انت متأكد من تحويل الزبائن");
+      if (!c) {
+        return;
+      }
       if (this.selectedDelegateId == 0) {
         this.$toast.open({
           type: "error",
@@ -368,7 +372,7 @@ export default {
       let customer = this.customers.filter((x) => x.idCustomer == id);
       if (customer.length > 0) {
         let cords = customer[0].location.split(",");
-        this.$refs.map.mapObject.flyTo([cords[0],cords[1]], 17);
+        this.$refs.map.mapObject.flyTo([cords[0], cords[1]], 17);
         this.selectCustomer(customer[0]);
       } else {
         this.$toast.open({
