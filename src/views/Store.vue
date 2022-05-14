@@ -38,7 +38,6 @@
             label="المندوب"
             v-model="selectedDelegate"
           ></v-autocomplete>
-
         </v-col>
         <v-col>
           <v-text-field
@@ -66,7 +65,6 @@
       </v-row>
       <br />
       <v-data-table
-
         :items-per-page="500"
         :items="store"
         :headers="selectedDelegate.length == 0 ? tableHeader : tableHeader2"
@@ -99,11 +97,23 @@
             {{ item.storex }}</v-chip
           >
         </template>
+        <template v-slot:[`item.totalDamaged`]="{ item }">
+          {{ item.totalDamaged.toLocaleString() }}
+        </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn
-          v-if="checkPermission('item_rail')"
+            v-if="checkPermission('item_rail')"
             target="_BLANK"
-            :to="'/itemRail/' + item.idItem + '?name=' + item.fullItemName + '&from=' + search.from + '&to=' + search.to"
+            :to="
+              '/itemRail/' +
+              item.idItem +
+              '?name=' +
+              item.fullItemName +
+              '&from=' +
+              search.from +
+              '&to=' +
+              search.to
+            "
             icon
           >
             <v-icon>la-eye</v-icon>
@@ -143,6 +153,7 @@ export default {
       { text: "المبيعات", value: "totalSell" },
       { text: "المشتريات", value: "totalBuy" },
       { text: "الراجع", value: "totalRestores" },
+      { text: "التالف", value: "totalDamaged" },
       { text: "راجع المشتريات", value: "totalBuyRestores" },
       { text: "شراء مؤقت", value: "totalTempBuy" },
       { text: "المتبقي", value: "storex" },
@@ -179,11 +190,11 @@ export default {
     });
 
     this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
-        this.supervisors = res.data;
-      });
-      this.$http.get(this.$baseUrl + "users").then((res) => {
-        this.delegates = res.data;
-      });
+      this.supervisors = res.data;
+    });
+    this.$http.get(this.$baseUrl + "users").then((res) => {
+      this.delegates = res.data;
+    });
   },
   methods: {
     checkPermission(permissionKey) {
@@ -204,10 +215,17 @@ export default {
     },
     setDelegates() {
       let loading = this.$loading.show();
-      this.$http.get(this.$baseUrl + "supervisorDelegates/userid/" + this.selectedSuperVisor).then((res) => {
-        this.selectedDelegate = res.data.map(e => e.delegateId)
-        this.selectedDelegate.push(this.selectedSuperVisor)
-      }).finally(() => loading.hide())
+      this.$http
+        .get(
+          this.$baseUrl +
+            "supervisorDelegates/userid/" +
+            this.selectedSuperVisor
+        )
+        .then((res) => {
+          this.selectedDelegate = res.data.map((e) => e.delegateId);
+          this.selectedDelegate.push(this.selectedSuperVisor);
+        })
+        .finally(() => loading.hide());
     },
     fetchSearch() {
       let loading = this.$loading.show();
@@ -247,7 +265,9 @@ export default {
         this.$http
           .get(
             this.$baseUrl +
-              `item/detailedStoreByUser/${JSON.stringify(this.selectedDelegate).slice(1, -1)}?from=${this.search.from}&to=${this.search.to}`
+              `item/detailedStoreByUser/${JSON.stringify(
+                this.selectedDelegate
+              ).slice(1, -1)}?from=${this.search.from}&to=${this.search.to}`
           )
           .then((res) => {
             this.store = res.data;

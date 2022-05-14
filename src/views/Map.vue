@@ -89,6 +89,51 @@
         </template>
       </div>
     </v-navigation-drawer>
+    <v-card
+      v-if="!editCustomers"
+      style="
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        height: 70vh;
+        z-index: 100000;
+        width: 350px;
+        overflow: scroll;
+      "
+    >
+      <v-card-text>
+        <h3>المندوبين</h3>
+        <small>اضغط على اسم المندوب لمشاهدة الحركة</small>
+        <v-list>
+          <v-list-item
+            v-for="user in users.filter((e) => e.roleId == 4)"
+            :key="'USER_' + user.idUser"
+            link
+            :to="'/track/' + user.idUser"
+          >
+            <v-list-item-content>
+              <v-list-item-title>{{ user.username }}</v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-chip
+                v-if="mapData.filter((e) => e.userId == user.idUser).length > 0"
+                small
+                color="success"
+                >متصل</v-chip
+              >
+              <v-chip
+                v-if="
+                  mapData.filter((e) => e.userId == user.idUser).length == 0
+                "
+                small
+                color="error"
+                >غير متصل</v-chip
+              >
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </v-card>
     <l-map
       :key="forceRerender"
       style="height: 100vh"
@@ -103,32 +148,35 @@
       ></l-tile-layer>
       <template v-if="this.checkPermission('map_tacking')">
         <template v-if="!editCustomers">
-          <l-marker
-            v-for="marker in mapData"
-            :key="marker.id"
-            :lat-lng="JSON.parse(marker.location)"
-          >
-            <l-icon>
-              <div class="userMarker">
-                <b style="color: white"> {{ getUserName(marker.userId) }}</b>
-              </div>
-              <img
-                src="@/assets/user.svg"
-                v-if="checkDate(marker.date)"
-                width="30px"
-                alt=""
-              />
-              <img
-                v-if="!checkDate(marker.date)"
-                src="@/assets/disconnected.png"
-                width="40px"
-                alt=""
-              />
-            </l-icon>
-            <l-popup ref="marker">
-              اخر تحديث للموقع قبل {{ getLocationDate(marker.date) * -1 }} دقيقة
-            </l-popup>
-          </l-marker>
+          <template v-if="reloadMarkers">
+            <l-marker
+              v-for="marker in mapData"
+              :key="'MARKER' + marker.userId"
+              :lat-lng.sync="marker.fixedLocation"
+            >
+              <l-icon>
+                <div class="userMarker">
+                  <b style="color: white"> {{ getUserName(marker.userId) }}</b>
+                </div>
+                <img
+                  src="@/assets/user.svg"
+                  v-if="checkDate(marker.date)"
+                  width="30px"
+                  alt=""
+                />
+                <img
+                  v-if="!checkDate(marker.date)"
+                  src="@/assets/disconnected.png"
+                  width="40px"
+                  alt=""
+                />
+              </l-icon>
+              <l-popup ref="marker">
+                اخر تحديث للموقع قبل
+                {{ getLocationDate(marker.date) * -1 }} دقيقة
+              </l-popup>
+            </l-marker>
+          </template>
         </template>
       </template>
       <template v-if="editCustomers">
@@ -193,7 +241,7 @@
 </template>
 
 <script>
-import { db } from "../firebase/db";
+// import { db } from "../firebase/db";
 import { LIcon, LPopup, LMarker, LCircleMarker, LTooltip } from "vue2-leaflet";
 import moment from "moment";
 export default {
@@ -204,6 +252,25 @@ export default {
     LMarker,
     LCircleMarker,
     LTooltip,
+  },
+  sockets: {
+    track: {
+      connect: function () {
+        console.log("Track socket connected");
+      },
+      trackData: function (data) {
+        console.log(data);
+        let mark = this.mapData.filter((e) => e.userId == data.userId);
+        if (mark.length == 0) {
+          this.mapData.push(data);
+        } else {
+          let index = this.mapData.indexOf(mark[0]);
+          this.mapData[index] = data;
+        }
+        this.reloadMarkers = false;
+        this.reloadMarkers = true;
+      },
+    },
   },
   data: () => ({
     permissions: [],
@@ -255,6 +322,7 @@ export default {
     dialogs: {
       setDelegate: false,
     },
+    reloadMarkers: true,
   }),
   methods: {
     selectByDrag() {
@@ -274,8 +342,10 @@ export default {
       else return "User not found";
     },
     checkDate(date) {
+      console.log("d2", date);
+
       let now = moment.now();
-      let d = new Date(date.seconds * 1000).toISOString();
+      let d = new Date(date).toISOString();
       let postDate = moment(d);
       if (postDate.diff(now, "minutes") < -15) {
         return false;
@@ -284,8 +354,9 @@ export default {
       }
     },
     getLocationDate(date) {
+      console.log("d1", date);
       let now = moment.now();
-      let d = new Date(date.seconds * 1000).toISOString();
+      let d = new Date(date).toISOString();
       let postDate = moment(d);
       return postDate.diff(now, "minutes");
     },
@@ -406,6 +477,11 @@ export default {
           });
       }
     },
+    testGps() {
+      this.$socket.track.emit("addNewTrack", {
+        userId: "s",
+      });
+    },
   },
   created: function () {
     // LOAD PERMS START
@@ -446,9 +522,9 @@ export default {
       return this.$store.getters.getLoginInfo;
     },
   },
-  firestore: {
-    mapData: db.collection("gpsTracking"),
-  },
+  // firestore: {
+  //   mapData: db.collection("gpsTracking"),
+  // },
 };
 </script>
 
@@ -472,5 +548,9 @@ export default {
 
 .leaflet-control-toolbar {
   display: none !important;
+}
+
+.leaflet-container .leaflet-marker-pane img {
+  width: 30px !important;
 }
 </style>

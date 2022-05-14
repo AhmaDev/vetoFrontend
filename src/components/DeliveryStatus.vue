@@ -30,6 +30,7 @@
       </table>
       <table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
         <thead>
+          <td width="40">#{{ deliveryStatus.counter }}</td>
           <th>اسم المادة</th>
           <th>عدد النقص</th>
           <th>مبلغ النقص</th>
@@ -46,7 +47,7 @@
             "
             :key="i"
           >
-            <td>{{ getItemName(item.itemId) }}</td>
+            <td colspan="2">{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
             <td>{{ item.count }}</td>
@@ -60,56 +61,38 @@
             <td></td>
             <td></td>
           </tr>
-          <template v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0">
-          <tr
-            :style="
-              giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0
-                ? 'background-color: red; color: white'
-                : ''
-            "
-            v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
-            :key="'GIFT_' + gift.itemId"
-            
+          <template
+            v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0"
           >
-            <td>
-              {{
-                getItemName(
-                  gift.itemId
-                )
-              }}
-            </td>
-            <td></td>
-            <td></td>
-            <td>
-              {{ gift.count }}
-            </td>
-            <td
-              v-if="
-                gift
-                  .discountTypeId > 0
+            <tr
+              :style="
+                giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0
+                  ? 'background-color: red; color: white'
+                  : ''
               "
+              v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
+              :key="'GIFT_' + gift.itemId"
             >
-              {{
-                getDiscountName(
-                  gift
-                    .discountTypeId
-                )
-              }}
-            </td>
-            <td v-else>
-              {{
-                gift.total /
-                gift.count
-              }}
-            </td>
-            <td>
-              {{
-                gift.total.toLocaleString()
-              }}
-            </td>
-            <td></td>
-            <td></td>
-          </tr>
+              <td>
+                {{ getItemName(gift.itemId) }}
+              </td>
+              <td></td>
+              <td></td>
+              <td>
+                {{ gift.count }}
+              </td>
+              <td v-if="gift.discountTypeId > 0">
+                {{ getDiscountName(gift.discountTypeId) }}
+              </td>
+              <td v-else>
+                {{ gift.total / gift.count }}
+              </td>
+              <td>
+                {{ gift.total.toLocaleString() }}
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
           </template>
         </template>
       </table>
@@ -118,27 +101,28 @@
     <v-sheet class="pa-10 sheet" elevation="2">
       <table border="1" cellspacing="0" width="100%" class="table" dir="rtl">
         <tr>
+          <td>#{{ deliveryStatus.counter }}</td>
           <td>مجموع العدد : {{ sumQty() }}</td>
           <td>مجموع الهدايا : {{ sumQty2() }}</td>
           <td>مجموع كلي : {{ sumQty() + sumQty2() }}</td>
           <td>الاجمالي : {{ totalPrice() }}</td>
         </tr>
         <tr>
-          <th>اسم الحساب</th>
+          <th colspan="2">اسم الحساب</th>
           <th colspan="3">البيان</th>
         </tr>
         <tr>
-          <td>مبلغ التوزيع الكلي</td>
+          <td colspan="2">مبلغ التوزيع الكلي</td>
           <td width="150px"></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>مبلغ نقص الاعداد</td>
+          <td colspan="2">مبلغ نقص الاعداد</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>مبلغ الراجع</td>
+          <td colspan="2">مبلغ الراجع</td>
           <td></td>
           <td colspan="2">
             <center>
@@ -150,62 +134,62 @@
           </td>
         </tr>
         <tr>
-          <td>مبلغ القائمة بعد نقص وراجع</td>
+          <td colspan="2">مبلغ القائمة بعد نقص وراجع</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>المستلم الفعلي</td>
+          <td colspan="2">المستلم الفعلي</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>م / كاز( ص / م )</td>
+          <td colspan="2">م / كاز( ص / م )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>م/متنوعة(ص/م)</td>
+          <td colspan="2">م/متنوعة(ص/م)</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>التالف مبيعات ( ص / م )</td>
+          <td colspan="2">التالف مبيعات ( ص / م )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>تعويض2(ص/م)</td>
+          <td colspan="2">تعويض2(ص/م)</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>مجموع(ص/م )</td>
+          <td colspan="2">مجموع(ص/م )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>ديون 1 ( د )</td>
+          <td colspan="2">ديون 1 ( د )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>ديون 2 ( د )</td>
+          <td colspan="2">ديون 2 ( د )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>ديون 3 ( د )</td>
+          <td colspan="2">ديون 3 ( د )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>المبلغ النهائي</td>
+          <td colspan="2">المبلغ النهائي</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
         <tr>
-          <td>النقص او الفرق</td>
+          <td colspan="2">النقص او الفرق</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
@@ -374,6 +358,12 @@ th {
   page-break-after: always;
   direction: rtl !important;
 }
+div.divFooter {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 @media print {
   @page {
     size: A4 portrait;
@@ -384,6 +374,10 @@ th {
   }
   .v-btn {
     display: none !important;
+  }
+  div.divFooter {
+    position: fixed;
+    bottom: 0;
   }
 }
 </style>

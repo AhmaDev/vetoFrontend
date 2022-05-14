@@ -387,6 +387,10 @@ export default {
       ],
       contents: [],
     },
+    settings: [],
+    settingsFields: {
+      daysToRestoreInvoices: "",
+    },
     inputFields: {
       itemId: null,
       price: 0,
@@ -467,6 +471,12 @@ export default {
         this.invoice.createdBy = this.userInfo.idUser;
       }
     });
+    this.$http.get(this.$baseUrl + "settings").then((res) => {
+      this.settings = res.data;
+      this.settingsFields.daysToRestoreInvoices = this.getSettingValue(
+        "daysToRestoreInvoices"
+      );
+    });
     this.$http.get(this.$baseUrl + "discount").then((res) => {
       this.discounts = res.data;
     });
@@ -478,6 +488,10 @@ export default {
       );
       if (isAuthorized.length > 0) return true;
       else return false;
+    },
+    getSettingValue(variable) {
+      return this.settings.filter((setting) => setting.variable == variable)[0]
+        .value;
     },
     getTotalPerItem() {
       if (this.inputFields.discount == 0) {
@@ -777,7 +791,14 @@ export default {
     },
     calculateDate() {
       let selectedDate = new Date(this.invoice.creationFixedDate);
-      let date = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      let date = new Date(
+        Date.now() -
+          parseInt(this.settingsFields.daysToRestoreInvoices) *
+            24 *
+            60 *
+            60 *
+            1000
+      );
       console.log("CURRENT: " + selectedDate.getTime());
       console.log("DATE: " + date.getTime());
       if (selectedDate.getTime() < date.getTime()) {

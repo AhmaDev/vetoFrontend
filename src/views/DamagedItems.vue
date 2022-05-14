@@ -5,18 +5,26 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn :disabled='!checkPermission("damaged_add")' icon to="/new/damagedItems">
+      <v-btn
+        :disabled="!checkPermission('damaged_add')"
+        icon
+        to="/new/damagedItems"
+      >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-card>
-      <v-data-table :headers="invoices.header" :items="invoices.data">
+      <v-data-table
+        :items-per-page="1000"
+        :headers="invoices.header"
+        :items="invoices.data"
+      >
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn icon :to="'/damagedItems/' + item.idDamagedItemsInvoice">
             <v-icon :title="item.idInvoice">mdi-magnify</v-icon>
           </v-btn>
-          <v-menu v-if='checkPermission("damaged_delete")' offset-y>
+          <v-menu v-if="checkPermission('damaged_delete')" offset-y>
             <template v-bind="item" v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" icon>
                 <v-icon color="red" title="حذف الفاتورة"
@@ -58,7 +66,6 @@ export default {
     this.fetch();
   },
   methods: {
-    
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
         (p) => p.permissionKey == permissionKey

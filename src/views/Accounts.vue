@@ -110,7 +110,7 @@ export default {
   }),
   methods: {
     logout(id) {
-      this.$socket.emit("logout", {
+      this.$socket.auth.emit("logout", {
         userId: id,
       });
     },

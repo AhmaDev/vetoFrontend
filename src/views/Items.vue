@@ -2,9 +2,7 @@
   <div class="pa-10">
     <v-app-bar app>
       <v-toolbar-title>المواد</v-toolbar-title>
-
       <v-spacer></v-spacer>
-
       <v-btn
         v-if="checkPermission('items_add')"
         @click="newItemDialog = true"
@@ -13,7 +11,6 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-app-bar>
-
     <div v-for="group in groups" :key="group.idItemGroup">
       <h3>{{ group.itemGroupName }}</h3>
       <br />
@@ -47,8 +44,8 @@
               {{ item.fullItemName }}
             </div>
 
-            <v-card-text class="textOverFlow">
-              {{ item.itemDescription }}
+            <v-card-text class="textOverFlow green--text headline">
+              {{ (item.prices[0].price || 0).toLocaleString() }} د.ع
             </v-card-text>
             <v-card-actions>
               <v-btn
@@ -435,6 +432,7 @@ export default {
           .get(this.$baseUrl + "item")
           .then((res) => {
             this.items = res.data;
+            console.log(this.items);
           })
           .finally(() => {
             loading.hide();

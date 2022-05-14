@@ -138,13 +138,15 @@ export default {
     Logo,
   },
   sockets: {
-    connect: function () {
-      console.log("socket connected");
-    },
-    logoutEmit: function (data) {
-      console.log(data);
-      alert("تم تغيير كلمة المرور");
-      this.logout();
+    auth: {
+      connect: function () {
+        console.log("socket connected");
+      },
+      logoutEmit: function (data) {
+        console.log(data);
+        alert("تم تغيير كلمة المرور");
+        this.logout();
+      },
     },
   },
   data: () => ({

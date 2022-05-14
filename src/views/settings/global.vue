@@ -30,6 +30,16 @@
         ></v-text-field>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="6">
+        <v-text-field
+          v-model="settingsFields.daysToRestoreInvoices"
+          type="number"
+          outlined
+          label="عدد الايام للسماح باسترجاع الفواتير"
+        ></v-text-field>
+      </v-col>
+    </v-row>
     <br />
     <br />
     <v-btn @click="save()" :color="$background" dark> حفظ </v-btn>
@@ -45,6 +55,7 @@ export default {
       title: "",
       workStartTime: "",
       workEndTime: "",
+      daysToRestoreInvoices: "",
     },
   }),
   created: function () {
@@ -57,6 +68,9 @@ export default {
         this.settingsFields.workStartTime =
           this.getSettingValue("workStartTime");
         this.settingsFields.workEndTime = this.getSettingValue("workEndTime");
+        this.settingsFields.daysToRestoreInvoices = this.getSettingValue(
+          "daysToRestoreInvoices"
+        );
       })
       .finally(() => loading.hide());
   },
@@ -72,6 +86,7 @@ export default {
           title: this.settingsFields.title,
           workStartTime: this.settingsFields.workStartTime,
           workEndTime: this.settingsFields.workEndTime,
+          daysToRestoreInvoices: this.settingsFields.daysToRestoreInvoices,
         })
         .then(() => {
           this.$toast.open({

@@ -22,10 +22,17 @@
       class="elevation-0"
     >
       <template v-slot:[`item.discountName`]="{ item }">
-        <v-text-field outlined dense @change="editDiscount(item.idDiscount, $event)" :value="item.discountName" hide-details></v-text-field>
+        <v-text-field
+          outlined
+          dense
+          disabled
+          @change="editDiscount(item.idDiscount, $event)"
+          :value="item.discountName"
+          hide-details
+        ></v-text-field>
       </template>
 
-      <template v-slot:[`item.actions`]="{ item }">
+      <!-- <template v-slot:[`item.actions`]="{ item }">
         <v-menu offset-y>
           <template v-bind="item" v-slot:activator="{ on, attrs }">
             <v-btn v-bind="attrs" v-on="on" icon>
@@ -42,7 +49,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      </template>
+      </template> -->
     </v-data-table>
   </div>
 </template>
@@ -53,6 +60,7 @@ export default {
   data: () => ({
     discounts: {
       header: [
+        { text: "#", value: "idDiscount" },
         { text: "اسم الخصم", value: "discountName" },
         { text: "الاجراءات", value: "actions", align: "left" },
       ],
@@ -94,35 +102,35 @@ export default {
       }
     },
     deleteDiscount(itemId) {
-        let loading = this.$loading.show();
-        this.$http
-          .delete(this.$baseUrl + "discount/delete/" + itemId)
-          .then(() => {
-            this.fetch();
-            this.$toast.open({
-              type: "warning",
-              message: " تم حذف الخصم",
-              duration: 3000,
-            });
-          })
-          .finally(() => loading.hide());
+      let loading = this.$loading.show();
+      this.$http
+        .delete(this.$baseUrl + "discount/delete/" + itemId)
+        .then(() => {
+          this.fetch();
+          this.$toast.open({
+            type: "warning",
+            message: " تم حذف الخصم",
+            duration: 3000,
+          });
+        })
+        .finally(() => loading.hide());
     },
     editDiscount(itemId, e) {
-        let loading = this.$loading.show();
-        this.$http
-          .put(this.$baseUrl + "discount/edit/" + itemId , {
-              discountName: e,
-          })
-          .then(() => {
-            this.fetch();
-            this.$toast.open({
-              type: "success",
-              message: " تم تعديل اسم الخصم",
-              duration: 3000,
-            });
-          })
-          .finally(() => loading.hide());
-    }
+      let loading = this.$loading.show();
+      this.$http
+        .put(this.$baseUrl + "discount/edit/" + itemId, {
+          discountName: e,
+        })
+        .then(() => {
+          this.fetch();
+          this.$toast.open({
+            type: "success",
+            message: " تم تعديل اسم الخصم",
+            duration: 3000,
+          });
+        })
+        .finally(() => loading.hide());
+    },
   },
 };
 </script>

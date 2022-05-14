@@ -32,7 +32,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="2">
-         <v-text-field
+          <v-text-field
             label="نوع المنتج داخل العلبة"
             outlined
             hide-details
@@ -68,7 +68,7 @@
             v-model="item.itemWeightSuffix"
           ></v-autocomplete>
         </v-col>
-         <v-col cols="2">
+        <v-col cols="2">
           <v-text-field
             label="عدد القطع في الكارتون"
             type="number"
@@ -148,8 +148,6 @@
           ></v-text-field>
         </v-col>
 
-       
-
         <v-col cols="2">
           <v-text-field
             label="عدد ايام صلاحية المادة"
@@ -216,6 +214,65 @@
             id="imagePath"
           />
         </v-col>
+        <v-btn
+          v-if="offer == null"
+          color="primary"
+          @click="addNewOfferDialog = true"
+        >
+          <v-dialog v-model="addNewOfferDialog" width="400">
+            <v-card>
+              <v-card-text>
+                <br /><br />
+                <v-text-field
+                  type="number"
+                  outlined
+                  label="كمية العرض"
+                  v-model="offerQty"
+                ></v-text-field>
+                <v-text-field
+                  type="number"
+                  outlined
+                  label="كمية البيع"
+                  v-model="offerCondition"
+                ></v-text-field>
+                <v-text-field
+                  type="number"
+                  outlined
+                  label="الحد الادنى"
+                  v-model="offerMinimum"
+                ></v-text-field>
+                <v-btn block color="primary" @click="addOffer()"> اضافة </v-btn>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          اضافة عرض تلقائي
+        </v-btn>
+        <v-card v-if="offer != null">
+          <v-card-text>
+            <span>
+              سيتم اضافة
+              <v-chip small outlined color="error">{{ offer.count }}</v-chip>
+              كارتون عرض تلقائي لكل
+              <v-chip small outlined color="primary">{{
+                offer.conditionCount
+              }}</v-chip>
+              كارتون بيع
+            </span>
+            <br />
+            <span
+              >الحد الادنى لتفعيل العرض
+              <v-chip small outlined color="success">{{
+                offer.minimumCount
+              }}</v-chip>
+              كارتون</span
+            >
+            <br />
+            <br />
+            <v-btn color="error" @click="deleteOffer()"
+              >حذف العرض التلقائي</v-btn
+            >
+          </v-card-text>
+        </v-card>
         <v-col cols="12">
           <v-data-table
             :headers="pricesHeader"
@@ -322,10 +379,15 @@ export default {
     permissions: [],
     sellPrices: [],
     itemTypes: [],
+    offer: null,
+    offerQty: null,
+    offerCondition: null,
+    offerMinimum: null,
     manufactures: [],
     itemId: 0,
     item: null,
     image: null,
+    addNewOfferDialog: false,
     pricesHeader: [
       { text: "السعر", value: "sellPriceName" },
       { text: "المبلغ", value: "price" },
@@ -393,6 +455,12 @@ export default {
         .get(this.$baseUrl + "manufacture")
         .then((res) => {
           this.manufactures = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "item/offer/" + this.itemId)
+        .then((res) => {
+          this.offer = res.data;
         })
         .finally(() => {});
     },
@@ -562,6 +630,43 @@ export default {
           });
         })
         .finally(() => loading.hide());
+    },
+    addOffer() {
+      if (
+        this.offerQty == null ||
+        this.offerCondition == null ||
+        this.offerMinimum == null
+      ) {
+        this.$toast.open({
+          type: "error",
+          message: " يرجى ملئ الحقول",
+          duration: 3000,
+        });
+        return;
+      }
+      let loading = this.$loading.show();
+      this.$http
+        .post(this.$baseUrl + "item/offer", {
+          itemId: this.itemId,
+          count: this.offerQty,
+          conditionCount: this.offerCondition,
+          minimumCount: this.offerMinimum,
+        })
+        .finally(() => {
+          loading.hide();
+          this.offerQty = null;
+          this.addNewOfferDialog = false;
+          this.fetch();
+        });
+    },
+    deleteOffer() {
+      let loading = this.$loading.show();
+      this.$http
+        .delete(this.$baseUrl + "item/offer/" + this.itemId)
+        .then(() => {
+          loading.hide();
+          this.offer = null;
+        });
     },
   },
 };
