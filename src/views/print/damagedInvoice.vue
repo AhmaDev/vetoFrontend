@@ -1,6 +1,6 @@
 <template>
   <div ref="print" id="homePage" class="pa-10">
-    <template v-for="invoice in invoices">
+    <template v-for="(invoice, index) in invoices">
       <v-sheet
         v-if="invoice.items[0] != null"
         style="margin-bottom: 20px"
@@ -10,6 +10,7 @@
         elevation="4"
       >
         <img src="@/assets/header.jpg" width="100%" alt="" />
+        <small>تسلسل: {{ index + 1 }}</small>
         <table class="table" border="1" cellspacing="0" width="100%">
           <tr>
             <td>رقم الفاتورة : #{{ invoice.idDamagedItemsInvoice }}</td>
@@ -39,6 +40,8 @@
               <th>الكمية</th>
               <th>سعر الوحدة</th>
               <th>الاجمالي</th>
+              <th>العدد</th>
+              <th>المبلغ</th>
             </tr>
           </thead>
           <tbody>
@@ -51,11 +54,13 @@
               <td>{{ item.count.toLocaleString() }}</td>
               <td>{{ item.price.toLocaleString() }}</td>
               <td>{{ item.totalPrice.toLocaleString() }}</td>
+              <td></td>
+              <td></td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="3"></td>
+              <td colspan="3">مجموع القطع:</td>
               <td>المجموع</td>
               <td>
                 {{
@@ -65,16 +70,23 @@
                     .toLocaleString()
                 }}
               </td>
+              <td></td>
+              <td></td>
             </tr>
           </tfoot>
         </table>
         <br />
-        <pre style="text-align: right; white-space: pre-wrap; width: 100%">ملاحظة :- الشركة غير مسؤولة عن أي تسديد بدون وصل صادر من الشركة .
+        <pre style="text-align: right; white-space: pre-wrap; width: 100%">
+ملاحظة :- الشركة غير مسؤولة عن أي تسديد بدون وصل صادر من الشركة .
 ملاحظة2: الشركة غير مسؤولة عن حماية العروض المواد داخل فاتورة وما عدها الشركة تحمي جميع المواد المدرجة في قائمة البيع الخاصة ب مملكة بغداد .
 ملاحظة 3:- قبل خروج الموزع يجب على الزبون جرد البضاعة والتأكد من الفاتورة وخلاف ذلك الشركة غير مسؤولة عن أي نقص .            
 ملاحظة 4 :- الشركة غير مسؤولة عن إعطاء للمندوب او الموزع او أي شخص يمثل الشركة مملكة بغداد مبالغ او غيرها من أمور خارج نطاق العمل وفي حالة حدوث ذلك اتصال بالأداة .                 
 ملاحظة 5 :- يجب الاحتفاظ في فاتورة بيع مملكة بغداد وهذا يمثل لك الحق في مطالبة أي تلف وفي حال لم تحصل على تعويض مراسلة الشركة في الأرقام المذكورة أعلاه . 
-          </pre>
+          </pre
+        >
+        <br />
+        <br />
+        توقيع الزبون
       </v-sheet>
     </template>
   </div>

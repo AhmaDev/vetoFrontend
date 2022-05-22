@@ -4,7 +4,10 @@
       <v-toolbar-title color="error">كشف توزيع التالف</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
-    <v-card v-if='checkPermission("damaged_delivery_add")' class="pa-10 deliveryStatusTable">
+    <v-card
+      v-if="checkPermission('damaged_delivery_add')"
+      class="pa-10 deliveryStatusTable"
+    >
       <v-row>
         <v-col>
           <v-autocomplete
@@ -34,17 +37,24 @@
             اضافة كشف توزيع تالف جديد
           </v-btn>
         </v-col>
+        <v-col cols="2">
+          <v-btn @click="startMethod(1)" dark :color="$background">
+            اضافة كشف مالية تالف جديد
+          </v-btn>
+        </v-col>
       </v-row>
     </v-card>
     <br />
     <v-row>
-      <v-col cols="12" md="12">
-
+      <v-col cols="12" md="7">
         <v-card class="pa-10 deliveryStatusTable">
-        <h3>كشف التوزيع للمواد التالفة</h3>
+          <h3>كشف التوزيع للمواد التالفة</h3>
           <v-data-table :items="deliveriesStatus" :headers="tableHeader">
             <template v-slot:[`item.total`]="{ item }">
               {{ sum(item) }}
+            </template>
+            <template v-slot:[`item.invoices`]="{ item }">
+              {{ item.invoices.length }}
             </template>
             <template v-slot:[`item.actions`]="{ item }">
               <v-btn
@@ -61,7 +71,9 @@
                 elevation="0"
                 block
                 small
-                :to="'/damagedDelivery/' + item.idDeliveryStatus + '?print=true'"
+                :to="
+                  '/damagedDelivery/' + item.idDeliveryStatus + '?print=true'
+                "
               >
                 طباعة كشف التوزيع
               </v-btn>
@@ -71,7 +83,8 @@
                 elevation="0"
                 small
                 :to="
-                  '/print/damagedInvoice/' + JSON.stringify(item.invoices).slice(1, -1)
+                  '/print/damagedInvoice/' +
+                  JSON.stringify(item.invoices).slice(1, -1)
                 "
               >
                 طباعة الفواتير
@@ -82,10 +95,59 @@
                 elevation="0"
                 small
                 :to="
-                  '/print/damagedDelegate/' + JSON.stringify(item.delegates).slice(1, -1) + '/' + item.creationFixedDate + '?print=1'
+                  '/print/damagedDelegate/' +
+                  JSON.stringify(item.delegates).slice(1, -1) +
+                  '/' +
+                  item.creationFixedDate +
+                  '?print=1'
                 "
               >
                 طباعة كشف مبالغ التالف
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="5">
+        <v-card class="pa-5 deliveryStatusTable">
+          <h3>كشف المالية للمواد التالفة</h3>
+          <v-data-table
+            :items="deliveriesStatusMoney"
+            :headers="tableHeaderMoney"
+          >
+            <template v-slot:[`item.total`]="{ item }">
+              {{ sum(item) }}
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-btn
+                color="error"
+                elevation="0"
+                small
+                block
+                :to="'/damagedMoney/' + item.idDeliveryStatus"
+              >
+                مشاهدة كشف المالية
+              </v-btn>
+              <v-btn
+                color="warning"
+                elevation="0"
+                small
+                block
+                :to="'/damagedMoney/' + item.idDeliveryStatus + '?print=true'"
+              >
+                طباعة كشف المالية
+              </v-btn>
+              <v-btn
+                color="secondary"
+                block
+                elevation="0"
+                small
+                :to="
+                  '/print/damagedInvoice/' +
+                  JSON.stringify(item.invoices).slice(1, -1)
+                "
+              >
+                طباعة الفواتير
               </v-btn>
             </template>
           </v-data-table>
@@ -106,34 +168,35 @@ export default {
     deliveriesStatusMoney: [],
     selectedDate: null,
     tableHeader: [
-      { text: "رقم التوزيع", value: "idDeliveryStatus" },
+      { text: "رقم التوزيع", value: "counter" },
       { text: "اسم الموزع", value: "deliveryName" },
       { text: "التاريخ", value: "creationFixedDate" },
       { text: "المبلغ", value: "total" },
+      { text: "الفواتير", value: "invoices" },
       { text: "الاجراءات", value: "actions" },
     ],
     tableHeaderMoney: [
-      { text: "رقم الكشف", value: "idDeliveryStatus" },
+      { text: "رقم الكشف", value: "counter" },
       { text: "التاريخ", value: "creationFixedDate" },
       { text: "المبلغ", value: "total" },
       { text: "الاجراءات", value: "actions" },
     ],
   }),
   created: function () {
-     // LOAD PERMS START
-      this.auth().then((res) => {
-        this.permissions = res.permissions;
-        // CHECK IF CAN SEE THIS PAGE
-        if (!this.checkPermission("damaged_delivery")) {
-          this.$toast.open({
-            type: "error",
-            message: "غير مصرح لك بمشاهدة هذه الصفحة",
-            duration: 3000,
-          });
-          this.$router.go(-1);
-        }
-      });
-      // LOAD PERMS END
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("damaged_delivery")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     this.getCurrentDate().then((value) => {
       this.selectedDate = value;
     });
@@ -156,13 +219,18 @@ export default {
     getData() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "deliveryStatus")
+        .get(this.$baseUrl + "deliveryStatus/damagedStatus")
         .then((res) => {
-          this.deliveriesStatus = res.data.filter(e => e.deliveryStatusType == 2);
+          this.deliveriesStatus = res.data.filter(
+            (e) => e.deliveryStatusType == 2
+          );
+          this.deliveriesStatusMoney = res.data.filter(
+            (e) => e.deliveryStatusType == 3
+          );
         })
         .finally(() => loading.hide());
     },
-    startMethod() {
+    startMethod(type) {
       if (this.selectedDeliveries.length == 0 || this.selectedDate == null) {
         this.$toast.open({
           type: "error",
@@ -176,7 +244,7 @@ export default {
         .post(this.$baseUrl + "deliveryStatus/damagedMultipleInsert", {
           deliveries: this.selectedDeliveries,
           date: this.selectedDate,
-          deliveryStatusType: 2,
+          deliveryStatusType: type == 0 ? 2 : 3,
         })
         .then(() => {
           setTimeout(() => {

@@ -147,6 +147,11 @@ const routes = [
     component: () => import("../components/MoneyStatus.vue"),
   },
   {
+    path: "/damagedMoney/:id",
+    name: "DeliveryStatus",
+    component: () => import("../components/DamagedMoneyStatus.vue"),
+  },
+  {
     path: "/store",
     name: "Store",
     component: () => import("../views/Store.vue"),

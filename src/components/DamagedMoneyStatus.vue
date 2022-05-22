@@ -9,7 +9,7 @@
       <div v-if="appData != null" class="pa-10">
         <center>
           <h2>
-            كشف توزيع تالف
+            كشف المالية للمواد التالفة -
             {{ appData.filter((e) => e.variable == "title")[0].value }}
           </h2>
         </center>
@@ -17,7 +17,7 @@
       <table border="1" cellspacing="0" width="100%" class="table" dir="rtl">
         <tr>
           <td>رقم التوزيع: {{ deliveryStatus.counter }}</td>
-          <td>اسم الموزع: {{ deliveryStatus.deliveryName }}</td>
+          <!-- <td>اسم الموزع: {{ deliveryStatus.deliveryName }}</td> -->
           <td>
             تاريخ التجهيز: {{ deliveryDate(deliveryStatus.creationFixedDate) }}
           </td>
@@ -30,7 +30,6 @@
       </table>
       <table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
         <thead>
-          <td width="40">#{{ deliveryStatus.counter }}</td>
           <th>اسم المادة</th>
           <th>عدد النقص</th>
           <th>مبلغ النقص</th>
@@ -38,7 +37,8 @@
           <th>السعر</th>
           <th>الاجمالي</th>
           <th>عدد الراجع</th>
-          <th>اجمالي الراجع</th>
+          <th>مبلغ الراجع</th>
+          <th>الصافي</th>
         </thead>
         <template v-for="(item, i) in deliveryStatus.invoicesData">
           <tr
@@ -47,17 +47,30 @@
             "
             :key="i"
           >
-            <td colspan="2">{{ getItemName(item.itemId) }}</td>
+            <td
+              style="font-size: 14px !important; font-weight: bold !important"
+            >
+              {{ getItemName(item.itemId) }}
+            </td>
             <td></td>
             <td></td>
-            <td>{{ item.count }}</td>
+            <td
+              style="font-size: 14px !important; font-weight: bold !important"
+            >
+              {{ item.count }}
+            </td>
             <td v-if="item.discountTypeId > 0">
               {{ getDiscountName(item.discountTypeId) }}
             </td>
             <td v-else>
               {{ item.total / item.count }}
             </td>
-            <td>{{ item.total.toLocaleString() }}</td>
+            <td
+              style="font-size: 14px !important; font-weight: bold !important"
+            >
+              {{ item.total.toLocaleString() }}
+            </td>
+            <td></td>
             <td></td>
             <td></td>
           </tr>
@@ -73,12 +86,16 @@
               v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
               :key="'GIFT_' + gift.itemId"
             >
-              <td>
+              <td
+                style="font-size: 14px !important; font-weight: bold !important"
+              >
                 {{ getItemName(gift.itemId) }}
               </td>
               <td></td>
               <td></td>
-              <td>
+              <td
+                style="font-size: 14px !important; font-weight: bold !important"
+              >
                 {{ gift.count }}
               </td>
               <td v-if="gift.discountTypeId > 0">
@@ -87,9 +104,8 @@
               <td v-else>
                 {{ gift.total / gift.count }}
               </td>
-              <td>
-                {{ gift.total.toLocaleString() }}
-              </td>
+              <td>{{ gift.total.toLocaleString() }}</td>
+              <td></td>
               <td></td>
               <td></td>
             </tr>
@@ -99,109 +115,84 @@
     </v-sheet>
     <br />
     <v-sheet class="pa-10 sheet" elevation="2">
-      <table border="1" cellspacing="0" width="100%" class="table" dir="rtl">
+      <table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
         <tr>
-          <td>#{{ deliveryStatus.counter }}</td>
-          <td colspan="2">مجموع العدد : {{ sumQty() }}</td>
-          <td>مجموع كلي : {{ sumQty() }}</td>
-          <td>الاجمالي : {{ totalPrice() }}</td>
+          <td colspan="2">اسم الحساب</td>
+          <td>البيان</td>
         </tr>
         <tr>
-          <th colspan="2">اسم الحساب</th>
-          <th colspan="3">البيان</th>
-        </tr>
-        <tr>
-          <td colspan="2">مبلغ التوزيع الكلي</td>
-          <td width="150px"></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">مبلغ نقص الاعداد</td>
+          <td width="200px">مجموع الاعداد مباعة بالمبالغ</td>
+          <td width="200px">{{ sumQty() }}</td>
           <td></td>
-          <td colspan="2"></td>
+        </tr>
+
+        <tr>
+          <td>عدد النقص</td>
+          <td></td>
+          <td></td>
         </tr>
         <tr>
-          <td colspan="2">مبلغ الراجع</td>
+          <td>عدد الراجع</td>
           <td></td>
-          <td colspan="2">
-            <center>
-              <b>
-                يجب تسليم فواتير الى امين الصندوق لأرسالها الى مسؤول التوزيع
-                لمعالجة الراجع مع المندوبين خلاف ذلك يغرم الموزع
-              </b>
-            </center>
+          <td></td>
+        </tr>
+        <tr>
+          <td>الصافي الاعداد</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مبلغ الاعداد قبل نقص وراجع</td>
+          <td>{{ totalPrice() }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مبلغ النقص</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>مبلغ الراجع</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>صافي مبيعات كل مندوبين مفرد</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="table" border="1" cellspacing="0" width="100%" dir="rtl">
+        <tr>
+          <td colspan="1">
+            <table border="1" cellspacing="0" width="100%" dir="rtl">
+              <tr>
+                <td width="10px">تسلسل</td>
+                <td>رقم توزيع</td>
+                <td width="200px">اسم موزع والأب</td>
+                <td width="200px">المبلغ</td>
+                <td width="200px">اسم حساب</td>
+                <td width="40%">البيان</td>
+              </tr>
+              <tr v-for="(x, i) in [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]" :key="i">
+                <td>{{ i + 1 }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr>
-          <td colspan="2">مبلغ القائمة بعد نقص وراجع</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">المستلم الفعلي</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">م / كاز( ص / م )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">م/متنوعة(ص/م)</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">التالف مبيعات ( ص / م )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">تعويض2(ص/م)</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">مجموع(ص/م )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">ديون 1 ( د )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">ديون 2 ( د )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">ديون 3 ( د )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">المبلغ النهائي</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">النقص او الفرق</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <!---->
-
-        <tr>
-          <td colspan="4" style="height: 200px">ملاحظات امين الصندوق</td>
+          <td colspan="2" style="height: 200px">ملاحظات المسؤول</td>
         </tr>
       </table>
       <br />
       <br />
-      <span style="float: right">توقيع واسم الموزع</span>
-      <span style="float: left">توقيع واسم امين الصندوق</span>
+      <span style="float: right">توقيع واسم امين المخزن</span>
+      <span style="float: left">توقيع واسم المدقق</span>
     </v-sheet>
 
     <v-fab-transition>
@@ -219,8 +210,8 @@ export default {
   data: () => ({
     deliveryStatusId: 0,
     deliveryStatus: null,
-    giftItems: [],
     discounts: [],
+    giftItems: [],
     items: [],
     appData: null,
   }),
@@ -231,13 +222,12 @@ export default {
     this.$http.get(this.$baseUrl + "discount").then((res) => {
       this.discounts = res.data;
     });
-    this.$http.get(this.$baseUrl + "settings").then((res) => {
-      this.appData = res.data;
-    });
     this.$http.get(this.$baseUrl + "item").then((res) => {
       this.items = res.data;
     });
-
+    this.$http.get(this.$baseUrl + "settings").then((res) => {
+      this.appData = res.data;
+    });
     if (
       this.$route.query.print != undefined ||
       this.$route.query.print != null
@@ -261,13 +251,11 @@ export default {
         )
         .then((res) => {
           this.deliveryStatus = res.data;
+
           this.deliveryStatus.invoicesData =
             this.deliveryStatus.invoicesData.sort((a, b) =>
               a.count < b.count ? 1 : b.count < a.count ? -1 : 0
             );
-          this.giftItems = this.deliveryStatus.invoicesData.filter(
-            (x) => x.discountTypeId > 0
-          );
         })
         .finally(() => loading.hide());
     },
@@ -286,12 +274,9 @@ export default {
       }
       return qty;
     },
-    getItemName(itemId) {
-      return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
-    },
     sumQty2() {
       let qty = 0;
-      let items = this.deliveryStatus.invoicesData;
+      let items = this.giftItems.filter((d) => d.discountTypeId > 0);
       for (let i = 0; i < items.length; i++) {
         qty = qty + items[i].count;
       }
@@ -311,6 +296,9 @@ export default {
         " - " +
         moment(date).locale("ar").format("dddd")
       );
+    },
+    getItemName(itemId) {
+      return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
     },
     deliveryDate(date) {
       if (moment(date).locale("en").format("dddd") == "Thursday") {
@@ -353,26 +341,16 @@ th {
   page-break-after: always;
   direction: rtl !important;
 }
-div.divFooter {
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
 @media print {
   @page {
     size: A4 portrait;
   }
   * {
-    font-size: 12px !important;
+    font-size: 10px !important;
     -webkit-print-color-adjust: exact;
   }
   .v-btn {
     display: none !important;
-  }
-  div.divFooter {
-    position: fixed;
-    bottom: 0;
   }
 }
 </style>
