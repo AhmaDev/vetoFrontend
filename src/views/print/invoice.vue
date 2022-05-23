@@ -9,7 +9,18 @@
         class="pa-10 sheet"
         elevation="4"
       >
-        <img src="@/assets/header.jpg" width="100%" alt="" />
+        <img
+          v-if="$baseUrl.includes('mmlka')"
+          src="@/assets/header.jpg"
+          width="100%"
+          alt=""
+        />
+        <img
+          v-if="$baseUrl.includes('sultan')"
+          src="@/assets/header2.jpg"
+          width="100%"
+          alt=""
+        />
         <small>تسلسل: {{ index + 1 }}</small>
         <table class="table" border="1" cellspacing="0" width="100%">
           <tr>
@@ -68,8 +79,12 @@
         <table class="table" border="1" cellspacing="0" width="100%">
           <tbody>
             <tr>
-              <td width="25%" colspan="1">رقم الفاتورة : {{invoice.idInvoice}}</td>
-              <td width="25%" colspan="1">كود الزبون : {{invoice.customerId}}</td>
+              <td width="25%" colspan="1">
+                رقم الفاتورة : {{ invoice.idInvoice }}
+              </td>
+              <td width="25%" colspan="1">
+                كود الزبون : {{ invoice.customerId }}
+              </td>
               <td>مجموع الاعداد</td>
               <td style="background-color: #eee" colspan="1">
                 {{ invoice.items.reduce((a, b) => a + b.count, 0) }}
@@ -83,13 +98,26 @@
           </tbody>
         </table>
         <br />
-        <pre style="text-align: right; white-space: pre-wrap; width: 100%">
+        <pre
+          v-if="$baseUrl.includes('mmlka')"
+          style="text-align: right; white-space: pre-wrap; width: 100%"
+        >
 ملاحظة1: الشركة غير مسؤولة عن حماية العروض المواد داخل فاتورة وما عدها الشركة تحمي جميع المواد المدرجة في قائمة البيع الخاصة ب مملكة بغداد .
 ملاحظة2:- قبل خروج الموزع يجب على الزبون جرد البضاعة والتأكد من الفاتورة وخلاف ذلك الشركة غير مسؤولة عن أي نقص .            
 ملاحظة 3 :- الشركة غير مسؤولة عن إعطاء للمندوب او الموزع او أي شخص يمثل الشركة مملكة بغداد مبالغ او غيرها من أمور خارج نطاق العمل وفي حالة حدوث ذلك اتصال بالأداة .                 
 ملاحظة 4 :- يجب الاحتفاظ في فاتورة بيع مملكة بغداد وهذا يمثل لك الحق في مطالبة أي تلف وفي حال لم تحصل على تعويض مراسلة الشركة في الأرقام المذكورة أعلاه . 
           </pre
         >
+        <pre
+          v-if="$baseUrl.includes('sultan')"
+          style="text-align: right; white-space: pre-wrap; width: 100%"
+        >
+ملاحظة :- الشركة غير مسؤولة عن أي تسديد بدون وصل صادر من الشركة
+ملاحظة 2:الشركة غير مسؤولة عن حماية العروض المواد داخل فاتورة وما عدها الشركة تحمي جميع المدرجة في قائمة البيع
+ملاحظة 3 -:قبل خروج الموزع يجب على زبون جرد بضاعة وتأكد من فاتورة وخالف ذلك الشركة غير مسؤولة .
+ملاحظة 4 -: الشركة غير مسؤولة عن إعطاء للمندوب او الموزع او أي شخص يمثل الشركة سلطان العين مبالغ او
+غيرها من أمور خارج نطاق العمل وفي حالة حدوث ذلك اتصال باألدارة .
+        </pre>
       </v-sheet>
     </template>
   </div>

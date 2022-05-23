@@ -20,14 +20,16 @@
     >
       <v-list dense>
         <center>
-          <br /><br />
+          <br />
           <Logo width="150px" />
 
-          <br />
-          <v-chip x-small :color="$background" outlined>
+          <div v-if="appData.length > 0">
+            {{ appData.filter((e) => e.variable == "title")[0].value }}
+          </div>
+
+          <v-chip class="ma-2" small :color="$background" outlined>
             {{ userInfo.username }}
           </v-chip>
-          <br />
         </center>
         <template v-for="item in items">
           <v-list-item
@@ -150,6 +152,7 @@ export default {
     },
   },
   data: () => ({
+    appData: [],
     items: [
       { title: "الرئيسية", icon: "las la-home", route: "/home", child: null },
       {
@@ -239,6 +242,7 @@ export default {
       },
     ],
   }),
+
   methods: {
     logout() {
       localStorage.clear();
@@ -258,6 +262,9 @@ export default {
     },
   },
   created: function () {
+    this.$http.get(this.$baseUrl + "settings").then((res) => {
+      this.appData = res.data;
+    });
     let isDarkMode = false;
     if (localStorage.getItem("darkMode") == "true") {
       isDarkMode = true;
