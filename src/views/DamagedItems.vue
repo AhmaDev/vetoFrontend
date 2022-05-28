@@ -14,6 +14,74 @@
       </v-btn>
     </v-app-bar>
 
+    <v-card no-elevation class="pa-5">
+      <v-row>
+        <v-col cols="4">
+          <v-autocomplete
+            hide-details
+            outlined
+            dense
+            clearable
+            v-model="search.customerId"
+            label="الزبون"
+            :items="customers"
+            item-text="storeName"
+            item-value="idCustomer"
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="4">
+          <v-autocomplete
+            outlined
+            hide-details
+            dense
+            clearable
+            v-model="search.delegateId"
+            label="المندوب"
+            :items="users.delegates"
+            item-text="username"
+            item-value="idUser"
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="4">
+          <v-text-field
+            label="رقم الفاتورة"
+            dense
+            clearable
+            v-model="search.invoiceId"
+            hide-details
+            outlined
+            type="number"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field
+            label="من تاريخ"
+            dense
+            clearable
+            v-model="search.dateFrom"
+            hide-details
+            outlined
+            type="date"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="3">
+          <v-text-field
+            label="الى تاريخ"
+            dense
+            clearable
+            v-model="search.dateTo"
+            hide-details
+            outlined
+            type="date"
+          ></v-text-field>
+        </v-col>
+        <v-col>
+          <v-btn @click="fetch()" dark :color="$background" block> بحث </v-btn>
+        </v-col>
+      </v-row>
+    </v-card>
+    <br />
+
     <v-card>
       <v-data-table
         :items-per-page="1000"
@@ -53,7 +121,9 @@ export default {
     permissions: [],
     invoices: {
       header: [
+        { text: "كود الزبون", value: "customerId" },
         { text: "اسم الزبون", value: "customerName" },
+        { text: "اسم المحل", value: "storeName" },
         { text: "الجهة", value: "createdByName" },
         { text: "بتاريخ", value: "creationFixedDate" },
         { text: "الوقت", value: "creationFixedTime" },
@@ -61,9 +131,40 @@ export default {
       ],
       data: [],
     },
+    search: {
+      invoiceType: null,
+      customerId: null,
+      delegateId: null,
+      deliveryId: null,
+      invoiceId: null,
+      dateFrom: null,
+      dateTo: null,
+    },
+    customers: [],
+    users: {
+      delegates: [],
+    },
   }),
   created: function () {
-    this.fetch();
+    this.getCurrentDate().then((value) => {
+      this.search.dateFrom = value;
+      this.search.dateTo = value;
+    });
+
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("damaged")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
   },
   methods: {
     checkPermission(permissionKey) {
@@ -74,27 +175,39 @@ export default {
       else return false;
     },
     fetch() {
-      // LOAD PERMS START
-      this.auth().then((res) => {
-        this.permissions = res.permissions;
-        // CHECK IF CAN SEE THIS PAGE
-        if (!this.checkPermission("damaged")) {
-          this.$toast.open({
-            type: "error",
-            message: "غير مصرح لك بمشاهدة هذه الصفحة",
-            duration: 3000,
-          });
-          this.$router.go(-1);
-        }
-      });
-      // LOAD PERMS END
       let loading = this.$loading.show();
+
+      let query = "";
+
+      if (this.search.customerId != null && this.search.customerId != "") {
+        query = query + `&customer=${this.search.customerId}`;
+      }
+      if (this.search.delegateId != null && this.search.delegateId != "") {
+        query = query + `&user=${this.search.delegateId}`;
+      }
+
+      if (this.search.invoiceId != null && this.search.invoiceId != "") {
+        query = query + `&id=${this.search.invoiceId}`;
+      }
+      if (this.search.dateFrom != null && this.search.dateFrom != "") {
+        query = query + `&dateRangeFrom=${this.search.dateFrom}`;
+      }
+      if (this.search.dateTo != null && this.search.dateTo != "") {
+        query = query + `&dateRangeTo=${this.search.dateTo}`;
+      }
+
       this.$http
-        .get(this.$baseUrl + "damagedInvoice")
+        .get(this.$baseUrl + "damagedInvoice/filter?search=true" + query)
         .then((res) => {
           this.invoices.data = res.data;
         })
         .finally(() => loading.hide());
+      this.$http.get(this.$baseUrl + "users").then((res) => {
+        this.users.delegates = res.data;
+      });
+      this.$http.get(this.$baseUrl + "customer").then((res) => {
+        this.customers = res.data;
+      });
     },
   },
 };
