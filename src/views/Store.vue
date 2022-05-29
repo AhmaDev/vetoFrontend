@@ -166,6 +166,8 @@ export default {
       { text: "المجموعة", value: "itemGroupName" },
       { text: "المبيعات", value: "totalSell" },
       { text: "المبلغ الاجمالي", value: "totalSellPrice" },
+      { text: "التالف", value: "totalDamaged" },
+      { text: "المبلغ للتالف", value: "totalDamagedPrice" },
     ],
   }),
   created: function () {

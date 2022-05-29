@@ -88,6 +88,7 @@ export default {
       { text: "كود الزبون", value: "idCustomer" },
       { text: "اسم الزبون", value: "customerName" },
       { text: "اسم المحل", value: "storeName" },
+      { text: "المندوب", value: "delegateName" },
       { text: "الكمية", value: "count" },
       { text: "بتاريخ", value: "creationFixedDate" },
       { text: "الاجراءات", value: "actions" },
@@ -100,9 +101,15 @@ export default {
     fetch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "reports/itemRail/" + this.$route.params.id  +
-              "?date1=" + this.$route.query.from +
-              "&date2=" + this.$route.query.to )
+        .get(
+          this.$baseUrl +
+            "reports/itemRail/" +
+            this.$route.params.id +
+            "?date1=" +
+            this.$route.query.from +
+            "&date2=" +
+            this.$route.query.to
+        )
         .then((res) => {
           this.tableData = res.data;
           this.allTableData = res.data;
@@ -135,9 +142,11 @@ export default {
     },
     sort(type) {
       if (type == "all") {
-          this.tableData = this.allTableData;
+        this.tableData = this.allTableData;
       } else {
-          this.tableData = this.allTableData.filter(x => x.invoiceTypeId == type);
+        this.tableData = this.allTableData.filter(
+          (x) => x.invoiceTypeId == type
+        );
       }
       this.selectedType = type;
     },
