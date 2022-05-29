@@ -71,7 +71,15 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="3">مجموع القطع:</td>
+              <td colspan="3">
+                مجموع القطع:
+                {{
+                  invoice.items
+                    .reduce((a, b) => a + b.count, 0)
+                    .toLocaleString()
+                    .toLocaleString()
+                }}
+              </td>
               <td>المجموع</td>
               <td>
                 {{
