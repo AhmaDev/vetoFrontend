@@ -44,7 +44,11 @@
             :key="'INVOICE_' + invoice.idInvoice"
           >
             <td>
-              <center>{{ i.filter(x => x.invoiceId == invoice.idInvoice)[0].index + 1 }}</center>
+              <center>
+                {{
+                  i.filter((x) => x.invoiceId == invoice.idInvoice)[0].index + 1
+                }}
+              </center>
             </td>
             <td>
               <center>{{ invoice.idInvoice }}</center>
@@ -111,7 +115,7 @@ export default {
           this.$route.params.id +
           "&date=" +
           this.$route.params.date +
-          "&type=1&order=createdBy&sort=ASC"
+          "&type=1&order=idInvoice&sort=ASC"
       )
       .then((res) => {
         this.invoices = res.data;
@@ -125,9 +129,12 @@ export default {
             ).length;
             j++
           ) {
-            this.i.push({index: index++, invoiceId: this.invoices.filter(
-              (invoice) => invoice.createdBy == this.delegateIds[i]
-            )[j].idInvoice});
+            this.i.push({
+              index: index++,
+              invoiceId: this.invoices.filter(
+                (invoice) => invoice.createdBy == this.delegateIds[i]
+              )[j].idInvoice,
+            });
           }
         }
         console.log(this.i);
