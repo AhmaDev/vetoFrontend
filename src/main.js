@@ -36,7 +36,7 @@ Icon.Default.mergeOptions({
 });
 Vue.config.productionTip = false;
 // Vue.prototype.$baseUrl = 'http://localhost:3000/';
-Vue.prototype.$baseUrl = "https://api.mmlka.oveto.app/";
+Vue.prototype.$baseUrl = "https://api.sultan.oveto.app/";
 Vue.prototype.$trackBaseUrl = "https://mmlka.track.oveto.app/";
 Vue.prototype.$appVersion = "1.6.0";
 Vue.http = Vue.prototype.$http = axios;

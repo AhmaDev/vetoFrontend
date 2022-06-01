@@ -44,7 +44,10 @@
               {{ item.fullItemName }}
             </div>
 
-            <v-card-text class="textOverFlow green--text headline">
+            <v-card-text
+              v-if="item.prices[0] != null"
+              class="textOverFlow green--text headline"
+            >
               {{ (item.prices[0].price || 0).toLocaleString() }} د.ع
             </v-card-text>
             <v-card-actions>
