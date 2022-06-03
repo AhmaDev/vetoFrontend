@@ -24,7 +24,7 @@
           <Logo
             :background="
               $baseUrl.includes('sultan')
-                ? $vuetify.theme.success
+                ? $vuetify.theme.primary
                 : $vuetify.theme.primary
             "
             width="150px"
