@@ -21,7 +21,14 @@
       <v-list dense>
         <center>
           <br />
-          <Logo width="150px" />
+          <Logo
+            :background="
+              $baseUrl.includes('sultan')
+                ? $vuetify.theme.success
+                : $vuetify.theme.primary
+            "
+            width="150px"
+          />
 
           <div v-if="appData.length > 0">
             {{ appData.filter((e) => e.variable == "title")[0].value }}
@@ -241,6 +248,7 @@ export default {
         child: null,
       },
     ],
+    forceRerender: 0,
   }),
 
   methods: {
@@ -270,6 +278,16 @@ export default {
       isDarkMode = true;
     }
     this.$vuetify.theme.dark = isDarkMode;
+    setTimeout(() => {
+      if (this.$baseUrl.includes("sultan")) {
+        this.$background = "#4CAF50";
+        this.$vuetify.theme.primary = "#4CAF50";
+      } else {
+        this.$background = "#2046D1";
+        this.$vuetify.theme.primary = "#2046D1";
+      }
+      this.forceRerender++;
+    }, 100);
   },
 };
 </script>
