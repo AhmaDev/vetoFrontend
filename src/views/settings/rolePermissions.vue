@@ -17,18 +17,26 @@
       >
         <v-col :key="role.idRole">
           <v-card elevation="0" class="pa-0">
-            <h4>{{ role.roleName }}</h4>
-            <v-checkbox
-              dense
-              :value="getPermissions(role.idRole, permission.idPermission)"
-              :input-value="
-                getPermissions(role.idRole, permission.idPermission)
-              "
-              v-for="permission in permissions"
-              :key="permission.idPermission"
-              :label="permission.permissionName"
-              @change="changePerm(role.idRole, permission.idPermission, $event)"
-            ></v-checkbox>
+            <v-alert type="info">{{ role.roleName }}</v-alert>
+            <template v-for="group in permissionGroup">
+              <v-alert type="success" :key="group.groupName">{{
+                group.groupName
+              }}</v-alert>
+              <v-checkbox
+                :value="getPermissions(role.idRole, permission.idPermission)"
+                :input-value="
+                  getPermissions(role.idRole, permission.idPermission)
+                "
+                v-for="permission in permissions.filter((e) =>
+                  group.permissions.includes(e.idPermission)
+                )"
+                :key="permission.idPermission"
+                :label="permission.permissionName"
+                @change="
+                  changePerm(role.idRole, permission.idPermission, $event)
+                "
+              ></v-checkbox>
+            </template>
           </v-card>
         </v-col>
         <v-divider :key="'ROLE_' + role.idRole" vertical></v-divider>
@@ -45,6 +53,20 @@ export default {
     permissions: [],
     rolePermissions: [],
     forceRerender: 0,
+    permissionGroup: [
+      { groupName: "صلاحيات الفواتير", permissions: [1, 2, 3, 4] },
+      { groupName: "صلاحيات الزبائن", permissions: [5, 6, 11, 13, 35] },
+      { groupName: "صلاحيات البرنامج", permissions: [12, 15, 22, 23, 32, 33] },
+      {
+        groupName: "صلاحيات المواد",
+        permissions: [7, 8, 9, 10, 16, 17, 18, 19, 29],
+      },
+      { groupName: "صلاحيات الموقع", permissions: [20, 21, 30] },
+      {
+        groupName: "صلاحيات الكشوفات",
+        permissions: [24, 25, 26, 27, 28, 31, 34, 36],
+      },
+    ],
   }),
   mounted: function () {
     this.fetch();

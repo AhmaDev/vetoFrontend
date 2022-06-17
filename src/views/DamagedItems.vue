@@ -89,7 +89,11 @@
         :items="invoices.data"
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn icon :to="'/damagedItems/' + item.idDamagedItemsInvoice">
+          <v-btn
+            target="_BLANK"
+            icon
+            :to="'/damagedItems/' + item.idDamagedItemsInvoice"
+          >
             <v-icon :title="item.idInvoice">mdi-magnify</v-icon>
           </v-btn>
           <v-menu v-if="checkPermission('damaged_delete')" offset-y>
@@ -109,6 +113,11 @@
             </v-list>
           </v-menu>
         </template>
+        <template v-slot:[`item.totalPrice`]="{ item }">
+          <v-chip color="success" small>{{
+            item.totalPrice.toLocaleString()
+          }}</v-chip>
+        </template>
       </v-data-table>
     </v-card>
   </div>
@@ -125,6 +134,7 @@ export default {
         { text: "اسم الزبون", value: "customerName" },
         { text: "اسم المحل", value: "storeName" },
         { text: "الجهة", value: "createdByName" },
+        { text: "المبلغ", value: "totalPrice" },
         { text: "بتاريخ", value: "creationFixedDate" },
         { text: "الوقت", value: "creationFixedTime" },
         { text: "الاجراءات", value: "actions" },
@@ -150,6 +160,15 @@ export default {
       this.search.dateFrom = value;
       this.search.dateTo = value;
     });
+
+    setTimeout(() => {
+      if (this.$route.query.delegate) {
+        this.search.delegateId = parseInt(this.$route.query.delegate);
+        this.search.dateFrom = this.$route.query.date;
+        this.search.dateTo = this.$route.query.date;
+        this.fetch();
+      }
+    }, 1000);
 
     // LOAD PERMS START
     this.auth().then((res) => {

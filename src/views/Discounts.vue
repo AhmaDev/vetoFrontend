@@ -60,10 +60,12 @@
           </v-btn>
         </template>
         <template v-slot:[`item.totalInvoicesPrice`]="{ item }">
-          <b class="green--text">{{item.totalInvoicesPrice.toLocaleString() }}</b>
+          <b class="green--text">{{
+            item.totalInvoicesPrice.toLocaleString()
+          }}</b>
         </template>
         <template v-slot:[`item.totalPrice`]="{ item }">
-          {{item.totalPrice.toLocaleString() }}
+          {{ item.totalPrice.toLocaleString() }}
         </template>
       </v-data-table>
     </v-card>
@@ -112,12 +114,20 @@ export default {
         this.$router.go(-1);
       }
     });
+    setTimeout(() => {
+      if (this.$route.query.delegate) {
+        this.search.from = this.$route.query.date;
+        this.search.to = this.$route.query.date;
+        this.fetchSearch();
+      } else {
+        this.getCurrentDate().then((value) => {
+          this.search.from = value;
+          this.search.to = value;
+          this.fetchSearch();
+        });
+      }
+    }, 1000);
     // LOAD PERMS END
-    this.getCurrentDate().then((value) => {
-      this.search.from = value;
-      this.search.to = value;
-      this.fetchSearch();
-    });
   },
   methods: {
     checkPermission(permissionKey) {
@@ -139,7 +149,13 @@ export default {
             this.search.to
         )
         .then((res) => {
-          this.discounts = res.data;
+          if (this.$route.query.delegate) {
+            this.discounts = res.data.filter(
+              (e) => e.idUser == parseInt(this.$route.query.delegate)
+            );
+          } else {
+            this.discounts = res.data;
+          }
         })
         .finally(() => loading.hide());
     },

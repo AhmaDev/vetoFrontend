@@ -176,7 +176,13 @@
                 <span>
                   {{ data.customerId }}
                 </span>
-                <v-chip class="mr-5" outlined color="error" small v-if="data.visitDay != dayName">
+                <v-chip
+                  class="mr-5"
+                  outlined
+                  color="error"
+                  small
+                  v-if="data.visitDay != dayName"
+                >
                   خارج المسار
                 </v-chip>
               </td>
@@ -348,6 +354,13 @@ export default {
     fetch: function () {
       this.$http.get(this.$baseUrl + "users").then((res) => {
         this.delegates = res.data;
+        setTimeout(() => {
+          if (this.$route.query.delegate) {
+            this.selectedDelegate = parseInt(this.$route.query.delegate);
+            this.from = this.$route.query.date;
+            this.selectDelegate();
+          }
+        }, 1000);
       });
     },
     setMarker(marker) {

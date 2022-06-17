@@ -13,7 +13,7 @@
     </v-app-bar>
 
     <v-card ref="print" class="pa-10">
-            <center class="printHeader"><h2>التقرير العام</h2></center>
+      <center class="printHeader"><h2>التقرير العام</h2></center>
 
       <v-row>
         <v-col>
@@ -61,7 +61,6 @@
             label="المندوب"
             v-model="selectedDelegate"
           ></v-autocomplete>
-
         </v-col>
         <v-col>
           <v-btn @click="search()" color="primary" block dark> بحث </v-btn>
@@ -79,7 +78,11 @@
           {{ item.totalCustomers.toLocaleString() }}
         </template>
         <template v-slot:[`item.totalSelling`]="{ item }">
-          {{ item.totalSelling.toLocaleString() }}
+          <router-link
+            target="_BLANK"
+            :to="'visits?delegate=' + item.idUser + '&date=' + startDate"
+            >{{ item.totalSelling.toLocaleString() }}</router-link
+          >
         </template>
         <template v-slot:[`item.totalRestores`]="{ item }">
           {{ item.totalRestores.toLocaleString() }}
@@ -88,13 +91,21 @@
           {{ item.totalRemaining.toLocaleString() }}
         </template>
         <template v-slot:[`item.totalOffers`]="{ item }">
-          {{ item.totalOffers.toLocaleString() }}
+          <router-link
+            target="_BLANK"
+            :to="'discounts?delegate=' + item.idUser + '&date=' + startDate"
+            >{{ item.totalOffers.toLocaleString() }}</router-link
+          >
         </template>
         <template v-slot:[`item.totalGifts`]="{ item }">
           {{ item.totalGifts.toLocaleString() }}
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
-          {{ item.totalDamaged.toLocaleString() }}
+          <router-link
+            target="_BLANK"
+            :to="'damagedItems?delegate=' + item.idUser + '&date=' + startDate"
+            >{{ item.totalDamaged.toLocaleString() }}</router-link
+          >
         </template>
 
         <template v-slot:footer>
@@ -208,7 +219,10 @@ export default {
         q = "from=" + this.startDate + "&to=" + this.endDate;
       }
       if (this.selectedDelegate.length > 0) {
-        q = q + "&delegateId=" + JSON.stringify(this.selectedDelegate).slice(1, -1);
+        q =
+          q +
+          "&delegateId=" +
+          JSON.stringify(this.selectedDelegate).slice(1, -1);
       }
       let loading = this.$loading.show();
       this.$http
@@ -228,22 +242,32 @@ export default {
     },
     setDelegates() {
       let loading = this.$loading.show();
-      this.$http.get(this.$baseUrl + "supervisorDelegates/userid/" + this.selectedSuperVisor).then((res) => {
-        this.selectedDelegate = res.data.map(e => e.delegateId)
-        this.selectedDelegate.push(this.selectedSuperVisor)
-      }).finally(() => loading.hide())
-    }
+      this.$http
+        .get(
+          this.$baseUrl +
+            "supervisorDelegates/userid/" +
+            this.selectedSuperVisor
+        )
+        .then((res) => {
+          this.selectedDelegate = res.data.map((e) => e.delegateId);
+          this.selectedDelegate.push(this.selectedSuperVisor);
+        })
+        .finally(() => loading.hide());
+    },
   },
 };
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+}
 .footerGrid .col {
   border: 1px grey solid !important;
 }
- .printHeader {
-    display:none !important;
-  }
+.printHeader {
+  display: none !important;
+}
 @media print {
   .printHeader {
     display: block !important;

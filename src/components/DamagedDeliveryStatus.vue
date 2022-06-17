@@ -37,8 +37,8 @@
           <th>العدد</th>
           <th>السعر</th>
           <th>الاجمالي</th>
-          <th>عدد الراجع</th>
-          <th>اجمالي الراجع</th>
+          <th>عدد الزيادة</th>
+          <th>اجمالي الزيادة</th>
         </thead>
         <template v-for="(item, i) in deliveryStatus.invoicesData">
           <tr
@@ -139,46 +139,6 @@
         </tr>
         <tr>
           <td colspan="2">المستلم الفعلي</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">م / كاز( ص / م )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">م/متنوعة(ص/م)</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">التالف مبيعات ( ص / م )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">تعويض2(ص/م)</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">مجموع(ص/م )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">ديون 1 ( د )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">ديون 2 ( د )</td>
-          <td></td>
-          <td colspan="2"></td>
-        </tr>
-        <tr>
-          <td colspan="2">ديون 3 ( د )</td>
           <td></td>
           <td colspan="2"></td>
         </tr>
