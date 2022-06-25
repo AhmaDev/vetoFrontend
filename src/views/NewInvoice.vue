@@ -102,6 +102,7 @@
           ></v-autocomplete>
           <v-autocomplete
             v-model="invoice.sellPriceId"
+            :key="forceRerender"
             :items="sellPrices"
             outlined
             dense
@@ -463,6 +464,15 @@ export default {
                 total: this.invoice.items[i].total,
               });
             }
+            this.$http
+              .get(this.$baseUrl + "users/userinfo/" + res.data.createdBy)
+              .then((result) => {
+                setTimeout(() => {
+                  this.invoice.sellPriceId = parseInt(result.data.sellPriceId);
+                  console.log(this.invoice.sellPriceId);
+                  this.forceRerender++;
+                }, 200);
+              });
           })
           .finally(() => {
             loading.hide();
