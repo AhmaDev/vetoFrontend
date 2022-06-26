@@ -419,7 +419,7 @@ export default {
           "&dateRangeFrom=" +
           this.from +
           "&dateRangeTo=" +
-          this.to +
+          this.from +
           "&type=1"
       );
       let restores = this.$http.get(
@@ -429,7 +429,7 @@ export default {
           "&dateRangeFrom=" +
           this.from +
           "&dateRangeTo=" +
-          this.to +
+          this.from +
           "&type=3"
       );
       let damaged = this.$http.get(
@@ -439,7 +439,7 @@ export default {
           "?from=" +
           this.from +
           "&to=" +
-          this.to
+          this.from
       );
 
       let customers = this.$http.get(
