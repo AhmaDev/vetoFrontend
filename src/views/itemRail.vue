@@ -90,6 +90,7 @@ export default {
       { text: "اسم المحل", value: "storeName" },
       { text: "المندوب", value: "delegateName" },
       { text: "الكمية", value: "count" },
+      { text: "سعر المادة في الفاتورة", value: "price" },
       { text: "بتاريخ", value: "creationFixedDate" },
       { text: "الاجراءات", value: "actions" },
     ],
@@ -113,6 +114,7 @@ export default {
         .then((res) => {
           this.tableData = res.data;
           this.allTableData = res.data;
+          console.log(this.tableData);
         })
         .finally(() => loading.hide());
     },
