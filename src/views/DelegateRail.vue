@@ -107,7 +107,10 @@
         <v-col>
           <h3>
             لم تتم زيارتهم :
-            {{ customers.filter((x) => x.visitCount == 0).length }}
+            {{
+              customers.filter((x) => x.visitCount == 0).length -
+              customers.filter((x) => x.totalInvoiceCount > 0).length
+            }}
           </h3>
         </v-col>
       </v-row>
