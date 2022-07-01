@@ -47,7 +47,7 @@
             "
             :key="i"
           >
-            <td colspan="2">{{ getItemName(item.itemId) }} - {{ item }}</td>
+            <td colspan="2">{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
             <td>{{ item.count }}</td>
