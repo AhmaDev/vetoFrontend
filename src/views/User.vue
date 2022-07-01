@@ -115,6 +115,14 @@
               v-model="userdata.canViewDailyItems"
             ></v-checkbox>
           </div>
+          <div v-if="user.roleId == 3">
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة التفاصيل المالية"
+              v-model="userdata.canViewMonthlySales"
+            ></v-checkbox>
+          </div>
         </v-col>
       </v-row>
     </v-card>

@@ -333,9 +333,9 @@ export default {
             .get(this.$baseUrl + "customer/info/" + this.customerId)
             .then((res) => {
               this.customerInfo = res.data;
-            })
-            .finally(() => loading.hide());
-        });
+            });
+        })
+        .finally(() => loading.hide());
       this.$http
         .get(this.$baseUrl + "customer/images/" + this.customerId)
         .then((res) => {

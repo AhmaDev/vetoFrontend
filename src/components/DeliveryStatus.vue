@@ -47,7 +47,7 @@
             "
             :key="i"
           >
-            <td colspan="2">{{ getItemName(item.itemId) }}</td>
+            <td colspan="2">{{ getItemName(item.itemId) }} - {{ item }}</td>
             <td></td>
             <td></td>
             <td>{{ item.count }}</td>
@@ -290,7 +290,11 @@ export default {
       return qty;
     },
     getItemName(itemId) {
-      return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
+      if (this.items.filter((i) => i.idItem == itemId).length > 0) {
+        return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
+      } else {
+        return "none";
+      }
     },
     sumQty2() {
       let qty = 0;

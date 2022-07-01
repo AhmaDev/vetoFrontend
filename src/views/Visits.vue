@@ -148,7 +148,7 @@
                   small
                   color="success"
                   v-if="data.idInvoiceType == 1"
-                  >فاتورة</v-chip
+                  >بيع</v-chip
                 >
                 <v-chip
                   outlined
@@ -168,7 +168,7 @@
                   outlined
                   small
                   color="error"
-                  v-if="data.idDamagedInvoice != undefined"
+                  v-if="data.idDamagedItemsInvoice != undefined"
                   >تالف</v-chip
                 >
               </td>
@@ -188,7 +188,13 @@
               </td>
               <td>{{ data.customerName }}</td>
               <td>{{ data.storeName }}</td>
-              <td>{{ data.totalPrice }}</td>
+              <td
+                class="error--text"
+                v-if="data.idDamagedItemsInvoice != undefined"
+              >
+                {{ data.total }}
+              </td>
+              <td v-else>{{ data.totalPrice }}</td>
               <td>{{ data.visitCauseName }}</td>
               <td>
                 <span v-if="data.idVisit != undefined">{{
@@ -205,6 +211,22 @@
                   v-if="data.idVisit != undefined"
                   @click="setMarker(data)"
                   >الخريطة</v-btn
+                >
+                <v-btn
+                  small
+                  color="success"
+                  :to="'/invoice/' + data.idInvoice"
+                  target="_BLANK"
+                  v-if="data.idInvoice != undefined"
+                  >مشاهدة</v-btn
+                >
+                <v-btn
+                  small
+                  color="error"
+                  :to="'/damagedItems/' + data.idDamagedItemsInvoice"
+                  target="_BLANK"
+                  v-if="data.idDamagedItemsInvoice != undefined"
+                  >مشاهدة</v-btn
                 >
               </td>
             </tr>

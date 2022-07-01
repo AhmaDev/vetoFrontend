@@ -189,11 +189,14 @@
           @update="forceRerender++"
           :fillColor="checkIfSelected(marker)"
           @click="selectCustomer(marker)"
+          @contextmenu="openCustomer(marker.idCustomer)"
           :lat-lng="getCustomerLocation(marker.location)"
         >
           <l-tooltip
-            >{{ marker.storeName }} - {{ marker.idCustomer }}</l-tooltip
-          >
+            >{{ marker.storeName }} - {{ marker.idCustomer }}
+            <br />
+            اضفط زر الفأرة الايمن لمشاهدة معلومات الزبون
+          </l-tooltip>
         </l-circle-marker>
       </template>
     </l-map>
@@ -481,6 +484,13 @@ export default {
       this.$socket.track.emit("addNewTrack", {
         userId: "s",
       });
+    },
+    openCustomer(id) {
+      let routeData = this.$router.resolve({
+        path: "/customer/" + id,
+        query: { data: "someData" },
+      });
+      window.open(routeData.href, "_blank");
     },
   },
   created: function () {
