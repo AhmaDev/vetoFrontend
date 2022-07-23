@@ -73,7 +73,7 @@
               v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
               :key="'GIFT_' + gift.itemId"
             >
-              <td>
+              <td colspan="2">
                 {{ getItemName(gift.itemId) }}
               </td>
               <td></td>

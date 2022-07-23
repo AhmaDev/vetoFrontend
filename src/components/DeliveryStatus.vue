@@ -73,7 +73,7 @@
               v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
               :key="'GIFT_' + gift.itemId"
             >
-              <td>
+              <td colspan="2">
                 {{ getItemName(gift.itemId) }}
               </td>
               <td></td>
@@ -94,6 +94,36 @@
               <td></td>
             </tr>
           </template>
+        </template>
+        <template v-for="gift in giftItems">
+          <tr
+            :style="0 == 0 ? 'background-color: red; color: white' : ''"
+            v-if="
+              deliveryStatus.invoicesData.filter((e) => e.itemId == gift.itemId)
+                .length == 0
+            "
+            :key="'GIFT_' + gift.itemId"
+          >
+            <td colspan="2">
+              {{ getItemName(gift.itemId) }}
+            </td>
+            <td></td>
+            <td></td>
+            <td>
+              {{ gift.count }}
+            </td>
+            <td v-if="gift.discountTypeId > 0">
+              {{ getDiscountName(gift.discountTypeId) }}
+            </td>
+            <td v-else>
+              {{ gift.total / gift.count }}
+            </td>
+            <td>
+              {{ gift.total.toLocaleString() }}
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
         </template>
       </table>
     </v-sheet>
@@ -257,6 +287,7 @@ export default {
       this.$http
         .get(this.$baseUrl + "deliveryStatus/" + this.deliveryStatusId)
         .then((res) => {
+          console.log(res.data.invoicesData);
           this.deliveryStatus = res.data;
           this.giftItems = this.deliveryStatus.invoicesData.filter(
             (x) => x.discountTypeId > 0
@@ -298,9 +329,7 @@ export default {
     },
     sumQty2() {
       let qty = 0;
-      let items = this.deliveryStatus.invoicesData.filter(
-        (d) => d.discountTypeId > 0
-      );
+      let items = this.giftItems.filter((d) => d.discountTypeId > 0);
       for (let i = 0; i < items.length; i++) {
         qty = qty + items[i].count;
       }
