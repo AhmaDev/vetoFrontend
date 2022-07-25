@@ -13,7 +13,7 @@
       <v-btn
         @click="emptyItemModal = true"
         color="error"
-        v-if="userInfo.roleId == 1"
+        v-if="this.checkPermission('store_empty')"
       >
         تصفير المادة ليوم معين
       </v-btn>
@@ -82,6 +82,7 @@ export default {
     tableData: [],
     allTableData: [],
     selectedType: "all",
+    permissions: [],
     selectedDate: null,
     header: [
       { text: "نوع الحركة", value: "type" },
@@ -99,6 +100,13 @@ export default {
     this.fetch();
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
       let loading = this.$loading.show();
       this.$http

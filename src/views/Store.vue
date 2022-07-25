@@ -13,7 +13,7 @@
       <center class="printHeader"><h2>اعداد المخزن</h2></center>
 
       <v-row>
-        <v-col>
+        <v-col v-if="this.checkPermission('store_search_supervisor')">
           <v-autocomplete
             :items="supervisors"
             item-text="username"
@@ -26,7 +26,7 @@
             @change="setDelegates()"
           ></v-autocomplete>
         </v-col>
-        <v-col>
+        <v-col v-if="this.checkPermission('store_search_delegate')">
           <v-autocomplete
             :items="delegates"
             item-text="username"
@@ -131,6 +131,7 @@ export default {
     store: [],
     lastStore: [],
     delegates: [],
+    permissions: [],
     supervisors: [],
     selectedSuperVisor: null,
     selectedDelegate: [],

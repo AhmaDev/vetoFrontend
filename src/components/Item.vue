@@ -214,39 +214,43 @@
             id="imagePath"
           />
         </v-col>
-        <v-btn
-          v-if="offer == null"
-          color="primary"
-          @click="addNewOfferDialog = true"
-        >
-          <v-dialog v-model="addNewOfferDialog" width="400">
-            <v-card>
-              <v-card-text>
-                <br /><br />
-                <v-text-field
-                  type="number"
-                  outlined
-                  label="كمية العرض"
-                  v-model="offerQty"
-                ></v-text-field>
-                <v-text-field
-                  type="number"
-                  outlined
-                  label="كمية البيع"
-                  v-model="offerCondition"
-                ></v-text-field>
-                <v-text-field
-                  type="number"
-                  outlined
-                  label="الحد الادنى"
-                  v-model="offerMinimum"
-                ></v-text-field>
-                <v-btn block color="primary" @click="addOffer()"> اضافة </v-btn>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-          اضافة عرض تلقائي
-        </v-btn>
+        <template v-if="this.checkPermission('item_add_offer')">
+          <v-btn
+            v-if="offer == null"
+            color="primary"
+            @click="addNewOfferDialog = true"
+          >
+            <v-dialog v-model="addNewOfferDialog" width="400">
+              <v-card>
+                <v-card-text>
+                  <br /><br />
+                  <v-text-field
+                    type="number"
+                    outlined
+                    label="كمية العرض"
+                    v-model="offerQty"
+                  ></v-text-field>
+                  <v-text-field
+                    type="number"
+                    outlined
+                    label="كمية البيع"
+                    v-model="offerCondition"
+                  ></v-text-field>
+                  <v-text-field
+                    type="number"
+                    outlined
+                    label="الحد الادنى"
+                    v-model="offerMinimum"
+                  ></v-text-field>
+                  <v-btn block color="primary" @click="addOffer()">
+                    اضافة
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+            اضافة عرض تلقائي
+          </v-btn>
+        </template>
         <v-card v-if="offer != null">
           <v-card-text>
             <span>
@@ -268,7 +272,10 @@
             >
             <br />
             <br />
-            <v-btn color="error" @click="deleteOffer()"
+            <v-btn
+              v-if="this.checkPermission('item_add_offer')"
+              color="error"
+              @click="deleteOffer()"
               >حذف العرض التلقائي</v-btn
             >
           </v-card-text>

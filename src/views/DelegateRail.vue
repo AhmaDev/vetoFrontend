@@ -106,7 +106,7 @@
         </v-col>
         <v-col>
           <h3>
-            لم تتم زيارتهم :
+            زبائن ليس لديهم فواتير :
             {{
               customers.filter((x) => x.visitCount == 0).length -
               customers.filter((x) => x.totalInvoiceCount > 0).length

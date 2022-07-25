@@ -180,7 +180,7 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn icon :to="'/invoice/' + item.idInvoice">
+          <v-btn target="_BLANK" icon :to="'/invoice/' + item.idInvoice">
             <v-icon :title="item.idInvoice">mdi-magnify</v-icon>
           </v-btn>
           <v-btn icon :to="'/print/invoice/' + item.idInvoice">

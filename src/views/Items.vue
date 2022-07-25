@@ -54,6 +54,7 @@
               <v-btn
                 :disabled="!checkPermission('items_edit')"
                 icon
+                target="_BLANK"
                 :to="'/item/' + item.idItem"
               >
                 <v-icon :title="item.itemName">mdi-magnify</v-icon>

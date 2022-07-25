@@ -47,7 +47,11 @@
             بحث
           </v-btn>
         </v-col>
-        <v-col class="no-print" cols="3">
+        <v-col
+          v-if="this.checkPermission('map_view_invoice')"
+          class="no-print"
+          cols="3"
+        >
           <v-checkbox
             @change="checkView()"
             v-model="show.invoices"
@@ -68,7 +72,11 @@
             label="عرض الراجع"
           ></v-checkbox>
         </v-col>
-        <v-col class="no-print" cols="3">
+        <v-col
+          v-if="this.checkPermission('map_view_damaged')"
+          class="no-print"
+          cols="3"
+        >
           <v-checkbox
             @change="checkView()"
             v-model="show.damaged"
@@ -77,7 +85,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col>
+        <v-col v-if="this.checkPermission('map_view_invoice')">
           <h5>
             المبيعات :
             {{
@@ -93,7 +101,7 @@
             }}
           </h5>
         </v-col>
-        <v-col>
+        <v-col v-if="this.checkPermission('map_view_damaged')">
           <h5>
             التالف :
             {{ damaged.reduce((a, b) => a + b.total, 0).toLocaleString() }}

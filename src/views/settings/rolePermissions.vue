@@ -55,16 +55,16 @@ export default {
     forceRerender: 0,
     permissionGroup: [
       { groupName: "المخزن", permissions: [] },
-      { groupName: "الفواتير", permissions: [1, 2, 3, 4] },
-      { groupName: "كشف المسار", permissions: [30] },
+      { groupName: "الفواتير", permissions: [1, 2, 3, 4, 15] },
+      { groupName: "كشف المسار", permissions: [30, 37, 38] },
       { groupName: "حركة المندوب", permissions: [34] },
       {
         groupName: "المواد",
-        permissions: [7, 8, 9, 10],
+        permissions: [7, 8, 9, 10, 39],
       },
       { groupName: "التوزيع والمالية", permissions: [25, 26] },
       { groupName: "التوزيع للتالف", permissions: [27, 28] },
-      { groupName: "اعداد المخزن", permissions: [29] },
+      { groupName: "اعداد المخزن", permissions: [29, 40, 36, 42, 43, 44] },
       {
         groupName: "المواد التالفة",
         permissions: [16, 17, 18, 19],
@@ -75,7 +75,7 @@ export default {
       { groupName: "الحسابات", permissions: [12, 23] },
       { groupName: "التقرير العام", permissions: [31] },
       { groupName: "كشف حساب زبون", permissions: [35] },
-      { groupName: "الاعدادات", permissions: [15, 22, 32, 33] },
+      { groupName: "الاعدادات", permissions: [22, 32, 33] },
 
       // {
       //   groupName: "صلاحيات الكشوفات",
