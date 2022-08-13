@@ -114,6 +114,18 @@
               label="مشاهدة مبيعات المواد اليومية"
               v-model="userdata.canViewDailyItems"
             ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="امكانية استرجاع التالف اكثر من 50%"
+              v-model="userdata.canRestoreAllItems"
+            ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="امكانية انشاء زبون جديد"
+              v-model="userdata.canCreateCustomer"
+            ></v-checkbox>
           </div>
           <div v-if="user.roleId == 3">
             <v-checkbox
@@ -145,6 +157,8 @@ export default {
       canViewMonthlyRestores: 0,
       canViewMonthlyDamaged: 0,
       canViewDailyItems: 0,
+      canRestoreAllItems: 0,
+      canCreateCustomer: 0,
     },
     user: null,
     sellPrices: [],
@@ -224,6 +238,8 @@ export default {
           canViewMonthlyRestores: this.userdata.canViewMonthlyRestores,
           canViewMonthlyDamaged: this.userdata.canViewMonthlyDamaged,
           canViewDailyItems: this.userdata.canViewDailyItems,
+          canRestoreAllItems: this.userdata.canRestoreAllItems,
+          canCreateCustomer: this.userdata.canCreateCustomer,
         })
         .then(() => {
           this.$toast.open({

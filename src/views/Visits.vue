@@ -498,6 +498,13 @@ export default {
             values[4].status != "rejected" ? values[4].value.data : [];
           this.allCustomers =
             values[4].status != "rejected" ? values[4].value.data : [];
+
+          if (!this.checkPermission("map_view_invoice")) {
+            this.invoices = [];
+          }
+          if (!this.checkPermission("map_view_damaged")) {
+            this.damaged = [];
+          }
           this.allData = [
             ...this.invoices,
             ...this.restores,
