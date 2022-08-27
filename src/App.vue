@@ -1,5 +1,8 @@
 <template>
-  <v-app :style="this.$vuetify.theme.dark ? '' : 'background-color: #EEE'">
+  <v-app
+    :class="checkPermission('disable_selection') ? 'disableSelection' : ''"
+    :style="this.$vuetify.theme.dark ? '' : 'background-color: #EEE'"
+  >
     <component :is="`style`">
       <!-- .selectedNavBarItem { border-right: 6px {{$background}} solid; transition: 0.3s; } -->
       .selectedNavBarItem .las { background-color: {{ this.$background }};
@@ -10,6 +13,7 @@
       .v-list-group__items>.v-list-item>.v-list-item__content {border-right: 2px
       {{ this.$background }} solid !important;}
     </component>
+
     <v-navigation-drawer
       class="elevation-10"
       permanent
@@ -159,6 +163,7 @@ export default {
     },
   },
   data: () => ({
+    permissions: [],
     appData: [],
     items: [
       { title: "الرئيسية", icon: "las la-home", route: "/home", child: null },
@@ -260,6 +265,13 @@ export default {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       localStorage.setItem("darkMode", this.$vuetify.theme.dark);
     },
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
   },
   computed: {
     isLoggedIn() {
@@ -270,6 +282,11 @@ export default {
     },
   },
   created: function () {
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+    });
+
     this.$http.get(this.$baseUrl + "settings").then((res) => {
       this.appData = res.data;
     });

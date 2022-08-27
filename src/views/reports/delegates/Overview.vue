@@ -108,6 +108,26 @@
           >
         </template>
 
+        <template v-slot:[`item.invoicesCount`]="{ item }">
+          <router-link
+            target="_BLANK"
+            :to="
+              'store?delegate=' +
+              item.idUser +
+              '&dateFrom=' +
+              startDate +
+              '&dateTo=' +
+              endDate
+            "
+            >{{ item.invoicesCount.toLocaleString() }}</router-link
+          >
+        </template>
+        <template v-slot:[`item.username`]="{ item }">
+          <router-link target="_BLANK" :to="'user/' + item.idUser">{{
+            item.username
+          }}</router-link>
+        </template>
+
         <template v-slot:footer>
           <div class="pa-10 footerGrid" style="font-size: 14px !important">
             <v-row>

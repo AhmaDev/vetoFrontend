@@ -56,7 +56,7 @@ export default {
     permissionGroup: [
       { groupName: "المخزن", permissions: [] },
       { groupName: "الفواتير", permissions: [1, 2, 3, 4, 15] },
-      { groupName: "كشف المسار", permissions: [30, 37, 38] },
+      { groupName: "كشف المسار", permissions: [30, 37, 38, 46] },
       { groupName: "حركة المندوب", permissions: [34] },
       {
         groupName: "المواد",
@@ -75,7 +75,7 @@ export default {
       { groupName: "الحسابات", permissions: [12, 23] },
       { groupName: "التقرير العام", permissions: [31] },
       { groupName: "كشف حساب زبون", permissions: [35] },
-      { groupName: "الاعدادات", permissions: [22, 32, 33] },
+      { groupName: "الاعدادات", permissions: [22, 32, 33, 45] },
 
       // {
       //   groupName: "صلاحيات الكشوفات",

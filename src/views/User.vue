@@ -16,6 +16,14 @@
             <v-col cols="12">
               <v-text-field
                 outlined
+                label="الاسم الكامل"
+                v-model="userdata.fullname"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                outlined
                 label="العنوان"
                 v-model="userdata.address"
                 hide-details
@@ -147,6 +155,7 @@ export default {
   data: () => ({
     userId: 0,
     userdata: {
+      fullname: null,
       address: null,
       phoneNumber: null,
       secondPhoneNumber: null,
@@ -229,6 +238,7 @@ export default {
       let loading = this.$loading.show();
       this.$http
         .put(this.$baseUrl + "users/edit/userinfo/" + this.userId, {
+          fullname: this.userdata.fullname,
           address: this.userdata.address,
           phoneNumber: this.userdata.phoneNumber,
           secondPhoneNumber: this.userdata.secondPhoneNumber,

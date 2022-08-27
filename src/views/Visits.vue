@@ -143,7 +143,8 @@
             <th>اسم المحل</th>
             <th>المبلغ</th>
             <th>سبب الزيارة</th>
-            <th>الوقت</th>
+            <th>وقت الفاتورة</th>
+            <th v-if="checkPermission('see_init_date')">وقت البدء</th>
             <th>الاجراءات</th>
           </tr>
         </thead>
@@ -210,6 +211,14 @@
                 }}</span>
                 <span v-if="data.idVisit == undefined">{{
                   data.creationFixedTime
+                }}</span>
+              </td>
+              <td v-if="checkPermission('see_init_date')">
+                <span v-if="data.idVisit != undefined">{{
+                  data.creationFixedDate.substring(11)
+                }}</span>
+                <span v-if="data.idVisit == undefined">{{
+                  data.initialDate
                 }}</span>
               </td>
               <td>

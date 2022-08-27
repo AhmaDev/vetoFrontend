@@ -67,7 +67,9 @@
       <v-data-table
         :items-per-page="500"
         :items="store"
-        :headers="selectedDelegate.length == 0 ? tableHeader : tableHeader2"
+        :headers="
+          checkPermission('store_view_incomes') ? tableHeader : tableHeader2
+        "
         multi-sort
       >
         <template v-slot:[`item.imagePath`]="{ item }">
@@ -197,6 +199,17 @@ export default {
     });
     this.$http.get(this.$baseUrl + "users").then((res) => {
       this.delegates = res.data;
+
+      setTimeout(() => {
+        if (this.$route.query.delegate) {
+          this.selectedDelegate.push(parseInt(this.$route.query.delegate));
+          this.search.from = this.$route.query.dateFrom;
+          this.search.to = this.$route.query.dateTo;
+          setTimeout(() => {
+            this.fetchSearch();
+          }, 1000);
+        }
+      }, 1000);
     });
   },
   methods: {
