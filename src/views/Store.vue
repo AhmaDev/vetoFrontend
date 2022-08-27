@@ -68,7 +68,9 @@
         :items-per-page="500"
         :items="store"
         :headers="
-          checkPermission('store_view_incomes') ? tableHeader : tableHeader2
+          checkPermission('store_view_incomes') && selectedDelegate.length == 0
+            ? tableHeader
+            : tableHeader2
         "
         multi-sort
       >
