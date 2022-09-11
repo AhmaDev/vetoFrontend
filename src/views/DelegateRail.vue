@@ -95,7 +95,7 @@
         <v-col>
           <h3>
             الزبائن :
-            {{ customers.length }}
+            {{ realCustomers.length }}
           </h3>
         </v-col>
         <v-col>
@@ -108,7 +108,7 @@
           <h3>
             زبائن ليس لديهم فواتير :
             {{
-              customers.length -
+              realCustomers.length -
               customers.filter((x) => x.totalInvoiceCount > 0).length
             }}
           </h3>
@@ -191,6 +191,8 @@ export default {
     from: "",
     to: "",
     customers: [],
+    realCustomers: [],
+    filteredRealCustomers: [],
     allCustomers: [],
     selectedDay: 0,
     tableHeaders: [
@@ -296,6 +298,12 @@ export default {
         return;
       }
       let loading = this.$loading.show();
+      this.$http
+        .get(this.$baseUrl + "customer/user/" + this.selectedDelegate)
+        .then((res) => {
+          this.filteredRealCustomers = res.data;
+          this.realCustomers = res.data;
+        });
       this.$http
         .get(
           this.$baseUrl +
