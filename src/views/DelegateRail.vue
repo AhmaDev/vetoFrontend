@@ -325,8 +325,12 @@ export default {
       day = this.capitalizeFirstLetter(day);
       if (day == "All") {
         this.customers = this.allCustomers;
+        this.realCustomers = this.filteredRealCustomers;
       } else {
         this.customers = this.allCustomers.filter(
+          (x) => x.visitDay == customerDay || x.secondVisitDay == customerDay
+        );
+        this.realCustomers = this.filteredRealCustomers.filter(
           (x) => x.visitDay == customerDay || x.secondVisitDay == customerDay
         );
       }
