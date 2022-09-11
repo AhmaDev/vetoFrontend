@@ -134,6 +134,18 @@
               label="امكانية انشاء زبون جديد"
               v-model="userdata.canCreateCustomer"
             ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة الزبائن الدائميين والغير دائميين"
+              v-model="userdata.canViewContinueusCustomers"
+            ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة حركة المندوب"
+              v-model="userdata.canViewDelegateRail"
+            ></v-checkbox>
           </div>
           <div v-if="user.roleId == 3">
             <v-checkbox
@@ -168,6 +180,8 @@ export default {
       canViewDailyItems: 0,
       canRestoreAllItems: 0,
       canCreateCustomer: 0,
+      canViewContinueusCustomers: 0,
+      canViewDelegateRail: 0,
     },
     user: null,
     sellPrices: [],
