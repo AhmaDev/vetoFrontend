@@ -264,6 +264,8 @@ export default {
           canViewDailyItems: this.userdata.canViewDailyItems,
           canRestoreAllItems: this.userdata.canRestoreAllItems,
           canCreateCustomer: this.userdata.canCreateCustomer,
+          canViewContinueusCustomers: this.userdata.canViewContinueusCustomers,
+          canViewDelegateRail: this.userdata.canViewDelegateRail,
         })
         .then(() => {
           this.$toast.open({
