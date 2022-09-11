@@ -154,6 +154,12 @@
               label="مشاهدة التفاصيل المالية"
               v-model="userdata.canViewMonthlySales"
             ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              label="مشاهدة الزبائن الدائميين والغير دائميين"
+              v-model="userdata.canViewContinueusCustomers"
+            ></v-checkbox>
           </div>
         </v-col>
       </v-row>
