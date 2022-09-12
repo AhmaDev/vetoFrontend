@@ -73,10 +73,14 @@ export default {
       { groupName: "صلاحيات الزبائن", permissions: [5, 6] },
       { groupName: "الخريطة", permissions: [11, 20, 21] },
       { groupName: "الحسابات", permissions: [12, 23] },
+
       { groupName: "التقرير العام", permissions: [31] },
       { groupName: "كشف حساب زبون", permissions: [35] },
       { groupName: "الاعدادات", permissions: [22, 32, 33, 45] },
-
+      {
+        groupName: "صلاحيات التطبيق",
+        permissions: [47, 48, 49, 50, 51, 52, 53, 54, 55],
+      },
       // {
       //   groupName: "صلاحيات الكشوفات",
       //   permissions: [25, 26, 27, 28, 34, 36],

@@ -101,6 +101,7 @@
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewMonthlySales')"
               label="مشاهدة المبيعات الشهرية"
               v-model="userdata.canViewMonthlySales"
             ></v-checkbox>
@@ -108,41 +109,48 @@
               :true-value="1"
               :false-value="0"
               label="مشاهدة الراجع الشهري"
+              v-if="checkPermission('canViewMonthlyRestores')"
               v-model="userdata.canViewMonthlyRestores"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
               label="مشاهدة التالف الشهري"
+              v-if="checkPermission('canViewMonthlyDamaged')"
               v-model="userdata.canViewMonthlyDamaged"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewDailyItems')"
               label="مشاهدة مبيعات المواد اليومية"
               v-model="userdata.canViewDailyItems"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canRestoreAllItems')"
               label="امكانية استرجاع التالف اكثر من 50%"
               v-model="userdata.canRestoreAllItems"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canCreateCustomer')"
               label="امكانية انشاء زبون جديد"
               v-model="userdata.canCreateCustomer"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewContinueusCustomers')"
               label="مشاهدة الزبائن الدائميين والغير دائميين"
               v-model="userdata.canViewContinueusCustomers"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewDelegateRail')"
               label="مشاهدة حركة المندوب"
               v-model="userdata.canViewDelegateRail"
             ></v-checkbox>
@@ -151,12 +159,14 @@
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewMonthlySales2')"
               label="مشاهدة التفاصيل المالية"
               v-model="userdata.canViewMonthlySales"
             ></v-checkbox>
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewContinueusCustomers')"
               label="مشاهدة الزبائن الدائميين والغير دائميين"
               v-model="userdata.canViewContinueusCustomers"
             ></v-checkbox>
@@ -173,6 +183,7 @@ export default {
   data: () => ({
     userId: 0,
     userdata: {
+      permissions: [],
       fullname: null,
       address: null,
       phoneNumber: null,
@@ -193,10 +204,31 @@ export default {
     sellPrices: [],
   }),
   created: function () {
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("visits")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     this.userId = this.$route.params.id;
     this.fetch();
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
       let loading = this.$loading.show();
       this.$http.get(this.$baseUrl + "users/" + this.userId).then((res) => {

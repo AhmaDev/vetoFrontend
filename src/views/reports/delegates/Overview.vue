@@ -63,12 +63,28 @@
           ></v-autocomplete>
         </v-col>
         <v-col>
+          <v-autocomplete
+            :items="sellPrices"
+            item-text="sellPriceName"
+            item-value="idSellPrice"
+            outlined
+            dense
+            hide-details
+            label="ترتيب حسب سعر البيع"
+            v-model="selectedSellPrice"
+          ></v-autocomplete>
+        </v-col>
+        <v-col>
           <v-btn @click="search()" color="primary" block dark> بحث </v-btn>
         </v-col>
       </v-row>
       <br />
       <v-data-table
-        :items="report.data"
+        :items="
+          selectedSellPrice == 0
+            ? report.data
+            : report.data.filter((e) => e.sellPriceId == selectedSellPrice)
+        "
         :items-per-page="2000"
         hide-default-footer
         :headers="report.header"
@@ -158,9 +174,11 @@ export default {
     supervisors: [],
     delegates: [],
     startDate: "",
+    sellPrices: [],
     endDate: "",
     selectedSuperVisor: 0,
     selectedDelegate: 0,
+    selectedSellPrice: 0,
     report: {
       data: [],
       header: [
@@ -221,6 +239,9 @@ export default {
 
       this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
         this.supervisors = res.data;
+      });
+      this.$http.get(this.$baseUrl + "sellPrice").then((res) => {
+        this.sellPrices = res.data;
       });
       this.$http.get(this.$baseUrl + "users").then((res) => {
         this.delegates = res.data;
