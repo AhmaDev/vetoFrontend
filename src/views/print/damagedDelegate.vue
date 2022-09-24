@@ -12,7 +12,7 @@
         كشف مبالغ التالف للمندوب :
         <b>{{ delegates.filter((d) => d.idUser == delegate)[0].username }}</b>
       </center>
-      <br>
+      <br />
       <center>
         بتاريخ : <b>{{ $route.params.date }}</b>
       </center>
@@ -91,6 +91,7 @@ export default {
       )
       .then((res) => {
         this.invoices = res.data;
+        console.log("INVOICES", this.invoices);
         if (this.$route.query.print == 1) {
           setTimeout(() => {
             this.$print(this.$refs.print);

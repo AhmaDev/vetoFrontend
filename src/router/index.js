@@ -181,6 +181,11 @@ const routes = [
     name: "Track",
     component: () => import("../views/Track.vue"),
   },
+  {
+    path: "/itemSales",
+    name: "ItemSales",
+    component: () => import("../views/ItemSales.vue"),
+  },
 ];
 
 const router = new VueRouter({

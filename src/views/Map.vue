@@ -5,6 +5,28 @@
       <v-spacer></v-spacer>
       <template v-if="this.checkPermission('map_edit')">
         <v-btn
+          @click="customers = allCustomers.filter((e) => e.totalInvoices > 0)"
+          v-if="editCustomers"
+          color="primary"
+        >
+          المعاميل
+        </v-btn>
+        <v-btn
+          @click="customers = allCustomers.filter((e) => e.totalInvoices == 0)"
+          v-if="editCustomers"
+          color="primary"
+        >
+          غير المعاميل
+        </v-btn>
+        <v-btn
+          @click="customers = allCustomers"
+          v-if="editCustomers"
+          color="primary"
+        >
+          الكل
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
           @click="editCustomers = true"
           v-if="!editCustomers"
           color="primary"
@@ -279,6 +301,7 @@ export default {
     permissions: [],
     editCustomers: false,
     customers: [],
+    allCustomers: [],
     selectedCustomers: [],
     forceRerender: 0,
     users: [],
@@ -367,14 +390,15 @@ export default {
       let loading = this.$loading.show();
       let query = "";
       if (this.search.selectedDay == "all") {
-        query = `user=${this.search.selectedUser}`;
+        query = `user=${this.search.selectedUser}&totalInvoices=1`;
       } else {
-        query = `user=${this.search.selectedUser}&visitDay=${this.search.selectedDay}`;
+        query = `user=${this.search.selectedUser}&visitDay=${this.search.selectedDay}&totalInvoices=1`;
       }
       this.$http
         .get(this.$baseUrl + `customer/filter/query?${query}`)
         .then((res) => {
           this.customers = res.data;
+          this.allCustomers = res.data;
         })
         .finally(() => loading.hide());
     },

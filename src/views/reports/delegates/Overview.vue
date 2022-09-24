@@ -123,6 +123,15 @@
             >{{ item.totalDamaged.toLocaleString() }}</router-link
           >
         </template>
+        <template v-slot:[`item.remain`]="{ item }">
+          {{
+            (
+              item.totalCustomers -
+              item.invoicesCount -
+              item.totalVisits
+            ).toLocaleString()
+          }}
+        </template>
 
         <template v-slot:[`item.invoicesCount`]="{ item }">
           <router-link
@@ -143,7 +152,13 @@
             item.username
           }}</router-link>
         </template>
-
+        <template v-slot:[`item.totalVisits`]="{ item }">
+          <router-link
+            target="_BLANK"
+            :to="'visits?delegate=' + item.idUser + '&date=' + startDate"
+            >{{ item.totalVisits.toLocaleString() }}</router-link
+          >
+        </template>
         <template v-slot:footer>
           <div class="pa-10 footerGrid" style="font-size: 14px !important">
             <v-row>
@@ -187,6 +202,7 @@ export default {
         { text: "المنطقة", value: "address" },
         { text: "المشرف", value: "superVisorName" },
         { text: "عدد الزبائن", value: "totalCustomers" },
+        { text: "عدد المعاميل", value: "activeCustomers" },
         { text: "فواتير البيع", value: "invoicesCount" },
         { text: "فواتير الراجع", value: "restoresCount" },
         { text: "مبيعات اجمالية", value: "totalSelling" },
@@ -195,6 +211,8 @@ export default {
         { text: "مبلغ العروض", value: "totalOffers" },
         { text: "مبلغ الهدايا", value: "totalGifts" },
         { text: "مبلغ التالف", value: "totalDamaged" },
+        { text: "الزيارات", value: "totalVisits" },
+        { text: "المتبقي", value: "remain" },
       ],
     },
   }),
@@ -216,8 +234,8 @@ export default {
     this.getCurrentDate().then((value) => {
       this.startDate = value;
       this.endDate = value;
+      this.fetch();
     });
-    this.fetch();
   },
   methods: {
     checkPermission(permissionKey) {
@@ -230,7 +248,14 @@ export default {
     fetch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "reports/overview")
+        .get(
+          this.$baseUrl +
+            "reports/overview?days=" +
+            JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
+              1,
+              -1
+            )
+        )
         .then((res) => {
           this.report.data = res.data;
           console.log(1);
@@ -267,7 +292,16 @@ export default {
       }
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "reports/overview?" + q)
+        .get(
+          this.$baseUrl +
+            "reports/overview?" +
+            q +
+            "&days=" +
+            JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
+              1,
+              -1
+            )
+        )
         .then((res) => {
           this.report.data = res.data;
           console.log(this.report.data);
@@ -294,6 +328,28 @@ export default {
           this.selectedDelegate.push(this.selectedSuperVisor);
         })
         .finally(() => loading.hide());
+    },
+    getDays(from, to) {
+      var d = new Date(from),
+        a = [],
+        y = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+      to = new Date(to);
+      while (d < to) {
+        a.push(y[d.getDay()]);
+        d.setDate(d.getDate() + 1);
+      }
+      if (d.getDay() === to.getDay())
+        // include last day
+        a.push(y[d.getDay()]);
+      return a;
     },
   },
 };

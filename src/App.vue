@@ -191,6 +191,7 @@ export default {
             child: null,
           },
           { title: "المواد", icon: "las la-box", route: "/items" },
+          { title: "مبيعات المواد", icon: "las la-box", route: "/itemSales" },
           {
             title: " التوزيع والمالية",
             icon: "las la-route",
