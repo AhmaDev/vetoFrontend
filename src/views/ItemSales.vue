@@ -191,6 +191,7 @@ export default {
   name: "ItemSales",
   data: () => ({
     items: [],
+    permissions: [],
     selectedGroupItem: null,
     selectedUser: null,
     itemGroups: [],
@@ -215,7 +216,28 @@ export default {
     this.fetch();
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
+      // LOAD PERMS START
+      this.auth().then((res) => {
+        this.permissions = res.permissions;
+        // CHECK IF CAN SEE THIS PAGE
+        if (!this.checkPermission("itemsSales")) {
+          this.$toast.open({
+            type: "error",
+            message: "غير مصرح لك بمشاهدة هذه الصفحة",
+            duration: 3000,
+          });
+          this.$router.go(-1);
+        }
+      });
+      // LOAD PERMS END
       let loading = this.$loading.show();
       this.$http
         .get(this.$baseUrl + "users")

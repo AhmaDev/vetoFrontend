@@ -310,8 +310,14 @@ export default {
     },
     sum(columnName) {
       let sum = 0;
-      for (let i = 0; i < this.report.data.length; i++) {
-        sum = sum + this.report.data[i][columnName];
+      let table =
+        this.selectedSellPrice == 0
+          ? this.report.data
+          : this.report.data.filter(
+              (e) => e.sellPriceId == this.selectedSellPrice
+            );
+      for (let i = 0; i < table.length; i++) {
+        sum = sum + table[i][columnName];
       }
       return sum.toLocaleString();
     },

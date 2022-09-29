@@ -60,7 +60,7 @@ export default {
       { groupName: "حركة المندوب", permissions: [34] },
       {
         groupName: "المواد",
-        permissions: [7, 8, 9, 10, 39],
+        permissions: [7, 8, 9, 10, 39, 56],
       },
       { groupName: "التوزيع والمالية", permissions: [25, 26] },
       { groupName: "التوزيع للتالف", permissions: [27, 28] },

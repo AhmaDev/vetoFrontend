@@ -194,6 +194,9 @@
                 >
                   خارج المسار
                 </v-chip>
+                <span v-if="data.visitDay != dayName">
+                  {{ getDayName(data.visitDay) }}
+                </span>
               </td>
               <td>{{ data.customerName }}</td>
               <td>{{ data.storeName }}</td>
@@ -544,6 +547,34 @@ export default {
       this.allData.sort(function (a, b) {
         return new Date(a.createdAt) - new Date(b.createdAt);
       });
+    },
+    getDayName(value) {
+      switch (value) {
+        case "sunday": {
+          return "الاحد";
+        }
+        case "monday": {
+          return "الاثنين";
+        }
+        case "tuesday": {
+          return "الثلاثاء";
+        }
+        case "wednesday": {
+          return "الاربعاء";
+        }
+        case "thursday": {
+          return "الخميس";
+        }
+        case "friday": {
+          return "الجمعة";
+        }
+        case "saturday": {
+          return "السبت";
+        }
+        default: {
+          return "لا يوجد";
+        }
+      }
     },
     filterData(day) {
       let customerDay = day;

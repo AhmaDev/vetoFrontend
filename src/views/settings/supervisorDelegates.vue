@@ -30,6 +30,7 @@
               item-value="idUser"
               v-model="selectedDelegate"
               outlined
+              multiple
               dense
               label="اختيار مندوب"
             ></v-autocomplete>
@@ -58,7 +59,9 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="deleteDelegate(item.idSupervisorDelegates)">
+                <v-list-item
+                  @click="deleteDelegate(item.idSupervisorDelegates)"
+                >
                   <v-list-item-title
                     >اضغط هنا لتأكيد حذف المندوب من قائمة
                     المشرف</v-list-item-title
@@ -81,7 +84,7 @@ export default {
     supervisors: [],
     supervisorDelegates: [],
     selectedSuperVisor: 0,
-    selectedDelegate: 0,
+    selectedDelegate: [],
     tableHeaders: [
       {
         text: "اسم المندوب",
@@ -117,7 +120,7 @@ export default {
         .finally(() => loading.hide());
     },
     addDeleteSuperVisor() {
-      if (this.selectedDelegate < 1) {
+      if (this.selectedDelegate.length == 0) {
         this.$toast.open({
           type: "error",
           message: "يرجى اختيار مندوب",
@@ -126,11 +129,13 @@ export default {
         return;
       }
       let loading = this.$loading.show();
+      let values = this.selectedDelegate.map((e) => [
+        this.selectedSuperVisor,
+        e,
+      ]);
+
       this.$http
-        .post(this.$baseUrl + "supervisorDelegates/new", {
-          supervisorId: this.selectedSuperVisor,
-          delegateId: this.selectedDelegate,
-        })
+        .post(this.$baseUrl + "supervisorDelegates/multiple", values)
         .then(() => {
           this.setSelectedSuperVisor(this.selectedSuperVisor);
           this.selectedDelegate = 0;

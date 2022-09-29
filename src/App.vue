@@ -1,6 +1,6 @@
 <template>
   <v-app
-    :class="checkPermission('disable_selection') ? 'disableSelection' : ''"
+    :class="!checkPermission('disable_selection') ? 'disableSelection' : ''"
     :style="this.$vuetify.theme.dark ? '' : 'background-color: #EEE'"
   >
     <component :is="`style`">
