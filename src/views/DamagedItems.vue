@@ -161,6 +161,13 @@ export default {
       this.search.dateTo = value;
     });
 
+    this.$http.get(this.$baseUrl + "users").then((res) => {
+      this.users.delegates = res.data;
+    });
+    this.$http.get(this.$baseUrl + "customer").then((res) => {
+      this.customers = res.data;
+    });
+
     setTimeout(() => {
       if (this.$route.query.delegate) {
         this.search.delegateId = parseInt(this.$route.query.delegate);
@@ -221,12 +228,6 @@ export default {
           this.invoices.data = res.data;
         })
         .finally(() => loading.hide());
-      this.$http.get(this.$baseUrl + "users").then((res) => {
-        this.users.delegates = res.data;
-      });
-      this.$http.get(this.$baseUrl + "customer").then((res) => {
-        this.customers = res.data;
-      });
     },
   },
 };
