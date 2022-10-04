@@ -141,6 +141,20 @@
           {{ item.customerName }} -
           <b class="grey--text">{{ item.customerId }}</b>
         </template>
+        <template v-slot:[`item.duplicate`]="{ item }">
+          <v-chip
+            small
+            v-if="
+              invoices.filter(
+                (e) =>
+                  e.customerId == item.customerId &&
+                  e.totalPrice == item.totalPrice
+              ).length > 1
+            "
+            color="error"
+            >مكرر</v-chip
+          >
+        </template>
 
         <template v-slot:[`item.creationFixedDate`]="{ item }">
           {{ item.creationFixedDate }}
@@ -320,6 +334,7 @@ export default {
       { text: "اسم الزبون", value: "customerName" },
       { text: "اسم المحل", value: "storeName" },
       { text: "نوع الفاتورة", value: "invoiceTypeName", align: "center" },
+      { text: "", value: "duplicate", align: "center" },
       { text: "مبلغ الفاتورة", value: "totalPrice" },
       { text: "التاريخ", value: "creationFixedDate" },
       { text: "بواسطة", value: "createdByName" },

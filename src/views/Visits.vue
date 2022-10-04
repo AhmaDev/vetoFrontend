@@ -131,6 +131,12 @@
             {{ customers.length - visits.length - invoices.length }}
           </h5>
         </v-col>
+        <v-col>
+          <h5>
+            خارج المسار :
+            {{ allData.filter((e) => e.visitDay != dayName).length }}
+          </h5>
+        </v-col>
       </v-row>
       <br />
       <v-divider></v-divider>
