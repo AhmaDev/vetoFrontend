@@ -116,6 +116,7 @@ export default {
         .get(this.$baseUrl + "supervisorDelegates/userid/" + id)
         .then((res) => {
           this.supervisorDelegates = res.data;
+          this.selectedDelegate = res.data.map((e) => e.delegateId);
         })
         .finally(() => loading.hide());
     },
@@ -135,7 +136,12 @@ export default {
       ]);
 
       this.$http
-        .post(this.$baseUrl + "supervisorDelegates/multiple", values)
+        .post(
+          this.$baseUrl +
+            "supervisorDelegates/multiple/" +
+            this.selectedSuperVisor,
+          values
+        )
         .then(() => {
           this.setSelectedSuperVisor(this.selectedSuperVisor);
           this.selectedDelegate = 0;
