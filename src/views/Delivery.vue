@@ -6,6 +6,10 @@
       <v-btn color="primary" @click="showDialog = true">
         اضافة فاتورة واحدة لكشف التوزيع
       </v-btn>
+      &nbsp; &nbsp;
+      <v-btn color="primary" @click="showDialog2 = true">
+        اضافة فواتير مندوب لكشف التوزيع
+      </v-btn>
     </v-app-bar>
     <v-card
       v-if="checkPermission('delivery_add')"
@@ -178,6 +182,44 @@
         >
       </v-card>
     </v-dialog>
+    <v-dialog v-model="showDialog2" width="500">
+      <v-card class="pa-10">
+        <v-autocomplete
+          :items="delegates"
+          item-text="username"
+          item-value="idUser"
+          outlined
+          hide-details
+          dense
+          label="قم باختيار المندوب"
+          v-model="dialogForm.selectedDelegate"
+        ></v-autocomplete
+        ><br />
+        <v-text-field
+          v-model="dialogForm.selectedDate"
+          label="التاريخ"
+          type="date"
+          outlined
+          hide-details
+          dense
+        ></v-text-field>
+        <br />
+        <v-autocomplete
+          :items="deliveries"
+          item-text="username"
+          item-value="idUser"
+          outlined
+          hide-details
+          dense
+          label="قم باختيار الموزع"
+          v-model="dialogForm.selectedDelivery"
+        ></v-autocomplete
+        ><br />
+        <v-btn color="primary" @click="addDelegateToReport()" block
+          >متابعة</v-btn
+        >
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -189,10 +231,14 @@ export default {
     dialogForm: {
       invoiceId: null,
       selectedDelivery: null,
+      selectedDelegate: null,
+      selectedDate: null,
     },
     deliveriesStatus: [],
     deliveries: [],
+    delegates: [],
     showDialog: false,
+    showDialog2: false,
     selectedDeliveries: [],
     deliveriesStatusMoney: [],
     selectedDate: null,
@@ -244,6 +290,9 @@ export default {
       this.$http.get(this.$baseUrl + "users/role/5").then((res) => {
         this.deliveries = res.data;
       });
+      this.$http.get(this.$baseUrl + "users/role/4").then((res) => {
+        this.delegates = res.data;
+      });
     },
     getData() {
       let loading = this.$loading.show();
@@ -277,6 +326,39 @@ export default {
         })
         .then(() => {
           setTimeout(() => {
+            this.getData();
+            loading.hide();
+          }, 5000);
+        });
+    },
+    addDelegateToReport() {
+      if (
+        this.dialogForm.selectedDelivery == null ||
+        this.dialogForm.selectedDelegate == null ||
+        this.dialogForm.selectedDate == null
+      ) {
+        this.$toast.open({
+          type: "error",
+          message: "يرجى ملئ الحقول",
+          duration: 3000,
+        });
+        return;
+      }
+      let loading = this.$loading.show();
+      this.$http
+        .post(
+          this.$baseUrl +
+            "deliveryStatus/multipleInvoices/" +
+            this.dialogForm.selectedDelegate,
+          {
+            delivery: this.dialogForm.selectedDelivery,
+            date: this.dialogForm.selectedDate,
+            deliveryStatusType: 0,
+          }
+        )
+        .then(() => {
+          setTimeout(() => {
+            this.showDialog2 = false;
             this.getData();
             loading.hide();
           }, 5000);
@@ -317,7 +399,7 @@ export default {
                   deliveryStatusType: 0,
                   counter: parseInt(counter) + 1,
                   createdAt: this.selectedDate,
-                  notice: "none",
+                  notice: "oneInvoice",
                   invoicesData: JSON.stringify(invoicesData),
                 })
                 .then(() => {

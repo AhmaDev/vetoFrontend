@@ -19,7 +19,12 @@
           <td>رقم التوزيع: {{ deliveryStatus.counter }}</td>
           <td>اسم الموزع: {{ deliveryStatus.deliveryName }}</td>
           <td>
-            تاريخ التجهيز: {{ deliveryDate(deliveryStatus.creationFixedDate) }}
+            تاريخ التجهيز:
+            {{
+              deliveryStatus.notice == "oneInvoice"
+                ? fixedDate(deliveryStatus.creationFixedDate)
+                : deliveryDate(deliveryStatus.creationFixedDate)
+            }}
           </td>
           <td>تاريخ طبع الكشف: {{ currentDay() }}</td>
           <td>

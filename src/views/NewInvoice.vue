@@ -83,6 +83,7 @@
                 : customers
             "
             outlined
+            @change="setDelegate()"
             dense
             :label="
               invoice.invoiceTypeId == 2 ||
@@ -818,6 +819,13 @@ export default {
           message: "التاريخ لا يمكن ان يكون قبل 3 ايام",
           duration: 3000,
         });
+      }
+    },
+    setDelegate() {
+      if (this.invoice.idInvoice == 0) {
+        this.invoice.createdBy = this.customers.filter(
+          (e) => e.idCustomer == this.invoice.customerId
+        )[0].createdBy;
       }
     },
   },
