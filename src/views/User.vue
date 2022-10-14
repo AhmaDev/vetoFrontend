@@ -159,6 +159,13 @@
             <v-checkbox
               :true-value="1"
               :false-value="0"
+              v-if="checkPermission('canViewDelegateRail')"
+              label="مشاهدة المجموع"
+              v-model="userdata.canViewDelegateRail"
+            ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
               v-if="checkPermission('canViewMonthlySales2')"
               label="مشاهدة التفاصيل المالية"
               v-model="userdata.canViewMonthlySales"
