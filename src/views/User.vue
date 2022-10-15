@@ -177,6 +177,13 @@
               label="مشاهدة الزبائن الدائميين والغير دائميين"
               v-model="userdata.canViewContinueusCustomers"
             ></v-checkbox>
+            <v-checkbox
+              :true-value="1"
+              :false-value="0"
+              v-if="checkPermission('canCreateCustomer')"
+              label="امكانية مشاهدة جميع المشرفين"
+              v-model="userdata.canCreateCustomer"
+            ></v-checkbox>
           </div>
         </v-col>
       </v-row>
