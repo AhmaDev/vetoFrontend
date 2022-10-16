@@ -181,7 +181,7 @@
               :true-value="1"
               :false-value="0"
               v-if="checkPermission('canCreateCustomer')"
-              label="امكانية مشاهدة جميع المشرفين"
+              label="امكانية فرز على المشرفين"
               v-model="userdata.canCreateCustomer"
             ></v-checkbox>
           </div>

@@ -10,6 +10,7 @@
         <center>
           <h2>
             كشف توزيع
+            <span v-if="deliveryStatus.notice != 'none'"> بيع مباشر </span>
             {{ appData.filter((e) => e.variable == "title")[0].value }}
           </h2>
         </center>
@@ -21,9 +22,9 @@
           <td>
             تاريخ التجهيز:
             {{
-              deliveryStatus.notice == "oneInvoice"
-                ? fixedDate(deliveryStatus.creationFixedDate)
-                : deliveryDate(deliveryStatus.creationFixedDate)
+              deliveryStatus.notice == "none"
+                ? deliveryDate(deliveryStatus.creationFixedDate)
+                : currentDay()
             }}
           </td>
           <td>تاريخ طبع الكشف: {{ currentDay() }}</td>

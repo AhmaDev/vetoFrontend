@@ -38,9 +38,9 @@
         </thead>
         <tbody>
           <tr
-            v-for="invoice in invoices.filter(
-              (invoice) => invoice.createdBy == delegate
-            )"
+            v-for="invoice in invoices
+              .filter((invoice) => invoice.createdBy == delegate)
+              .sort((a, b) => b.totalPrice - a.totalPrice)"
             :key="'INVOICE_' + invoice.idInvoice"
           >
             <td>

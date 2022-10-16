@@ -11,7 +11,52 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-app-bar>
-    <div v-for="group in groups" :key="group.idItemGroup">
+    <br />
+    <v-card class="pa-10">
+      <v-row>
+        <v-col>
+          <v-autocomplete
+            v-model="selectedGroup"
+            item-text="itemGroupName"
+            item-value="idItemGroup"
+            :items="groups"
+            outlined
+            label="فرز حسب المجموعات"
+            clearable
+          ></v-autocomplete>
+        </v-col>
+        <v-col>
+          <v-autocomplete
+            v-model="selectedBrand"
+            item-text="brandName"
+            item-value="idBrand"
+            :items="brands"
+            outlined
+            label="فرز حسب المورد"
+            clearable
+            @change="searchBrand"
+          ></v-autocomplete>
+        </v-col>
+        <v-col>
+          <v-autocomplete
+            v-model="itemNameSearch"
+            item-text="fullItemName"
+            item-value="idItem"
+            :items="allItems"
+            outlined
+            label="فرز حسب اسم المادة"
+            clearable
+            @change="searchItemName"
+          ></v-autocomplete>
+        </v-col>
+      </v-row>
+    </v-card>
+    <div
+      v-for="group in selectedGroup == null
+        ? groups
+        : groups.filter((e) => e.idItemGroup == selectedGroup)"
+      :key="group.idItemGroup"
+    >
       <h3>{{ group.itemGroupName }}</h3>
       <br />
       <v-row>
@@ -372,7 +417,12 @@ export default {
   data: () => ({
     permissions: [],
     items: [],
+    allItems: [],
     groups: [],
+    allGroups: [],
+    selectedGroup: null,
+    selectedBrand: null,
+    itemNameSearch: null,
     sellPrices: [],
     manufactures: [],
     brands: [],
@@ -432,10 +482,12 @@ export default {
       let loading = this.$loading.show();
       this.$http.get(this.$baseUrl + "itemgroup").then((res) => {
         this.groups = res.data;
+        this.allGroups = res.data;
         this.$http
           .get(this.$baseUrl + "item")
           .then((res) => {
             this.items = res.data;
+            this.allItems = res.data;
             console.log(this.items);
           })
           .finally(() => {
@@ -572,6 +624,19 @@ export default {
           });
           this.fetch();
         });
+    },
+    searchBrand() {
+      this.selectedGroup = null;
+      if (this.selectedBrand == null) {
+        this.items = this.allItems;
+      } else {
+        this.items = this.allItems.filter(
+          (e) => e.brandId == this.selectedBrand
+        );
+      }
+    },
+    searchItemName() {
+      this.$router.push("/item/" + this.itemNameSearch);
     },
   },
 };

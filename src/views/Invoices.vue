@@ -103,6 +103,11 @@
             بحث
           </v-btn>
         </v-col>
+        <v-col>
+          <v-btn @click="performSearch(1)" dark color="error" block>
+            بحث عن المكرر
+          </v-btn>
+        </v-col>
       </v-row>
     </v-card>
     <br />
@@ -148,7 +153,9 @@
               invoices.filter(
                 (e) =>
                   e.customerId == item.customerId &&
-                  e.totalPrice == item.totalPrice
+                  e.totalPrice == item.totalPrice &&
+                  e.creationFixedDate == item.creationFixedDate &&
+                  e.invoiceTypeId == item.invoiceTypeId
               ).length > 1
             "
             color="error"
@@ -543,7 +550,7 @@ export default {
       }
       this.$router.push("/print/invoice/" + ids);
     },
-    performSearch() {
+    performSearch(checkDuplicated = 0) {
       let loading = this.$loading.show();
       let query = "";
       if (this.search.invoiceType != null && this.search.invoiceType != "") {
@@ -571,7 +578,25 @@ export default {
       this.$http
         .get(this.$baseUrl + "invoice/filter?search=true" + query)
         .then((res) => {
-          this.invoices = res.data;
+          if (checkDuplicated == 0) {
+            this.invoices = res.data;
+          } else {
+            this.invoices = [];
+            for (let i = 0; i < res.data.length; i++) {
+              const invoice = res.data[i];
+              let duplicate = res.data.filter(
+                (e) =>
+                  e.customerId == invoice.customerId &&
+                  e.creationFixedDate == invoice.creationFixedDate &&
+                  e.totalPrice == invoice.totalPrice &&
+                  e.invoiceTypeId == invoice.invoiceTypeId
+              ).length;
+              console.log(duplicate);
+              if (duplicate > 1) {
+                this.invoices.push(invoice);
+              }
+            }
+          }
           localStorage.setItem(
             "searchInvoicesHistory",
             JSON.stringify(this.invoices)
