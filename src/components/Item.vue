@@ -214,163 +214,215 @@
             id="imagePath"
           />
         </v-col>
-        <template v-if="this.checkPermission('item_add_offer')">
-          <v-btn
-            v-if="offer == null"
-            color="primary"
-            @click="addNewOfferDialog = true"
-          >
-            <v-dialog v-model="addNewOfferDialog" width="400">
-              <v-card>
-                <v-card-text>
-                  <br /><br />
-                  <v-text-field
-                    type="number"
-                    outlined
-                    label="كمية العرض"
-                    v-model="offerQty"
-                  ></v-text-field>
-                  <v-text-field
-                    type="number"
-                    outlined
-                    label="كمية البيع"
-                    v-model="offerCondition"
-                  ></v-text-field>
-                  <v-text-field
-                    type="number"
-                    outlined
-                    label="الحد الادنى"
-                    v-model="offerMinimum"
-                  ></v-text-field>
-                  <v-btn block color="primary" @click="addOffer()">
-                    اضافة
-                  </v-btn>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-            اضافة عرض تلقائي
-          </v-btn>
-        </template>
-        <v-card v-if="offer != null">
-          <v-card-text>
-            <span>
-              سيتم اضافة
-              <v-chip small outlined color="error">{{ offer.count }}</v-chip>
-              كارتون عرض تلقائي لكل
-              <v-chip small outlined color="primary">{{
-                offer.conditionCount
-              }}</v-chip>
-              كارتون بيع
-            </span>
-            <br />
-            <span
-              >الحد الادنى لتفعيل العرض
-              <v-chip small outlined color="success">{{
-                offer.minimumCount
-              }}</v-chip>
-              كارتون</span
-            >
-            <br />
-            <br />
-            <v-btn
-              v-if="this.checkPermission('item_add_offer')"
-              color="error"
-              @click="deleteOffer()"
-              >حذف العرض التلقائي</v-btn
-            >
-          </v-card-text>
-        </v-card>
         <v-col cols="12">
-          <v-data-table
-            :headers="pricesHeader"
-            :items="item.prices"
-            :items-per-page="100"
-            class="elevation-1"
-          >
-            <template v-slot:top>
-              <v-menu offset-y>
-                <template v-slot:activator="{ attrs, on }">
-                  <v-btn color="primary" v-bind="attrs" v-on="on">
-                    اضافة سعر جديد
-                  </v-btn>
-                </template>
+          <template v-if="this.checkPermission('item_add_offer')">
+            <v-btn
+              v-if="offer == null"
+              color="primary"
+              @click="addNewOfferDialog = true"
+            >
+              <v-dialog v-model="addNewOfferDialog" width="400">
+                <v-card>
+                  <v-card-text>
+                    <br /><br />
+                    <v-text-field
+                      type="number"
+                      outlined
+                      label="كمية العرض"
+                      v-model="offerQty"
+                    ></v-text-field>
+                    <v-text-field
+                      type="number"
+                      outlined
+                      label="كمية البيع"
+                      v-model="offerCondition"
+                    ></v-text-field>
+                    <v-text-field
+                      type="number"
+                      outlined
+                      label="الحد الادنى"
+                      v-model="offerMinimum"
+                    ></v-text-field>
+                    <v-btn block color="primary" @click="addOffer()">
+                      اضافة
+                    </v-btn>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+              اضافة عرض تلقائي
+            </v-btn>
+          </template>
+          <v-card v-if="offer != null">
+            <v-card-text>
+              <span>
+                سيتم اضافة
+                <v-chip small outlined color="error">{{ offer.count }}</v-chip>
+                كارتون عرض تلقائي لكل
+                <v-chip small outlined color="primary">{{
+                  offer.conditionCount
+                }}</v-chip>
+                كارتون بيع
+              </span>
+              <br />
+              <span
+                >الحد الادنى لتفعيل العرض
+                <v-chip small outlined color="success">{{
+                  offer.minimumCount
+                }}</v-chip>
+                كارتون</span
+              >
+              <br />
+              <br />
+              <v-btn
+                v-if="this.checkPermission('item_add_offer')"
+                color="error"
+                @click="deleteOffer()"
+                >حذف العرض التلقائي</v-btn
+              >
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="8">
+          <v-card class="pa-5">
+            <v-data-table
+              :headers="pricesHeader"
+              :items="item.prices"
+              :items-per-page="100"
+            >
+              <template v-slot:top>
+                <v-menu offset-y>
+                  <template v-slot:activator="{ attrs, on }">
+                    <v-btn color="primary" v-bind="attrs" v-on="on">
+                      اضافة سعر جديد
+                    </v-btn>
+                  </template>
 
-                <v-list>
-                  <v-list-item
-                    v-for="sellPrice in sellPrices"
-                    :key="sellPrice.idSellPrice"
-                    link
-                    @click="addNewSellPrice(sellPrice.idSellPrice)"
-                  >
-                    <v-list-item-title
-                      v-text="sellPrice.sellPriceName"
-                    ></v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </template>
-            <template v-slot:[`item.price`]="{ item }">
-              <v-text-field
-                @change="updatePrice(item.idItemPrice, $event)"
-                :value="item.price"
-                type="number"
-                outlined
-                dense
-                hide-details
-              ></v-text-field>
-            </template>
-
-            <template v-slot:[`item.delegateTarget`]="{ item }">
-              <v-text-field
-                @change="updateDelegateTarget(item.idItemPrice, $event)"
-                :value="item.delegateTarget"
-                type="number"
-                outlined
-                dense
-                hide-details
-              ></v-text-field>
-            </template>
-
-            <template v-slot:[`item.damagedItemPrice`]="{ item }">
-              <v-text-field
-                @change="updateDamagedItemPrice(item.idItemPrice, $event)"
-                :value="item.damagedItemPrice"
-                type="number"
-                outlined
-                dense
-                hide-details
-              ></v-text-field>
-            </template>
-
-            <template v-slot:[`item.itemDescription`]="{ item }">
-              <v-text-field
-                outlined
-                @change="updateItemDescription(item.idItemPrice, $event)"
-                :value="item.itemDescription"
-                dense
-                hide-details
-              ></v-text-field>
-            </template>
-
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-menu offset-y>
-                <template v-bind="item" v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" icon>
-                    <v-icon color="red" title="حذف السعر"
-                      >mdi-delete-outline</v-icon
+                  <v-list>
+                    <v-list-item
+                      v-for="sellPrice in sellPrices"
+                      :key="sellPrice.idSellPrice"
+                      link
+                      @click="addNewSellPrice(sellPrice.idSellPrice)"
                     >
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item @click="deletePrice(item.idItemPrice)">
-                    <v-list-item-title
-                      >اضغط هنا لتأكيد حذف السعر</v-list-item-title
+                      <v-list-item-title
+                        v-text="sellPrice.sellPriceName"
+                      ></v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </template>
+              <template v-slot:[`item.price`]="{ item }">
+                <v-text-field
+                  @change="updatePrice(item.idItemPrice, $event)"
+                  :value="item.price"
+                  type="number"
+                  outlined
+                  dense
+                  hide-details
+                ></v-text-field>
+              </template>
+
+              <template v-slot:[`item.delegateTarget`]="{ item }">
+                <v-text-field
+                  @change="updateDelegateTarget(item.idItemPrice, $event)"
+                  :value="item.delegateTarget"
+                  type="number"
+                  outlined
+                  dense
+                  hide-details
+                ></v-text-field>
+              </template>
+
+              <template v-slot:[`item.damagedItemPrice`]="{ item }">
+                <v-text-field
+                  @change="updateDamagedItemPrice(item.idItemPrice, $event)"
+                  :value="item.damagedItemPrice"
+                  type="number"
+                  outlined
+                  dense
+                  hide-details
+                ></v-text-field>
+              </template>
+
+              <template v-slot:[`item.itemDescription`]="{ item }">
+                <v-text-field
+                  outlined
+                  @change="updateItemDescription(item.idItemPrice, $event)"
+                  :value="item.itemDescription"
+                  dense
+                  hide-details
+                ></v-text-field>
+              </template>
+
+              <template v-slot:[`item.actions`]="{ item }">
+                <v-menu offset-y>
+                  <template v-bind="item" v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on" icon>
+                      <v-icon color="red" title="حذف السعر"
+                        >mdi-delete-outline</v-icon
+                      >
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="deletePrice(item.idItemPrice)">
+                      <v-list-item-title
+                        >اضغط هنا لتأكيد حذف السعر</v-list-item-title
+                      >
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-col>
+        <v-col cols="4">
+          <v-card class="pa-5">
+            <v-card class="pa-2" color="warning">
+              اخفاء المادة عن مندوب
+            </v-card>
+            <br />
+            <v-row>
+              <v-col>
+                <v-autocomplete
+                  :items="users.filter((e) => e.roleId == 3 || e.roleId == 4)"
+                  item-text="username"
+                  item-value="idUser"
+                  outlined
+                  v-model="hideForm.userId"
+                  label="اختيار مندوب او مشرف"
+                  dense
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="3">
+                <v-btn @click="hideItem()" color="success">اخفاء</v-btn>
+              </v-col>
+            </v-row>
+            <v-simple-table>
+              <thead>
+                <tr>
+                  <th>اسم المندوب</th>
+                  <th>الاجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="hide in hidden" :key="hide.idItemHide">
+                  <td>
+                    {{
+                      users.filter((e) => e.idUser == hide.userId)[0].username
+                    }}
+                  </td>
+                  <td>
+                    <v-btn
+                      @click="showItem(hide.idItemHide)"
+                      plain
+                      color="success"
+                      ><v-icon>mdi-eye</v-icon>اظهار المادة</v-btn
                     >
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </template>
-          </v-data-table>
+                  </td>
+                </tr>
+              </tbody>
+            </v-simple-table>
+          </v-card>
         </v-col>
       </v-row>
     </v-card>
@@ -383,6 +435,11 @@ export default {
   data: () => ({
     groups: [],
     brands: [],
+    users: [],
+    hidden: [],
+    hideForm: {
+      userId: null,
+    },
     permissions: [],
     sellPrices: [],
     itemTypes: [],
@@ -423,8 +480,44 @@ export default {
     this.fetch();
   },
   methods: {
+    getHidden() {
+      this.$http
+        .get(this.$baseUrl + "item/hide/" + this.itemId)
+        .then((res) => {
+          this.hidden = res.data;
+        })
+        .finally(() => {});
+    },
+    hideItem() {
+      if (this.hideForm.userId == null) {
+        return;
+      }
+      let loading = this.$loading.show();
+      this.$http
+        .post(this.$baseUrl + "item/hide", {
+          userId: this.hideForm.userId,
+          itemId: this.itemId,
+        })
+        .then(() => {
+          this.$toast.open({
+            type: "success",
+            message: "تم اخفاء المادة عن المندوب",
+            duration: 3000,
+          });
+          this.getHidden();
+        })
+        .catch(() => {
+          this.$toast.open({
+            type: "error",
+            message: "هذا المندوب تم اختياره من قبل",
+            duration: 3000,
+          });
+        })
+        .finally(() => loading.hide());
+    },
     fetch() {
       this.itemId = this.$route.params.id;
+      this.getHidden();
       let loading = this.$loading.show();
       this.$http
         .get(this.$baseUrl + "itemgroup")
@@ -444,6 +537,12 @@ export default {
         .get(this.$baseUrl + "sellprice")
         .then((res) => {
           this.sellPrices = res.data;
+        })
+        .finally(() => {});
+      this.$http
+        .get(this.$baseUrl + "users")
+        .then((res) => {
+          this.users = res.data;
         })
         .finally(() => {});
       this.$http
@@ -674,6 +773,13 @@ export default {
           loading.hide();
           this.offer = null;
         });
+    },
+    showItem(id) {
+      let loading = this.$loading.show();
+      this.$http.delete(this.$baseUrl + "item/hide/delete/" + id).then(() => {
+        loading.hide();
+        this.getHidden();
+      });
     },
   },
 };

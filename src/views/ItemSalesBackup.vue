@@ -27,7 +27,19 @@
             type="date"
           ></v-text-field>
         </v-col>
-
+        <v-col cols="2">
+          <v-autocomplete
+            item-value="idItemGroup"
+            item-text="itemGroupName"
+            hide-details
+            outlined
+            dense
+            placeholder="المجموعة"
+            clearable
+            v-model="selectedGroupItem"
+            :items="itemGroups"
+          ></v-autocomplete>
+        </v-col>
         <v-col>
           <v-autocomplete
             item-value="idUser"
@@ -51,16 +63,13 @@
       <v-simple-table>
         <thead>
           <tr>
-            <th
-              colspan="2"
-              style="background-color: rgb(100, 100, 100); color: white"
-            >
+            <th colspan="4" style="background-color: rgb(202, 248, 184)">
               اسم الحساب
             </th>
             <th
               style="background-color: rgb(202, 248, 184)"
               class="text-center"
-              colspan="2"
+              colspan="3"
               v-for="user in selectedUser == null
                 ? users
                 : users.filter((e) => e.idUser == selectedUser)"
@@ -71,6 +80,8 @@
           </tr>
           <tr>
             <th>#</th>
+            <th>اسم المادة</th>
+            <th>المورد</th>
             <th>المجموعة</th>
             <template
               v-for="user in selectedUser == null
@@ -84,6 +95,12 @@
                 المبيعات
               </th>
               <th
+                style="background-color: rgb(202, 200, 184)"
+                :key="'PRICE_' + user.idUser"
+              >
+                السعر
+              </th>
+              <th
                 style="background-color: rgb(202, 150, 184)"
                 :key="'TOTAL_' + user.idUser"
               >
@@ -93,11 +110,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(group, index) in itemGroups" :key="group.idItemGroup">
+          <tr
+            v-for="(item, index) in selectedGroupItem == null
+              ? items
+              : items.filter((e) => e.itemGroupId == selectedGroupItem)"
+            :key="item.idItem"
+          >
             <td>{{ index + 1 }}</td>
             <td width="200px">
-              {{ group.itemGroupName }}
+              {{ item.fullItemName }}
             </td>
+            <td>
+              {{ getManufactureName(item.manufactureId) }}
+            </td>
+            <td>{{ item.itemGroupName }}</td>
             <template
               v-for="user in selectedUser == null
                 ? users
@@ -108,21 +134,21 @@
                 :key="'ITEMSALES_' + `_${index}_` + user.idUser"
               >
                 {{
-                  getItemCountByUser(
-                    user.idUser,
-                    group.idItemGroup
-                  ).toLocaleString()
+                  getItemCountByUser(user.idUser, item.idItem).toLocaleString()
                 }}
+              </td>
+              <td
+                style="background-color: rgb(214 214 214)"
+                :key="'ITEMPRICE_' + `_${index}_` + user.idUser"
+              >
+                {{ getItemPrice(item.idItem).toLocaleString() }}
               </td>
               <th
                 style="background-color: rgb(193 193 193)"
                 :key="'ITEMTOTAL_' + `_${index}_` + user.idUser"
               >
                 {{
-                  getItemSalesByUser(
-                    user.idUser,
-                    group.idItemGroup
-                  ).toLocaleString()
+                  getItemSalesByUser(user.idUser, item.idItem).toLocaleString()
                 }}
               </th>
             </template>
@@ -130,7 +156,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="2">المجموع</td>
+            <td colspan="4">المجموع</td>
             <template
               v-for="(user, index) in selectedUser == null
                 ? users
@@ -142,6 +168,10 @@
               >
                 {{ getTotalCount(user.idUser).toLocaleString() }}
               </td>
+              <td
+                style="background-color: rgb(214 214 214)"
+                :key="'GROUPEDITEMPRICE_' + `_${index}_` + user.idUser"
+              ></td>
               <th
                 style="background-color: rgb(193 193 193)"
                 :key="'GROUPEDITEMTOTAL_' + `_${index}_` + user.idUser"
@@ -242,25 +272,17 @@ export default {
           loading.hide();
         });
     },
-    getItemSalesByUser(userId, groupId) {
+    getItemSalesByUser(userId, itemId) {
       if (this.invoices.length == 0) {
         return 0;
       } else {
         let sum = 0;
-        for (
-          let i = 0;
-          i < this.items.filter((e) => e.itemGroupId == groupId).length;
-          i++
-        ) {
-          const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
-          let invoices = this.invoices.filter(
-            (e) => e.createdBy == userId && e.itemId == item.idItem
-          );
-          for (let i = 0; i < invoices.length; i++) {
-            sum = sum + invoices[i].total;
-          }
+        let invoices = this.invoices.filter(
+          (e) => e.createdBy == userId && e.itemId == itemId
+        );
+        for (let i = 0; i < invoices.length; i++) {
+          sum = sum + invoices[i].total;
         }
-
         return sum;
       }
     },
@@ -284,25 +306,17 @@ export default {
         return sum;
       }
     },
-    getItemCountByUser(userId, groupId) {
+    getItemCountByUser(userId, itemId) {
       if (this.invoices.length == 0) {
         return 0;
       } else {
         let sum = 0;
-        for (
-          let i = 0;
-          i < this.items.filter((e) => e.itemGroupId == groupId).length;
-          i++
-        ) {
-          const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
-          let invoices = this.invoices.filter(
-            (e) => e.createdBy == userId && e.itemId == item.idItem
-          );
-          for (let i = 0; i < invoices.length; i++) {
-            sum = sum + invoices[i].count;
-          }
+        let invoices = this.invoices.filter(
+          (e) => e.createdBy == userId && e.itemId == itemId
+        );
+        for (let i = 0; i < invoices.length; i++) {
+          sum = sum + invoices[i].count;
         }
-
         return sum;
       }
     },
