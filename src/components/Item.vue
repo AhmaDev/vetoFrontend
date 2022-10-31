@@ -282,7 +282,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="8">
+        <v-col cols="12">
           <v-card class="pa-5">
             <v-data-table
               :headers="pricesHeader"
@@ -375,7 +375,7 @@
             </v-data-table>
           </v-card>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="12">
           <v-card class="pa-5">
             <v-card class="pa-2" color="warning">
               اخفاء المادة عن مندوب
