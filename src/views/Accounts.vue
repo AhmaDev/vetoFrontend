@@ -163,6 +163,7 @@ export default {
       this.$http
         .put(this.$baseUrl + "users/edit/" + this.selectedUserId, {
           password: this.newPasswordField,
+          logout: 1,
         })
         .then(() => {
           this.$toast.open({
