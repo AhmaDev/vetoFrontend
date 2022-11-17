@@ -229,6 +229,7 @@
                 <span v-if="data.idVisit == undefined">{{
                   getFixedDate(data.initialDate)
                 }}</span>
+                <div>{{ data.initialDate }}</div>
               </td>
               <td>
                 <v-btn
@@ -628,6 +629,9 @@ export default {
       return Math.ceil(daysFromFirstTargetDay / 7);
     },
     getFixedDate(date) {
+      if (date == null || date == "" || date == "none") {
+        return "";
+      }
       return this.formatAMPM(new Date("2022-01-01 " + date));
     },
     formatAMPM(date) {
