@@ -229,7 +229,6 @@
                 <span v-if="data.idVisit == undefined">{{
                   getFixedDate(data.initialDate)
                 }}</span>
-                <div>{{ data.initialDate }}</div>
               </td>
               <td>
                 <v-btn
