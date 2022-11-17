@@ -227,7 +227,7 @@
                   data.creationFixedDate.substring(11)
                 }}</span>
                 <span v-if="data.idVisit == undefined">{{
-                  data.initialDate
+                  getFixedDate(data.initialDate)
                 }}</span>
               </td>
               <td>
@@ -626,6 +626,20 @@ export default {
       );
       // Calculate the number of weeks (even partial) from the first target day to the end.
       return Math.ceil(daysFromFirstTargetDay / 7);
+    },
+    getFixedDate(date) {
+      return this.formatAMPM(new Date("2022-01-01 " + date));
+    },
+    formatAMPM(date) {
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      var strTime =
+        hours + ":" + minutes + ":" + date.getSeconds() + " " + ampm;
+      return strTime;
     },
   },
 };
