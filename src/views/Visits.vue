@@ -226,9 +226,14 @@
                 <span v-if="data.idVisit != undefined">{{
                   data.creationFixedDate.substring(11)
                 }}</span>
-                <span v-if="data.idVisit == undefined">{{
-                  getFixedDate(data.initialDate)
-                }}</span>
+                <span v-if="data.idVisit == undefined">
+                  <span v-if="checkInitialDate(data.initialDate)">
+                    {{ formatDate(data.initialDate) }}
+                  </span>
+                  <span v-if="!checkInitialDate(data.initialDate)">
+                    {{ getFixedDate(data.initialDate) }}
+                  </span>
+                </span>
               </td>
               <td>
                 <v-btn
@@ -631,7 +636,11 @@ export default {
       if (date == null || date == "" || date == "none") {
         return "";
       }
-      return this.formatAMPM(new Date("2022-01-01 " + date));
+      if (date.length > 15) {
+        return this.formatAMPM(new Date(date));
+      } else {
+        return this.formatAMPM(new Date("2022-01-01 " + date));
+      }
     },
     formatAMPM(date) {
       var hours = date.getHours();
@@ -643,6 +652,31 @@ export default {
       var strTime =
         hours + ":" + minutes + ":" + date.getSeconds() + " " + ampm;
       return strTime;
+    },
+    formatDate(d) {
+      let x = new Date(d);
+      return (
+        x.getFullYear() +
+        "-" +
+        (x.getMonth() + 1) +
+        "-" +
+        x.getDate() +
+        " " +
+        this.formatAMPM(x)
+      );
+    },
+    checkInitialDate(d) {
+      let x = new Date(d);
+      let y = new Date();
+      if (
+        x.getFullYear() == y.getFullYear() &&
+        x.getMonth() == y.getMonth() &&
+        x.getDate() == y.getDate()
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

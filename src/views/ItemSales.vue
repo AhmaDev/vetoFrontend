@@ -27,7 +27,19 @@
             type="date"
           ></v-text-field>
         </v-col>
-
+        <v-col>
+          <v-autocomplete
+            :items="users.filter((e) => e.roleId == 3)"
+            item-text="username"
+            item-value="idUser"
+            outlined
+            dense
+            hide-details
+            label="المشرف"
+            v-model="selectedSuperVisor"
+            @change="setDelegates()"
+          ></v-autocomplete>
+        </v-col>
         <v-col>
           <v-autocomplete
             item-value="idUser"
@@ -62,11 +74,14 @@
               class="text-center"
               colspan="2"
               v-for="user in selectedUser == null
-                ? users
+                ? tableUsers
                 : users.filter((e) => e.idUser == selectedUser)"
               :key="user.idUser"
             >
-              {{ user.username }}
+              <span v-if="selectedUser == null">
+                {{ user.delegateName || user.username }}</span
+              >
+              <span v-if="selectedUser != null"> {{ user.username }}</span>
             </th>
           </tr>
           <tr>
@@ -74,7 +89,7 @@
             <th>المجموعة</th>
             <template
               v-for="user in selectedUser == null
-                ? users
+                ? tableUsers
                 : users.filter((e) => e.idUser == selectedUser)"
             >
               <th
@@ -100,7 +115,7 @@
             </td>
             <template
               v-for="user in selectedUser == null
-                ? users
+                ? tableUsers
                 : users.filter((e) => e.idUser == selectedUser)"
             >
               <td
@@ -133,7 +148,7 @@
             <td colspan="2">المجموع</td>
             <template
               v-for="(user, index) in selectedUser == null
-                ? users
+                ? tableUsers
                 : users.filter((e) => e.idUser == selectedUser)"
             >
               <td
@@ -166,6 +181,9 @@ export default {
     selectedUser: null,
     itemGroups: [],
     users: [],
+    tableUsers: [],
+    selectedSuperVisor: 0,
+    supervisors: [],
     manufactures: [],
     invoices: [],
     search: {
@@ -213,6 +231,7 @@ export default {
         .get(this.$baseUrl + "users")
         .then((res) => {
           this.users = res.data;
+          this.tableUsers = res.data;
         })
         .finally(() => {
           loading.hide();
@@ -373,6 +392,21 @@ export default {
         .then((res) => {
           this.invoices = res.data;
           console.log(this.invoices);
+        })
+        .finally(() => loading.hide());
+    },
+    setDelegates() {
+      this.selectedUser = null;
+      let loading = this.$loading.show();
+      this.$http
+        .get(
+          this.$baseUrl +
+            "supervisorDelegates/userid/" +
+            this.selectedSuperVisor
+        )
+        .then((res) => {
+          this.tableUsers = res.data;
+          console.log(this.tableUsers);
         })
         .finally(() => loading.hide());
     },
