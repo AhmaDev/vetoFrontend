@@ -159,6 +159,16 @@
             >{{ item.totalVisits.toLocaleString() }}</router-link
           >
         </template>
+        <template v-slot:[`item.firstInvoiceDate`]="{ item }">
+          <div>
+            {{ formatAMPM(item.firstInvoiceDate) }}
+          </div>
+        </template>
+        <template v-slot:[`item.lastInvoiceDate`]="{ item }">
+          <div>
+            {{ formatAMPM(item.lastInvoiceDate) }}
+          </div>
+        </template>
         <template v-slot:footer>
           <div class="pa-10 footerGrid" style="font-size: 14px !important">
             <v-row>
@@ -213,6 +223,8 @@ export default {
         { text: "مبلغ التالف", value: "totalDamaged" },
         { text: "مبلغ الهدايا", value: "totalGifts" },
         { text: "مبلغ العروض", value: "totalOffers" },
+        { text: "بداية العمل", value: "firstInvoiceDate" },
+        { text: "نهاية العمل", value: "lastInvoiceDate" },
       ],
     },
   }),
@@ -250,7 +262,7 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "reports/overview?days=" +
+            "reports/overviewHuge?days=" +
             JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
               1,
               -1
@@ -258,7 +270,7 @@ export default {
         )
         .then((res) => {
           this.report.data = res.data;
-          console.log(1);
+          console.log(this.report.data);
         })
         .finally(() => loading.hide());
 
@@ -356,6 +368,21 @@ export default {
         // include last day
         a.push(y[d.getDay()]);
       return a;
+    },
+    formatAMPM(x) {
+      if (x == null || x == undefined) {
+        return "";
+      }
+      let date = new Date(x);
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      var strTime =
+        hours + ":" + minutes + ":" + date.getSeconds() + " " + ampm;
+      return strTime;
     },
   },
 };
