@@ -224,7 +224,10 @@
               </td>
               <td v-if="checkPermission('see_init_date')">
                 <span v-if="data.idVisit != undefined">{{
-                  data.creationFixedDate.substring(11)
+                  data.creationFixedDate
+                    .substring(11)
+                    .replace("AM", "ص")
+                    .replace("PM", "م")
                 }}</span>
                 <span v-if="data.idVisit == undefined">
                   <span v-if="checkInitialDate(data.initialDate)">
@@ -251,6 +254,20 @@
                   v-if="data.idInvoice != undefined"
                   >مشاهدة</v-btn
                 >
+                <v-btn
+                  small
+                  color="error"
+                  v-if="data.idInvoice != undefined && data.sentFrom != 'none'"
+                  :href="
+                    'https://www.google.com/maps/dir/' +
+                    data.sentFrom +
+                    '/' +
+                    data.customerLocation
+                  "
+                  target="_BLANK"
+                  >موقع الارسال</v-btn
+                >
+
                 <v-btn
                   small
                   color="error"
@@ -296,6 +313,7 @@ export default {
   data: () => ({
     permissions: [],
     mapDialog: false,
+    invoiceMapDialog: false,
     delegates: [],
     cols: 12,
     selectedDelegate: 0,
@@ -361,6 +379,11 @@ export default {
       latitude: 0,
       longitude: 0,
     },
+    markerStore: {
+      idCustomer: 0,
+      latitude: 0,
+      longitude: 0,
+    },
   }),
   watch: {
     sheetMap: function (val) {
@@ -420,6 +443,20 @@ export default {
       this.marker = marker;
       this.mapDialog = true;
       this.map.center = [marker.latitude, marker.longitude];
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.myMap.mapObject.invalidateSize();
+        }, 500);
+      });
+    },
+    setInvoiceMarker(marker) {
+      console.log(marker);
+      this.marker = marker;
+      this.invoiceMapDialog = true;
+      this.map.center = [
+        marker.sentFrom.split(",")[0],
+        marker.sentFrom.split(",")[1],
+      ];
       this.$nextTick(() => {
         setTimeout(() => {
           this.$refs.myMap.mapObject.invalidateSize();
@@ -645,7 +682,7 @@ export default {
     formatAMPM(date) {
       var hours = date.getHours();
       var minutes = date.getMinutes();
-      var ampm = hours >= 12 ? "PM" : "AM";
+      var ampm = hours >= 12 ? "م" : "ص";
       hours = hours % 12;
       hours = hours ? hours : 12; // the hour '0' should be '12'
       minutes = minutes < 10 ? "0" + minutes : minutes;
