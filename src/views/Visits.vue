@@ -219,7 +219,7 @@
                   data.creationFixedDate.substring(11)
                 }}</span>
                 <span v-if="data.idVisit == undefined">{{
-                  data.creationFixedTime
+                  data.creationFixedTime.replace("AM", "ص").replace("PM", "م")
                 }}</span>
               </td>
               <td v-if="checkPermission('see_init_date')">
