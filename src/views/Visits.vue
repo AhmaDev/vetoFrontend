@@ -216,7 +216,10 @@
               <td>{{ data.visitCauseName }}</td>
               <td>
                 <span v-if="data.idVisit != undefined">{{
-                  data.creationFixedDate.substring(11)
+                  data.creationFixedDate
+                    .substring(11)
+                    .replace("AM", "ص")
+                    .replace("PM", "م")
                 }}</span>
                 <span v-if="data.idVisit == undefined">{{
                   data.creationFixedTime.replace("AM", "ص").replace("PM", "م")
@@ -254,7 +257,7 @@
                   v-if="data.idInvoice != undefined"
                   >مشاهدة</v-btn
                 >
-                <v-btn
+                <!-- <v-btn
                   small
                   color="error"
                   v-if="data.idInvoice != undefined && data.sentFrom != 'none'"
@@ -266,8 +269,20 @@
                   "
                   target="_BLANK"
                   >موقع الارسال</v-btn
+                > -->
+                <v-chip
+                  v-if="data.idInvoice != undefined && data.sentFrom != 'none'"
                 >
-
+                  {{
+                    calcCrow(
+                      data.sentFrom.split(",")[0],
+                      data.sentFrom.split(",")[1],
+                      data.customerLocation.split(",")[0],
+                      data.customerLocation.split(",")[1]
+                    ).toLocaleString()
+                  }}
+                  كم
+                </v-chip>
                 <v-btn
                   small
                   color="error"
@@ -714,6 +729,27 @@ export default {
       } else {
         return false;
       }
+    },
+    calcCrow(lat1, lon1, lat2, lon2) {
+      var R = 6371; // km
+      var dLat = this.toRad(lat2 - lat1);
+      var dLon = this.toRad(lon2 - lon1);
+      var lat1x = this.toRad(lat1);
+      var lat2x = this.toRad(lat2);
+
+      var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.sin(dLon / 2) *
+          Math.sin(dLon / 2) *
+          Math.cos(lat1x) *
+          Math.cos(lat2x);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      var d = R * c;
+      return d;
+    },
+
+    toRad(Value) {
+      return (Value * Math.PI) / 180;
     },
   },
 };
