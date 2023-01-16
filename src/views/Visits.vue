@@ -151,6 +151,7 @@
             <th>سبب الزيارة</th>
             <th>وقت الفاتورة</th>
             <th v-if="checkPermission('see_init_date')">وقت البدء</th>
+            <th v-if="checkPermission('see_init_date')">الفرق</th>
             <th>الاجراءات</th>
           </tr>
         </thead>
@@ -215,15 +216,19 @@
               <td v-else>{{ data.totalPrice }}</td>
               <td>{{ data.visitCauseName }}</td>
               <td>
-                <span v-if="data.idVisit != undefined">{{
-                  data.creationFixedDate
-                    .substring(11)
-                    .replace("AM", "ص")
-                    .replace("PM", "م")
-                }}</span>
-                <span v-if="data.idVisit == undefined">{{
-                  data.creationFixedTime.replace("AM", "ص").replace("PM", "م")
-                }}</span>
+                <span v-if="data.idVisit != undefined">
+                  {{
+                    data.creationFixedDate
+                      .substring(11)
+                      .replace("AM", "ص")
+                      .replace("PM", "م")
+                  }}</span
+                >
+                <span v-if="data.idVisit == undefined">
+                  {{
+                    data.creationFixedTime.replace("AM", "ص").replace("PM", "م")
+                  }}</span
+                >
               </td>
               <td v-if="checkPermission('see_init_date')">
                 <span v-if="data.idVisit != undefined">{{
@@ -239,6 +244,21 @@
                   <span v-if="!checkInitialDate(data.initialDate)">
                     {{ getFixedDate(data.initialDate) }}
                   </span>
+                </span>
+              </td>
+              <td v-if="checkPermission('see_init_date')">
+                <span
+                  v-if="
+                    data.idVisit == undefined &&
+                    data.idDamagedItemsInvoice == undefined
+                  "
+                >
+                  <span>{{
+                    startDateFixed(data.initialDate, data.createdAt).replace(
+                      "منذ",
+                      "الفرق"
+                    )
+                  }}</span>
                 </span>
               </td>
               <td>
@@ -279,9 +299,9 @@
                       data.sentFrom.split(",")[1],
                       data.customerLocation.split(",")[0],
                       data.customerLocation.split(",")[1]
-                    ).toLocaleString()
+                    ).toFixed(5)
                   }}
-                  كم
+                  م
                 </v-chip>
                 <v-btn
                   small
@@ -322,6 +342,8 @@
 </template>
 
 <script>
+import * as moment from "moment";
+
 export default {
   name: "Visits",
   components: {},
@@ -331,7 +353,7 @@ export default {
     invoiceMapDialog: false,
     delegates: [],
     cols: 12,
-    selectedDelegate: 0,
+    selectedDelegate: 4,
     from: "",
     to: "",
     dayName: "",
@@ -435,6 +457,9 @@ export default {
     this.fetch();
   },
   methods: {
+    startDateFixed(datex, firstDate) {
+      return moment(datex).locale("ar").from(moment(firstDate));
+    },
     checkPermission(permissionKey) {
       var isAuthorized = this.permissions.filter(
         (p) => p.permissionKey == permissionKey
@@ -445,6 +470,7 @@ export default {
     fetch: function () {
       this.$http.get(this.$baseUrl + "users").then((res) => {
         this.delegates = res.data;
+        this.selectDelegate();
         setTimeout(() => {
           if (this.$route.query.delegate) {
             this.selectedDelegate = parseInt(this.$route.query.delegate);
@@ -745,7 +771,7 @@ export default {
           Math.cos(lat2x);
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       var d = R * c;
-      return d;
+      return d / 1000;
     },
 
     toRad(Value) {

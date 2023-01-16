@@ -161,12 +161,30 @@
         </template>
         <template v-slot:[`item.firstInvoiceDate`]="{ item }">
           <div>
-            {{ formatAMPM(item.firstInvoiceDate) }}
+            {{
+              formatAMPM(
+                compareDates(item.firstVisitDate, item.firstInvoiceDate)
+              )
+            }}
           </div>
         </template>
         <template v-slot:[`item.lastInvoiceDate`]="{ item }">
           <div>
-            {{ formatAMPM(item.lastInvoiceDate) }}
+            {{
+              formatAMPM(
+                compareDates2(item.lastVisitDate, item.lastInvoiceDate)
+              )
+            }}
+          </div>
+        </template>
+        <template v-slot:[`item.timeCompare`]="{ item }">
+          <div>
+            {{
+              startDateFixed(
+                compareDates(item.firstVisitDate, item.firstInvoiceDate),
+                compareDates2(item.lastVisitDate, item.lastInvoiceDate)
+              ).replace("منذ", "")
+            }}
           </div>
         </template>
         <template v-slot:footer>
@@ -192,6 +210,7 @@
 </template>
 
 <script>
+import * as moment from "moment";
 export default {
   name: "OverViewReport",
   data: () => ({
@@ -225,6 +244,7 @@ export default {
         { text: "مبلغ العروض", value: "totalOffers" },
         { text: "بداية العمل", value: "firstInvoiceDate" },
         { text: "نهاية العمل", value: "lastInvoiceDate" },
+        { text: "الفرق", value: "timeCompare" },
       ],
     },
   }),
@@ -347,6 +367,9 @@ export default {
         })
         .finally(() => loading.hide());
     },
+    startDateFixed(datex, firstDate) {
+      return moment(datex).locale("ar").from(moment(firstDate));
+    },
     getDays(from, to) {
       var d = new Date(from),
         a = [],
@@ -383,6 +406,33 @@ export default {
       var strTime =
         hours + ":" + minutes + ":" + date.getSeconds() + " " + ampm;
       return strTime;
+    },
+    compareDates(d1, d2) {
+      let date1 = new Date(d1);
+      let date2 = new Date(d2);
+      if (d1 == undefined || d1 == null) {
+        return date2;
+      }
+      if (d2 == undefined || d2 == null) {
+        return date1;
+      }
+      if (d1 == null && d2 == null) {
+        return "";
+      }
+      if (date1 < date2) {
+        return date1;
+      } else {
+        return date2;
+      }
+    },
+    compareDates2(d1, d2) {
+      let date1 = new Date(d1);
+      let date2 = new Date(d2);
+      if (date1 > date2) {
+        return date1;
+      } else {
+        return date2;
+      }
     },
   },
 };

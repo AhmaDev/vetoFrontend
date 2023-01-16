@@ -67,6 +67,120 @@
               colspan="2"
               style="background-color: rgb(100, 100, 100); color: white"
             >
+              المجموعة
+            </th>
+            <th
+              style="background-color: rgb(202, 248, 184)"
+              class="text-center"
+              colspan="2"
+              v-for="group in itemGroups"
+              :key="group.idItemGroup"
+            >
+              {{ group.itemGroupName }}
+            </th>
+            <th colspan="2">المجموع</th>
+          </tr>
+          <tr>
+            <th>#</th>
+            <th>اسم الحساب</th>
+            <template v-for="group in itemGroups">
+              <th
+                style="background-color: rgb(100, 248, 184)"
+                :key="'SALES_' + group.idItemGroup"
+              >
+                المبيعات
+              </th>
+              <th
+                style="background-color: rgb(202, 150, 184)"
+                :key="'TOTAL_' + group.idItemGroup"
+              >
+                الاجمالي
+              </th>
+            </template>
+            <th style="background-color: rgb(100, 248, 184)">المبيعات</th>
+            <th style="background-color: rgb(202, 150, 184)">الاجمالي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(user, i) in selectedUser == null
+              ? tableUsers
+              : users.filter((e) => e.idUser == selectedUser)"
+            :key="user.idUser"
+          >
+            <td>{{ i + 1 }}</td>
+            <td width="200px">
+              <span v-if="selectedUser == null">
+                {{ user.delegateName || user.username }}</span
+              >
+              <span v-if="selectedUser != null"> {{ user.username }}</span>
+            </td>
+            <template v-for="(group, index) in itemGroups">
+              <td
+                style="background-color: rgb(232 232 232)"
+                :key="'ITEMSALES_' + `_${index}_` + user.idUser"
+              >
+                {{
+                  getItemCountByUser(
+                    user.idUser,
+                    group.idItemGroup
+                  ).toLocaleString()
+                }}
+              </td>
+              <th
+                style="background-color: rgb(193 193 193)"
+                :key="'ITEMTOTAL_' + `_${index}_` + user.idUser"
+              >
+                {{
+                  getItemSalesByUser(
+                    user.idUser,
+                    group.idItemGroup
+                  ).toLocaleString()
+                }}
+              </th>
+            </template>
+            <td
+              style="background-color: rgb(232 232 232)"
+              :key="'GROUPEDITEMSALES_' + `_${index}_` + user.idUser"
+            >
+              {{ getTotalCount(user.idUser).toLocaleString() }}
+            </td>
+            <th
+              style="background-color: rgb(193 193 193)"
+              :key="'GROUPEDITEMTOTAL_' + `_${index}_` + user.idUser"
+            >
+              {{ getTotalByUser(user.idUser).toLocaleString() }}
+            </th>
+          </tr>
+        </tbody>
+        <!-- <tfoot>
+          <tr>
+            <td colspan="2">المجموع</td>
+            <template v-for="(group, index) in itemGroups">
+              <td
+                style="background-color: rgb(232 232 232)"
+                :key="'GROUPEDITEMSALES_' + `_${index}_` + group.idItemGroup"
+              >
+                {{ getTotalCount(user.idUser).toLocaleString() }}
+              </td>
+              <th
+                style="background-color: rgb(193 193 193)"
+                :key="'GROUPEDITEMTOTAL_' + `_${index}_` + user.idUser"
+              >
+                {{ getTotalByUser(user.idUser).toLocaleString() }}
+              </th>
+            </template>
+          </tr>
+        </tfoot> -->
+      </v-simple-table>
+      <!--
+      <v-simple-table>
+        <thead>
+          <tr>
+            <th
+              colspan="2"
+              style="background-color: rgb(100, 100, 100); color: white"
+            >
               اسم الحساب
             </th>
             <th
@@ -167,6 +281,7 @@
           </tr>
         </tfoot>
       </v-simple-table>
+      -->
     </v-card>
   </div>
 </template>
