@@ -143,13 +143,17 @@
               style="background-color: rgb(232 232 232)"
               :key="'GROUPEDITEMSALES_' + `_${i}_` + user.idUser"
             >
-              {{ getTotalCount(user.idUser).toLocaleString() }}
+              {{
+                getTotalCount(user.idUser || user.delegateId).toLocaleString()
+              }}
             </td>
             <th
               style="background-color: rgb(193 193 193)"
               :key="'GROUPEDITEMTOTAL_' + `_${i}_` + user.idUser"
             >
-              {{ getTotalByUser(user.idUser).toLocaleString() }}
+              {{
+                getTotalByUser(user.idUser || user.delegateId).toLocaleString()
+              }}
             </th>
           </tr>
         </tbody>
