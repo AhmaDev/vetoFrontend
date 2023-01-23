@@ -49,6 +49,7 @@
             <th>المندوب</th>
             <th>الكمية بالكارتون</th>
             <th>الكمية بالقطع</th>
+            <th>المبلغ</th>
             <th>الاجراءات</th>
           </tr>
         </thead>
@@ -70,6 +71,9 @@
             </td>
             <td>
               {{ invoice.count }}
+            </td>
+            <td>
+              {{ invoice.totalPrice.toLocaleString() }}
             </td>
             <td>
               <v-btn

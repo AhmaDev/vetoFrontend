@@ -122,7 +122,7 @@
               >
                 {{
                   getItemCountByUser(
-                    user.idUser,
+                    user.idUser || user.delegateId,
                     group.idItemGroup
                   ).toLocaleString()
                 }}
@@ -133,7 +133,7 @@
               >
                 {{
                   getItemSalesByUser(
-                    user.idUser,
+                    user.idUser || user.delegateId,
                     group.idItemGroup
                   ).toLocaleString()
                 }}
@@ -141,13 +141,13 @@
             </template>
             <td
               style="background-color: rgb(232 232 232)"
-              :key="'GROUPEDITEMSALES_' + `_${index}_` + user.idUser"
+              :key="'GROUPEDITEMSALES_' + `_${i}_` + user.idUser"
             >
               {{ getTotalCount(user.idUser).toLocaleString() }}
             </td>
             <th
               style="background-color: rgb(193 193 193)"
-              :key="'GROUPEDITEMTOTAL_' + `_${index}_` + user.idUser"
+              :key="'GROUPEDITEMTOTAL_' + `_${i}_` + user.idUser"
             >
               {{ getTotalByUser(user.idUser).toLocaleString() }}
             </th>
