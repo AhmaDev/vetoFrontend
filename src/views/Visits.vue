@@ -211,9 +211,15 @@
                 class="error--text"
                 v-if="data.idDamagedItemsInvoice != undefined"
               >
-                {{ data.total }}
+                {{ data.total != undefined ? data.total.toLocaleString() : "" }}
               </td>
-              <td v-else>{{ data.totalPrice }}</td>
+              <td v-else>
+                {{
+                  data.totalPrice != undefined
+                    ? data.totalPrice.toLocaleString()
+                    : ""
+                }}
+              </td>
               <td>{{ data.visitCauseName }}</td>
               <td>
                 <span v-if="data.idVisit != undefined">
@@ -771,7 +777,7 @@ export default {
           Math.cos(lat2x);
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       var d = R * c;
-      return d / 1000;
+      return d;
     },
 
     toRad(Value) {

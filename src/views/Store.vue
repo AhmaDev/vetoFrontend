@@ -102,7 +102,18 @@
           >
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
-          {{ item.totalDamaged.toLocaleString() }}
+          <a
+            target="_blank"
+            :href="
+              '/damagedItemsRail?itemId=' +
+              item.idItem +
+              '&from=' +
+              search.from +
+              '&to=' +
+              search.to
+            "
+            >{{ item.totalDamaged.toLocaleString() }}</a
+          >
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn

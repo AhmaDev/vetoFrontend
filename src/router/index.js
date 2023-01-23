@@ -177,6 +177,11 @@ const routes = [
     component: () => import("../views/itemRail.vue"),
   },
   {
+    path: "/damagedItemsRail",
+    name: "CustomerRail",
+    component: () => import("../views/damagedItemsRail.vue"),
+  },
+  {
     path: "/track/:id",
     name: "Track",
     component: () => import("../views/Track.vue"),
