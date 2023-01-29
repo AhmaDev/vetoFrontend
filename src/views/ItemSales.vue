@@ -2,6 +2,11 @@
   <div id="itemSales" class="pa-10">
     <v-app-bar app>
       <v-toolbar-title>كشف مبيعات المواد</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn color="success" @click="tablesToExcel()">
+        <v-icon left>la-download</v-icon>
+        <span>تحميل</span>
+      </v-btn>
     </v-app-bar>
     <v-card class="pa-5">
       <v-row>
@@ -69,6 +74,7 @@
             >
               المجموعة
             </th>
+            <th colspan="2">المجموع</th>
             <th
               style="background-color: rgb(202, 248, 184)"
               class="text-center"
@@ -78,11 +84,12 @@
             >
               {{ group.itemGroupName }}
             </th>
-            <th colspan="2">المجموع</th>
           </tr>
           <tr>
             <th>#</th>
             <th>اسم الحساب</th>
+            <th style="background-color: rgb(100, 248, 184)">المبيعات</th>
+            <th style="background-color: rgb(202, 150, 184)">الاجمالي</th>
             <template v-for="group in itemGroups">
               <th
                 style="background-color: rgb(100, 248, 184)"
@@ -97,8 +104,6 @@
                 الاجمالي
               </th>
             </template>
-            <th style="background-color: rgb(100, 248, 184)">المبيعات</th>
-            <th style="background-color: rgb(202, 150, 184)">الاجمالي</th>
           </tr>
         </thead>
         <tbody>
@@ -115,6 +120,22 @@
               >
               <span v-if="selectedUser != null"> {{ user.username }}</span>
             </td>
+            <td
+              style="background-color: rgb(132 232 232)"
+              :key="'GROUPEDITEMSALES_' + `_${i}_` + user.idUser"
+            >
+              {{
+                getTotalCount(user.idUser || user.delegateId).toLocaleString()
+              }}
+            </td>
+            <th
+              style="background-color: rgb(293 193 193)"
+              :key="'GROUPEDITEMTOTAL_' + `_${i}_` + user.idUser"
+            >
+              {{
+                getTotalByUser(user.idUser || user.delegateId).toLocaleString()
+              }}
+            </th>
             <template v-for="(group, index) in itemGroups">
               <td
                 style="background-color: rgb(232 232 232)"
@@ -139,43 +160,29 @@
                 }}
               </th>
             </template>
-            <td
-              style="background-color: rgb(232 232 232)"
-              :key="'GROUPEDITEMSALES_' + `_${i}_` + user.idUser"
-            >
-              {{
-                getTotalCount(user.idUser || user.delegateId).toLocaleString()
-              }}
-            </td>
-            <th
-              style="background-color: rgb(193 193 193)"
-              :key="'GROUPEDITEMTOTAL_' + `_${i}_` + user.idUser"
-            >
-              {{
-                getTotalByUser(user.idUser || user.delegateId).toLocaleString()
-              }}
-            </th>
           </tr>
         </tbody>
-        <!-- <tfoot>
+        <tfoot>
           <tr>
             <td colspan="2">المجموع</td>
+            <td colspan="1">{{ getTotalCountx().toLocaleString() }}</td>
+            <td colspan="1">{{ getTotalPricex().toLocaleString() }}</td>
             <template v-for="(group, index) in itemGroups">
               <td
-                style="background-color: rgb(232 232 232)"
-                :key="'GROUPEDITEMSALES_' + `_${index}_` + group.idItemGroup"
+                style="background-color: rgb(232 232 132)"
+                :key="'FOOTER_' + `_${index}_` + group.idItemGroup"
               >
-                {{ getTotalCount(user.idUser).toLocaleString() }}
+                {{ getTotalCountByGroup(group.idItemGroup).toLocaleString() }}
               </td>
               <th
-                style="background-color: rgb(193 193 193)"
-                :key="'GROUPEDITEMTOTAL_' + `_${index}_` + user.idUser"
+                style="background-color: rgb(232 232 132)"
+                :key="'FOOTER_' + `_${index}_` + group.idItemGroup"
               >
-                {{ getTotalByUser(user.idUser).toLocaleString() }}
+                {{ getTotalPriceByGroup(group.idItemGroup).toLocaleString() }}
               </th>
             </template>
           </tr>
-        </tfoot> -->
+        </tfoot>
       </v-simple-table>
       <!--
       <v-simple-table>
@@ -291,6 +298,7 @@
 </template>
 
 <script>
+import * as XLSX from "xlsx-js-style/dist/xlsx.bundle";
 export default {
   name: "ItemSales",
   data: () => ({
@@ -306,7 +314,7 @@ export default {
     manufactures: [],
     invoices: [],
     search: {
-      invoiceType: null,
+      invoiceType: 1,
       customerId: null,
       delegateId: null,
       deliveryId: null,
@@ -444,6 +452,73 @@ export default {
         return sum;
       }
     },
+    getTotalCountByGroup(groupId) {
+      if (this.invoices.length == 0) {
+        return 0;
+      } else {
+        let sum = 0;
+        for (
+          let i = 0;
+          i < this.items.filter((e) => e.itemGroupId == groupId).length;
+          i++
+        ) {
+          const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
+          let invoices = this.invoices.filter((e) => e.itemId == item.idItem);
+          for (let i = 0; i < invoices.length; i++) {
+            sum = sum + invoices[i].count;
+          }
+        }
+
+        return sum;
+      }
+    },
+    getTotalPriceByGroup(groupId) {
+      if (this.invoices.length == 0) {
+        return 0;
+      } else {
+        let sum = 0;
+        for (
+          let i = 0;
+          i < this.items.filter((e) => e.itemGroupId == groupId).length;
+          i++
+        ) {
+          const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
+          let invoices = this.invoices.filter((e) => e.itemId == item.idItem);
+          for (let i = 0; i < invoices.length; i++) {
+            sum = sum + invoices[i].total;
+          }
+        }
+
+        return sum;
+      }
+    },
+    getTotalCountx() {
+      let sum = 0;
+      if (this.invoices.length == 0) {
+        return 0;
+      } else {
+        let invoices = this.invoices;
+        for (let i = 0; i < invoices.length; i++) {
+          sum = sum + invoices[i].count;
+        }
+
+        return sum;
+      }
+    },
+    getTotalPricex() {
+      let sum = 0;
+      if (this.invoices.length == 0) {
+        return 0;
+      } else {
+        let invoices = this.invoices;
+        for (let i = 0; i < invoices.length; i++) {
+          sum = sum + invoices[i].total;
+        }
+
+        return sum;
+      }
+    },
+
     getTotalCount(userId) {
       let items =
         this.selectedGroupItem == null
@@ -509,7 +584,7 @@ export default {
       this.$http
         .get(this.$baseUrl + "invoice/invoiceContent?search=true" + query)
         .then((res) => {
-          this.invoices = res.data;
+          this.invoices = res.data.filter((e) => e.invoiceTypeId == 1);
           console.log(this.invoices);
         })
         .finally(() => loading.hide());
@@ -528,6 +603,27 @@ export default {
           console.log(this.tableUsers);
         })
         .finally(() => loading.hide());
+    },
+    tablesToExcel() {
+      this.showSDollar = true;
+      setTimeout(() => {
+        var table_elt = document.getElementsByClassName(
+          "v-data-table__wrapper"
+        )[0];
+        var wb = XLSX.utils.table_to_book(table_elt, { raw: true });
+        if (wb.Workbook) {
+          wb.Workbook.Views[0]["RTL"] = true;
+        } else {
+          wb.Workbook = {};
+          wb.Workbook["Views"] = [{ RTL: true }];
+        }
+
+        // Package and Release Data (`writeFile` tries to write and save an XLSB file)
+        XLSX.writeFile(wb, "Report.xlsx");
+        setTimeout(() => {
+          this.showSDollar = false;
+        }, 1000);
+      }, 500);
     },
   },
 };
