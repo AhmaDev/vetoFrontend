@@ -326,7 +326,7 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "reports/overview?" +
+            "reports/overviewHuge?" +
             q +
             "&days=" +
             JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
