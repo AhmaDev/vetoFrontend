@@ -757,7 +757,7 @@ export default {
         x.getMonth() == y.getMonth() &&
         x.getDate() == y.getDate()
       ) {
-        return true;
+        return false;
       } else {
         return false;
       }
