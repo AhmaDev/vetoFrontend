@@ -65,6 +65,14 @@
                 item-value="idSellPrice"
               ></v-autocomplete>
             </v-col>
+            <v-col cols="12">
+              <v-text-field
+                outlined
+                label="التحصيل الدراسي"
+                hide-details
+                v-model="userdata.education"
+              ></v-text-field>
+            </v-col>
             <v-col cols="4">
               <v-btn
                 onclick="document.getElementById('filepicker').click()"
@@ -205,6 +213,7 @@ export default {
       imagePath: null,
       monthlyTarget: null,
       sellPriceId: 0,
+      education: null,
       canViewMonthlySales: 0,
       canViewMonthlyRestores: 0,
       canViewMonthlyDamaged: 0,
@@ -310,6 +319,7 @@ export default {
           secondPhoneNumber: this.userdata.secondPhoneNumber,
           monthlyTarget: this.userdata.monthlyTarget,
           sellPriceId: this.userdata.sellPriceId,
+          education: this.userdata.education,
           canViewMonthlySales: this.userdata.canViewMonthlySales,
           canViewMonthlyRestores: this.userdata.canViewMonthlyRestores,
           canViewMonthlyDamaged: this.userdata.canViewMonthlyDamaged,

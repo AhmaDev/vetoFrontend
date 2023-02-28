@@ -89,6 +89,7 @@
         hide-default-footer
         :headers="report.header"
         multi-sort
+        :key="forceRerender"
       >
         <template v-slot:[`item.totalCustomers`]="{ item }">
           {{ item.totalCustomers.toLocaleString() }}
@@ -187,6 +188,30 @@
             }}
           </div>
         </template>
+        <template v-slot:[`item.late`]="{ item }">
+          <div>
+            {{
+              calculateLate(item.idUser) == -1
+                ? "..."
+                : calculateLateDuration(calculateLate(item.idUser))
+            }}
+          </div>
+        </template>
+        <template v-slot:[`item.finalLate`]="{ item }">
+          <div>
+            {{
+              calculateLate(item.idUser) == -1
+                ? "..."
+                : calculateLateDuration(
+                    finalLate(
+                      compareDates(item.firstVisitDate, item.firstInvoiceDate),
+                      compareDates2(item.lastVisitDate, item.lastInvoiceDate),
+                      calculateLate(item.idUser)
+                    )
+                  )
+            }}
+          </div>
+        </template>
         <template v-slot:footer>
           <div class="pa-10 footerGrid" style="font-size: 14px !important">
             <v-row>
@@ -220,6 +245,7 @@ export default {
     startDate: "",
     sellPrices: [],
     endDate: "",
+    forceRerender: 0,
     selectedSuperVisor: 0,
     selectedDelegate: 0,
     selectedSellPrice: 0,
@@ -245,8 +271,11 @@ export default {
         { text: "بداية العمل", value: "firstInvoiceDate" },
         { text: "نهاية العمل", value: "lastInvoiceDate" },
         { text: "الفرق", value: "timeCompare" },
+        { text: "التأخير", value: "late" },
+        { text: "الصافي", value: "finalLate" },
       ],
     },
+    delegatesWork: [],
   }),
   created: function () {
     // LOAD PERMS START
@@ -290,6 +319,24 @@ export default {
         )
         .then((res) => {
           this.report.data = res.data;
+          for (let i = 0; i < this.report.data.length; i++) {
+            const user = this.report.data[i];
+            this.$http
+              .get(
+                this.$baseUrl +
+                  "supervisorDelegates/delegate/" +
+                  user.idUser +
+                  "?date=" +
+                  this.startDate
+              )
+              .then((workRes) => {
+                this.delegatesWork.push({
+                  userId: user.idUser,
+                  data: workRes.data,
+                });
+                console.log(user.idUser, this.delegatesWork);
+              });
+          }
           console.log(this.report.data);
         })
         .finally(() => loading.hide());
@@ -336,6 +383,25 @@ export default {
         )
         .then((res) => {
           this.report.data = res.data;
+          for (let i = 0; i < this.report.data.length; i++) {
+            const user = this.report.data[i];
+            this.$http
+              .get(
+                this.$baseUrl +
+                  "supervisorDelegates/delegate/" +
+                  user.idUser +
+                  "?date=" +
+                  this.startDate
+              )
+              .then((workRes) => {
+                this.delegatesWork.push({
+                  userId: user.idUser,
+                  data: workRes.data,
+                });
+
+                console.log(user.idUser, this.delegatesWork);
+              });
+          }
           console.log(this.report.data);
         })
         .finally(() => loading.hide());
@@ -433,6 +499,38 @@ export default {
       } else {
         return date2;
       }
+    },
+    calculateLate(userId) {
+      let work = this.delegatesWork.filter((e) => e.userId == userId);
+      if (this.delegatesWork.length != this.report.data.length) {
+        return -1;
+      } else {
+        let time = 0;
+        for (let i = 0; i < work[0].data.length - 1; i++) {
+          const element = work[0].data[i];
+          if (element.length < 2) {
+            return -2;
+          }
+          let date1 = new Date(element.createdAt);
+          let date2 = new Date(work[0].data[i + 1].createdAt);
+          const diffTime = Math.abs(date2 - date1);
+          if (diffTime > 900000) {
+            // 15 MINUTES
+            time = time + diffTime;
+          }
+        }
+        return time;
+      }
+    },
+    calculateLateDuration(millisecond) {
+      let tempTime = moment.duration(millisecond);
+      return tempTime.hours() + "ساعات و " + tempTime.minutes() + " دقيقة";
+    },
+    finalLate(startDate, endDate, late) {
+      let sDate = new Date(startDate);
+      let eDate = new Date(endDate);
+      const diffTime = Math.abs(eDate - sDate);
+      return diffTime - late;
     },
   },
 };

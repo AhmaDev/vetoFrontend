@@ -223,6 +223,12 @@ export default {
         child: null,
       },
       {
+        title: "كشف الزيارات",
+        icon: "las la-map",
+        route: "/visitsReport",
+        child: null,
+      },
+      {
         title: "الزبائن الموردين",
         icon: "las la-user-friends",
         route: "/customers",

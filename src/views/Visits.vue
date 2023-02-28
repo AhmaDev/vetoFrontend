@@ -305,7 +305,14 @@
                       data.sentFrom.split(",")[1],
                       data.customerLocation.split(",")[0],
                       data.customerLocation.split(",")[1]
-                    ).toFixed(5)
+                    ) >= 1
+                      ? calcCrow(
+                          data.sentFrom.split(",")[0],
+                          data.sentFrom.split(",")[1],
+                          data.customerLocation.split(",")[0],
+                          data.customerLocation.split(",")[1]
+                        ).toFixed(1)
+                      : "0.5"
                   }}
                   م
                 </v-chip>
