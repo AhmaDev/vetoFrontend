@@ -22,6 +22,7 @@
             outlined
             dense
             hide-details
+            :disabled="!checkPermission('overview_date')"
             label="تاريخ البداية"
             v-model="startDate"
           ></v-text-field>
@@ -31,6 +32,7 @@
             type="date"
             outlined
             dense
+            :disabled="!checkPermission('overview_date')"
             hide-details
             label="تاريخ النهاية"
             v-model="endDate"
@@ -97,9 +99,13 @@
         <template v-slot:[`item.totalSelling`]="{ item }">
           <router-link
             target="_BLANK"
+            v-if="checkPermission('overview_visits')"
             :to="'visits?delegate=' + item.idUser + '&date=' + startDate"
             >{{ item.totalSelling.toLocaleString() }}</router-link
           >
+          <div v-if="!checkPermission('overview_visits')">
+            {{ item.totalSelling.toLocaleString() }}
+          </div>
         </template>
         <template v-slot:[`item.totalRestores`]="{ item }">
           {{ item.totalRestores.toLocaleString() }}
@@ -120,9 +126,13 @@
         <template v-slot:[`item.totalDamaged`]="{ item }">
           <router-link
             target="_BLANK"
+            v-if="checkPermission('overview_damaged')"
             :to="'damagedItems?delegate=' + item.idUser + '&date=' + startDate"
             >{{ item.totalDamaged.toLocaleString() }}</router-link
           >
+          <div v-if="!checkPermission('overview_damaged')">
+            {{ item.totalDamaged.toLocaleString() }}
+          </div>
         </template>
         <template v-slot:[`item.remain`]="{ item }">
           {{
@@ -136,6 +146,7 @@
 
         <template v-slot:[`item.invoicesCount`]="{ item }">
           <router-link
+            v-if="checkPermission('overview_access_sales')"
             target="_BLANK"
             :to="
               'store?delegate=' +
@@ -147,18 +158,31 @@
             "
             >{{ item.invoicesCount.toLocaleString() }}</router-link
           >
+          <div v-if="!checkPermission('overview_access_sales')">
+            {{ item.invoicesCount.toLocaleString() }}
+          </div>
         </template>
         <template v-slot:[`item.username`]="{ item }">
-          <router-link target="_BLANK" :to="'user/' + item.idUser">{{
-            item.username
-          }}</router-link>
+          <router-link
+            v-if="checkPermission('overview_access_account')"
+            target="_BLANK"
+            :to="'user/' + item.idUser"
+            >{{ item.username }}</router-link
+          >
+          <div v-if="!checkPermission('overview_access_account')">
+            {{ item.username }}
+          </div>
         </template>
         <template v-slot:[`item.totalVisits`]="{ item }">
           <router-link
             target="_BLANK"
+            v-if="checkPermission('overview_visits')"
             :to="'visits?delegate=' + item.idUser + '&date=' + startDate"
             >{{ item.totalVisits.toLocaleString() }}</router-link
           >
+          <div v-if="!checkPermission('overview_visits')">
+            {{ item.totalVisits.toLocaleString() }}
+          </div>
         </template>
         <template v-slot:[`item.firstInvoiceDate`]="{ item }">
           <div>
@@ -319,6 +343,7 @@ export default {
         )
         .then((res) => {
           this.report.data = res.data;
+          this.delegatesWork = [];
           for (let i = 0; i < this.report.data.length; i++) {
             const user = this.report.data[i];
             this.$http
@@ -385,6 +410,7 @@ export default {
           this.report.data = res.data;
           for (let i = 0; i < this.report.data.length; i++) {
             const user = this.report.data[i];
+            this.delegatesWork = [];
             this.$http
               .get(
                 this.$baseUrl +
@@ -398,7 +424,6 @@ export default {
                   userId: user.idUser,
                   data: workRes.data,
                 });
-
                 console.log(user.idUser, this.delegatesWork);
               });
           }
@@ -434,7 +459,12 @@ export default {
         .finally(() => loading.hide());
     },
     startDateFixed(datex, firstDate) {
-      return moment(datex).locale("ar").from(moment(firstDate));
+      // return moment(datex).locale("ar").from(moment(firstDate));
+      let d1 = new Date(datex);
+      let d2 = new Date(firstDate);
+      let d = d2 - d1;
+      let tempTime = moment.duration(d);
+      return tempTime.hours() + "ساعات و " + tempTime.minutes() + " دقيقة";
     },
     getDays(from, to) {
       var d = new Date(from),
@@ -502,7 +532,7 @@ export default {
     },
     calculateLate(userId) {
       let work = this.delegatesWork.filter((e) => e.userId == userId);
-      if (this.delegatesWork.length != this.report.data.length) {
+      if (work.length == 0) {
         return -1;
       } else {
         let time = 0;
@@ -516,7 +546,7 @@ export default {
           const diffTime = Math.abs(date2 - date1);
           if (diffTime > 900000) {
             // 15 MINUTES
-            time = time + diffTime;
+            time = time + diffTime - 900000;
           }
         }
         return time;

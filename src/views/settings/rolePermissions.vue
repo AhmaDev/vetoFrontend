@@ -74,7 +74,7 @@ export default {
       { groupName: "الخريطة", permissions: [11, 20, 21] },
       { groupName: "الحسابات", permissions: [12, 23] },
 
-      { groupName: "التقرير العام", permissions: [31] },
+      { groupName: "التقرير العام", permissions: [31, 57, 58, 59, 60, 61] },
       { groupName: "كشف حساب زبون", permissions: [35] },
       { groupName: "الاعدادات", permissions: [22, 32, 33, 45] },
       {
