@@ -111,7 +111,7 @@
             v-for="(user, i) in selectedUser == null
               ? tableUsers
               : users.filter((e) => e.idUser == selectedUser)"
-            :key="user.idUser"
+            :key="user.idUser || user.delegateId"
           >
             <td>{{ i + 1 }}</td>
             <td width="200px">
@@ -122,7 +122,11 @@
             </td>
             <td
               style="background-color: rgb(132 232 232)"
-              :key="'GROUPEDITEMSALES_' + `_${i}_` + user.idUser"
+              :key="
+                'GROUPEDITEMSALES_' +
+                `_${i}_` +
+                (user.idUser || user.delegateId)
+              "
             >
               {{
                 getTotalCount(user.idUser || user.delegateId).toLocaleString()
@@ -130,7 +134,11 @@
             </td>
             <th
               style="background-color: rgb(293 193 193)"
-              :key="'GROUPEDITEMTOTAL_' + `_${i}_` + user.idUser"
+              :key="
+                'GROUPEDITEMTOTAL_' +
+                `_${i}_` +
+                (user.idUser || user.delegateId)
+              "
             >
               {{
                 getTotalByUser(user.idUser || user.delegateId).toLocaleString()
@@ -139,7 +147,9 @@
             <template v-for="(group, index) in itemGroups">
               <td
                 style="background-color: rgb(232 232 232)"
-                :key="'ITEMSALES_' + `_${index}_` + user.idUser"
+                :key="
+                  'ITEMSALES_' + `_${index}_` + (user.idUser || user.delegateId)
+                "
               >
                 {{
                   getItemCountByUser(
@@ -150,7 +160,9 @@
               </td>
               <th
                 style="background-color: rgb(193 193 193)"
-                :key="'ITEMTOTAL_' + `_${index}_` + user.idUser"
+                :key="
+                  'ITEMTOTAL_' + `_${index}_` + (user.idUser || user.delegateId)
+                "
               >
                 {{
                   getItemSalesByUser(
@@ -176,7 +188,7 @@
               </td>
               <th
                 style="background-color: rgb(232 232 132)"
-                :key="'FOOTER_' + `_${index}_` + group.idItemGroup"
+                :key="'FOOTERx_' + `_${index}_` + group.idItemGroup"
               >
                 {{ getTotalPriceByGroup(group.idItemGroup).toLocaleString() }}
               </th>
@@ -457,15 +469,37 @@ export default {
         return 0;
       } else {
         let sum = 0;
-        for (
-          let i = 0;
-          i < this.items.filter((e) => e.itemGroupId == groupId).length;
-          i++
-        ) {
-          const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
-          let invoices = this.invoices.filter((e) => e.itemId == item.idItem);
-          for (let i = 0; i < invoices.length; i++) {
-            sum = sum + invoices[i].count;
+
+        if (this.tableUsers.length == this.users.length) {
+          console.log(1);
+
+          for (
+            let i = 0;
+            i < this.items.filter((e) => e.itemGroupId == groupId).length;
+            i++
+          ) {
+            const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
+            let invoices = this.invoices.filter((e) => e.itemId == item.idItem);
+            for (let i = 0; i < invoices.length; i++) {
+              sum = sum + invoices[i].count;
+            }
+          }
+        } else {
+          let ids = this.tableUsers.map((e) => e.delegateId);
+          console.log(ids);
+          for (
+            let i = 0;
+            i < this.items.filter((e) => e.itemGroupId == groupId).length;
+            i++
+          ) {
+            const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
+
+            let invoices = this.invoices.filter(
+              (e) => e.itemId == item.idItem && ids.includes(e.createdBy)
+            );
+            for (let i = 0; i < invoices.length; i++) {
+              sum = sum + invoices[i].count;
+            }
           }
         }
 
@@ -477,15 +511,34 @@ export default {
         return 0;
       } else {
         let sum = 0;
-        for (
-          let i = 0;
-          i < this.items.filter((e) => e.itemGroupId == groupId).length;
-          i++
-        ) {
-          const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
-          let invoices = this.invoices.filter((e) => e.itemId == item.idItem);
-          for (let i = 0; i < invoices.length; i++) {
-            sum = sum + invoices[i].total;
+        if (this.tableUsers.length == this.users.length) {
+          console.log(1);
+          for (
+            let i = 0;
+            i < this.items.filter((e) => e.itemGroupId == groupId).length;
+            i++
+          ) {
+            const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
+            let invoices = this.invoices.filter((e) => e.itemId == item.idItem);
+            for (let i = 0; i < invoices.length; i++) {
+              sum = sum + invoices[i].total;
+            }
+          }
+        } else {
+          let ids = this.tableUsers.map((e) => e.delegateId);
+          console.log(ids);
+          for (
+            let i = 0;
+            i < this.items.filter((e) => e.itemGroupId == groupId).length;
+            i++
+          ) {
+            const item = this.items.filter((e) => e.itemGroupId == groupId)[i];
+            let invoices = this.invoices.filter(
+              (e) => e.itemId == item.idItem && ids.includes(e.createdBy)
+            );
+            for (let i = 0; i < invoices.length; i++) {
+              sum = sum + invoices[i].total;
+            }
           }
         }
 
