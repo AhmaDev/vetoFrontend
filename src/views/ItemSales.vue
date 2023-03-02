@@ -494,29 +494,29 @@ export default {
     },
     getTotalCountx() {
       let sum = 0;
-      if (this.invoices.length == 0) {
-        return 0;
+      let u = [];
+      if (this.selectedUser == null) {
+        u = this.tableUsers;
       } else {
-        let invoices = this.invoices;
-        for (let i = 0; i < invoices.length; i++) {
-          sum = sum + invoices[i].count;
-        }
-
-        return sum;
+        u = this.users.filter((e) => e.idUser == this.selectedUser);
       }
+      for (let i = 0; i < u.length; i++) {
+        sum = sum + this.getTotalCount(u[i].idUser || u[i].delegateId);
+      }
+      return sum;
     },
     getTotalPricex() {
       let sum = 0;
-      if (this.invoices.length == 0) {
-        return 0;
+      let u = [];
+      if (this.selectedUser == null) {
+        u = this.tableUsers;
       } else {
-        let invoices = this.invoices;
-        for (let i = 0; i < invoices.length; i++) {
-          sum = sum + invoices[i].total;
-        }
-
-        return sum;
+        u = this.users.filter((e) => e.idUser == this.selectedUser);
       }
+      for (let i = 0; i < u.length; i++) {
+        sum = sum + this.getTotalByUser(u[i].idUser || u[i].delegateId);
+      }
+      return sum;
     },
 
     getTotalCount(userId) {
