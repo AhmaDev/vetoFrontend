@@ -49,6 +49,17 @@
             @change="searchItemName"
           ></v-autocomplete>
         </v-col>
+        <v-col>
+          <v-autocomplete
+            item-text="sellPriceName"
+            item-value="idSellPrice"
+            :items="sellPrices"
+            outlined
+            label="فرز حسب السعر"
+            clearable
+            v-model="selectedSellPrice"
+          ></v-autocomplete>
+        </v-col>
       </v-row>
     </v-card>
     <div
@@ -93,7 +104,16 @@
               v-if="item.prices[0] != null"
               class="textOverFlow green--text headline"
             >
-              {{ (item.prices[0].price || 0).toLocaleString() }} د.ع
+              {{
+                (item.prices.filter((e) => e.sellPriceId == selectedSellPrice)
+                  .length > 0
+                  ? item.prices.filter(
+                      (e) => e.sellPriceId == selectedSellPrice
+                    )[0].price
+                  : 0
+                ).toLocaleString()
+              }}
+              د.ع
             </v-card-text>
             <v-card-actions>
               <v-btn
@@ -424,6 +444,7 @@ export default {
     selectedBrand: null,
     itemNameSearch: null,
     sellPrices: [],
+    selectedSellPrice: 1,
     manufactures: [],
     brands: [],
     itemWeightSuffixes: ["غرام", "كيلو", "ملي", "لتر"],
