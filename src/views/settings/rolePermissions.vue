@@ -70,6 +70,7 @@ export default {
         permissions: [16, 17, 18, 19],
       },
       { groupName: "كشف الهدايا", permissions: [24] },
+      { groupName: "كشف الزيارات", permissions: [62] },
       { groupName: "صلاحيات الزبائن", permissions: [5, 6] },
       { groupName: "الخريطة", permissions: [11, 20, 21] },
       { groupName: "الحسابات", permissions: [12, 23] },

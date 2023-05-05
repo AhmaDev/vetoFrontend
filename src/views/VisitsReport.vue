@@ -49,6 +49,7 @@
         <thead>
           <tr>
             <th>اسم الزبون</th>
+            <th>يوم الزيارة الرسمي</th>
             <th>اسم المندوب</th>
             <th>الوقت</th>
             <th>سبب الزيارة</th>
@@ -58,6 +59,7 @@
         <tbody>
           <tr v-for="visit in visits" :key="visit.idVisit">
             <td>{{ visit.storeName }} - {{ visit.customerId }}</td>
+            <td>{{ getDayName(visit.visitDay) }}</td>
             <td>{{ visit.username }}</td>
             <td>
               {{
@@ -114,6 +116,7 @@
 
 export default {
   data: () => ({
+    permissions: [],
     visitCauses: [],
     mapDialog: false,
     visits: [],
@@ -134,6 +137,20 @@ export default {
     },
   }),
   created: function () {
+    // LOAD PERMS START
+    this.auth().then((res) => {
+      this.permissions = res.permissions;
+      // CHECK IF CAN SEE THIS PAGE
+      if (!this.checkPermission("visit_report")) {
+        this.$toast.open({
+          type: "error",
+          message: "غير مصرح لك بمشاهدة هذه الصفحة",
+          duration: 3000,
+        });
+        this.$router.go(-1);
+      }
+    });
+    // LOAD PERMS END
     // LOAD PERMS END
     this.getCurrentDate().then((value) => {
       this.startDate = value;
@@ -142,6 +159,13 @@ export default {
     });
   },
   methods: {
+    checkPermission(permissionKey) {
+      var isAuthorized = this.permissions.filter(
+        (p) => p.permissionKey == permissionKey
+      );
+      if (isAuthorized.length > 0) return true;
+      else return false;
+    },
     fetch() {
       this.search();
       this.$http.get(this.$baseUrl + "visitCauses").then((res) => {
@@ -189,6 +213,34 @@ export default {
           this.$refs.myMap.mapObject.invalidateSize();
         }, 500);
       });
+    },
+    getDayName(value) {
+      switch (value) {
+        case "sunday": {
+          return "الاحد";
+        }
+        case "monday": {
+          return "الاثنين";
+        }
+        case "tuesday": {
+          return "الثلاثاء";
+        }
+        case "wednesday": {
+          return "الاربعاء";
+        }
+        case "thursday": {
+          return "الخميس";
+        }
+        case "friday": {
+          return "الجمعة";
+        }
+        case "saturday": {
+          return "السبت";
+        }
+        default: {
+          return "لا يوجد";
+        }
+      }
     },
   },
 };

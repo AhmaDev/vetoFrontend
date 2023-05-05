@@ -286,7 +286,7 @@
           <v-card class="pa-5">
             <v-data-table
               :headers="pricesHeader"
-              :items="item.prices.sort((a, b) => b.sellPriceId - a.sellPriceId)"
+              :items="item.prices"
               :items-per-page="100"
             >
               <template v-slot:top>

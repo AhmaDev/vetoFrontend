@@ -294,6 +294,20 @@ export default {
       // CHECK IF CAN SEE THIS PAGE
     });
 
+    // CHECK LOGIN
+    this.$http
+      .get(this.$baseUrl + "users/" + this.userInfo.idUser)
+      .then((res) => {
+        if (res.data.logout == 1) {
+          this.$http
+            .put(this.$baseUrl + "users/edit/" + this.userInfo.idUser, {
+              logout: 0,
+            })
+            .then(() => {
+              this.logout();
+            });
+        }
+      });
     this.$http.get(this.$baseUrl + "settings").then((res) => {
       this.appData = res.data;
     });
