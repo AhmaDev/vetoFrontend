@@ -130,6 +130,9 @@
             <template v-slot:[`item.visitDay`]="{ item }">
               {{ getDayName(item.visitDay) }}
             </template>
+            <template v-slot:[`item.totalSell`]="{ item }">
+              {{ item.totalSell.toLocaleString() }}
+            </template>
             <template v-slot:[`item.lastInvoice`]="{ item }">
               {{
                 item.lastInvoice == null
