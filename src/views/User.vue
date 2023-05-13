@@ -231,14 +231,16 @@ export default {
     this.auth().then((res) => {
       this.permissions = res.permissions;
       // CHECK IF CAN SEE THIS PAGE
-      if (!this.checkPermission("visits")) {
-        this.$toast.open({
-          type: "error",
-          message: "غير مصرح لك بمشاهدة هذه الصفحة",
-          duration: 3000,
-        });
-        this.$router.go(-1);
-      }
+      setTimeout(() => {
+        if (!this.checkPermission("visits")) {
+          this.$toast.open({
+            type: "error",
+            message: "غير مصرح لك بمشاهدة هذه الصفحة",
+            duration: 3000,
+          });
+          this.$router.go(-1);
+        }
+      }, 1000);
     });
     // LOAD PERMS END
     this.userId = this.$route.params.id;
@@ -246,6 +248,9 @@ export default {
   },
   methods: {
     checkPermission(permissionKey) {
+      if (this.permissions == undefined) {
+        return true;
+      }
       var isAuthorized = this.permissions.filter(
         (p) => p.permissionKey == permissionKey
       );
