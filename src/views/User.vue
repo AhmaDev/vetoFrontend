@@ -14,184 +14,75 @@
         <v-col>
           <v-row>
             <v-col cols="12">
-              <v-text-field
-                outlined
-                label="الاسم الكامل"
-                v-model="userdata.fullname"
-                hide-details
-              ></v-text-field>
+              <v-text-field outlined label="الاسم الكامل" v-model="userdata.fullname" hide-details></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                outlined
-                label="العنوان"
-                v-model="userdata.address"
-                hide-details
-              ></v-text-field>
+              <v-text-field outlined label="العنوان" v-model="userdata.address" hide-details></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                outlined
-                hide-details
-                label="رقم الهاتف الاول"
-                v-model="userdata.phoneNumber"
-              ></v-text-field>
+              <v-text-field outlined hide-details label="رقم الهاتف الاول" v-model="userdata.phoneNumber"></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                outlined
-                hide-details
-                label="رقم الهاتف الثاني"
-                v-model="userdata.secondPhoneNumber"
-              ></v-text-field>
+              <v-text-field outlined hide-details label="رقم الهاتف الثاني"
+                v-model="userdata.secondPhoneNumber"></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                outlined
-                label="الهدف الشهري للمبيعات"
-                type="number"
-                hide-details
-                v-model="userdata.monthlyTarget"
-              ></v-text-field>
+              <v-text-field outlined label="الهدف الشهري للمبيعات" type="number" hide-details
+                v-model="userdata.monthlyTarget"></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-autocomplete
-                outlined
-                label="سعر البيع"
-                hide-details
-                v-model="userdata.sellPriceId"
-                :items="sellPrices"
-                item-text="sellPriceName"
-                item-value="idSellPrice"
-              ></v-autocomplete>
+              <v-autocomplete outlined label="سعر البيع" hide-details v-model="userdata.sellPriceId" :items="sellPrices"
+                item-text="sellPriceName" item-value="idSellPrice"></v-autocomplete>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                outlined
-                label="التحصيل الدراسي"
-                hide-details
-                v-model="userdata.education"
-              ></v-text-field>
+              <v-text-field outlined label="التحصيل الدراسي" hide-details v-model="userdata.education"></v-text-field>
             </v-col>
             <v-col cols="4">
-              <v-btn
-                onclick="document.getElementById('filepicker').click()"
-                block
-              >
+              <v-btn onclick="document.getElementById('filepicker').click()" block>
                 <v-icon> mdi-cloud-outline </v-icon>
                 &nbsp;&nbsp; تعديل صورة المستخدم
               </v-btn>
-              <input
-                id="filepicker"
-                style="display: none"
-                type="file"
-                name="uploads"
-                @change="selectFiles($event)"
-                accept="image/png, image/gif, image/jpeg"
-              />
-              <img
-                v-if="userdata.imagePath != null"
-                :src="$baseUrl + 'files/' + userdata.imagePath"
-                width="100%"
-                id="imagePath"
-              />
-              <img
-                v-if="userdata.imagePath == null"
-                src="@/assets/no_image_placeholder.png"
-                width="100%"
-                id="imagePath"
-              />
+              <input id="filepicker" style="display: none" type="file" name="uploads" @change="selectFiles($event)"
+                accept="image/png, image/gif, image/jpeg" />
+              <img v-if="userdata.imagePath != null" :src="$baseUrl + 'files/' + userdata.imagePath" width="100%"
+                id="imagePath" />
+              <img v-if="userdata.imagePath == null" src="@/assets/no_image_placeholder.png" width="100%"
+                id="imagePath" />
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="6">
           <div v-if="user.roleId == 4">
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewMonthlySales')"
-              label="مشاهدة المبيعات الشهرية"
-              v-model="userdata.canViewMonthlySales"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              label="مشاهدة الراجع الشهري"
-              v-if="checkPermission('canViewMonthlyRestores')"
-              v-model="userdata.canViewMonthlyRestores"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              label="مشاهدة التالف الشهري"
-              v-if="checkPermission('canViewMonthlyDamaged')"
-              v-model="userdata.canViewMonthlyDamaged"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewDailyItems')"
-              label="مشاهدة مبيعات المواد اليومية"
-              v-model="userdata.canViewDailyItems"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canRestoreAllItems')"
-              label="امكانية استرجاع التالف اكثر من 50%"
-              v-model="userdata.canRestoreAllItems"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canCreateCustomer')"
-              label="امكانية انشاء زبون جديد"
-              v-model="userdata.canCreateCustomer"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewContinueusCustomers')"
-              label="مشاهدة الزبائن الدائميين والغير دائميين"
-              v-model="userdata.canViewContinueusCustomers"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewDelegateRail')"
-              label="مشاهدة حركة المندوب"
-              v-model="userdata.canViewDelegateRail"
-            ></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewMonthlySales')"
+              label="مشاهدة المبيعات الشهرية" v-model="userdata.canViewMonthlySales"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" label="مشاهدة الراجع الشهري"
+              v-if="checkPermission('canViewMonthlyRestores')" v-model="userdata.canViewMonthlyRestores"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" label="مشاهدة التالف الشهري"
+              v-if="checkPermission('canViewMonthlyDamaged')" v-model="userdata.canViewMonthlyDamaged"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewDailyItems')"
+              label="مشاهدة مبيعات المواد اليومية" v-model="userdata.canViewDailyItems"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canRestoreAllItems')"
+              label="امكانية استرجاع التالف اكثر من 50%" v-model="userdata.canRestoreAllItems"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canCreateCustomer')"
+              label="امكانية انشاء زبون جديد" v-model="userdata.canCreateCustomer"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewContinueusCustomers')"
+              label="مشاهدة الزبائن الدائميين والغير دائميين" v-model="userdata.canViewContinueusCustomers"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewDelegateRail')"
+              label="مشاهدة حركة المندوب" v-model="userdata.canViewDelegateRail"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" label="امكانية تعديل معلومات الزبون"
+              v-model="userdata.canEditCustomer"></v-checkbox>
           </div>
           <div v-if="user.roleId == 3">
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewDelegateRail')"
-              label="مشاهدة المجموع"
-              v-model="userdata.canViewDelegateRail"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewMonthlySales2')"
-              label="مشاهدة التفاصيل المالية"
-              v-model="userdata.canViewMonthlySales"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canViewContinueusCustomers')"
-              label="مشاهدة الزبائن الدائميين والغير دائميين"
-              v-model="userdata.canViewContinueusCustomers"
-            ></v-checkbox>
-            <v-checkbox
-              :true-value="1"
-              :false-value="0"
-              v-if="checkPermission('canCreateCustomer')"
-              label="امكانية فرز على المشرفين"
-              v-model="userdata.canCreateCustomer"
-            ></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewDelegateRail')"
+              label="مشاهدة المجموع" v-model="userdata.canViewDelegateRail"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewMonthlySales2')"
+              label="مشاهدة التفاصيل المالية" v-model="userdata.canViewMonthlySales"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewContinueusCustomers')"
+              label="مشاهدة الزبائن الدائميين والغير دائميين" v-model="userdata.canViewContinueusCustomers"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canCreateCustomer')"
+              label="امكانية فرز على المشرفين" v-model="userdata.canCreateCustomer"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" label="امكانية تعديل معلومات الزبون"
+              v-model="userdata.canEditCustomer"></v-checkbox>
           </div>
         </v-col>
       </v-row>
@@ -222,6 +113,7 @@ export default {
       canCreateCustomer: 0,
       canViewContinueusCustomers: 0,
       canViewDelegateRail: 0,
+      canEditCustomer: 0,
     },
     user: null,
     sellPrices: [],
@@ -333,6 +225,7 @@ export default {
           canCreateCustomer: this.userdata.canCreateCustomer,
           canViewContinueusCustomers: this.userdata.canViewContinueusCustomers,
           canViewDelegateRail: this.userdata.canViewDelegateRail,
+          canEditCustomer: this.userdata.canEditCustomer,
         })
         .then(() => {
           this.$toast.open({
@@ -347,5 +240,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
