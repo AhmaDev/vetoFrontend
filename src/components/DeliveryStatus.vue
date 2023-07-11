@@ -1,10 +1,5 @@
 <template>
-  <div
-    ref="print"
-    v-if="deliveryStatus != null"
-    id="deliveryStatus"
-    class="pa-10"
-  >
+  <div ref="print" v-if="deliveryStatus != null" id="deliveryStatus" class="pa-10">
     <v-sheet class="pa-10 sheet" elevation="2">
       <div v-if="appData != null" class="pa-10">
         <center>
@@ -23,8 +18,8 @@
             تاريخ التجهيز:
             {{
               deliveryStatus.notice == "none"
-                ? deliveryDate(deliveryStatus.creationFixedDate)
-                : currentDay()
+              ? deliveryDate(deliveryStatus.creationFixedDate)
+              : currentDay()
             }}
           </td>
           <td>تاريخ طبع الكشف: {{ currentDay() }}</td>
@@ -47,12 +42,8 @@
           <th>اجمالي الراجع</th>
         </thead>
         <template v-for="(item, i) in deliveryStatus.invoicesData">
-          <tr
-            :style="
-              item.total == 0 ? 'background-color: red; color: white' : ''
-            "
-            :key="i"
-          >
+          <tr :style="item.total == 0 ? 'background-color: red; color: white' : ''
+            " :key="i">
             <td colspan="2">{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
@@ -67,18 +58,11 @@
             <td></td>
             <td></td>
           </tr>
-          <template
-            v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0"
-          >
-            <tr
-              :style="
-                giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0
-                  ? 'background-color: red; color: white'
-                  : ''
-              "
-              v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
-              :key="'GIFT_' + gift.itemId"
-            >
+          <template v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0">
+            <tr :style="giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0
+                ? 'background-color: red; color: white'
+                : ''
+              " v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)" :key="'GIFT_' + gift.itemId">
               <td colspan="2">
                 {{ getItemName(gift.itemId) }}
               </td>
@@ -102,14 +86,9 @@
           </template>
         </template>
         <template v-for="gift in giftItems">
-          <tr
-            :style="0 == 0 ? 'background-color: red; color: white' : ''"
-            v-if="
-              deliveryStatus.invoicesData.filter((e) => e.itemId == gift.itemId)
-                .length == 0
-            "
-            :key="'GIFT_' + gift.itemId"
-          >
+          <tr :style="0 == 0 ? 'background-color: red; color: white' : ''" v-if="deliveryStatus.invoicesData.filter((e) => e.itemId == gift.itemId)
+              .length == 0
+            " :key="'GIFT_' + gift.itemId">
             <td colspan="2">
               {{ getItemName(gift.itemId) }}
             </td>
@@ -390,13 +369,16 @@ td,
 th {
   padding: 10px;
 }
+
 th {
   background-color: #ddd;
 }
+
 .sheet {
   page-break-after: always;
   direction: rtl !important;
 }
+
 div.divFooter {
   position: fixed;
   top: 0;
@@ -407,13 +389,16 @@ div.divFooter {
   @page {
     size: A4 portrait;
   }
+
   * {
     font-size: 12px !important;
     -webkit-print-color-adjust: exact;
   }
+
   .v-btn {
     display: none !important;
   }
+
   div.divFooter {
     position: fixed;
     bottom: 0;

@@ -10,80 +10,38 @@
     </v-app-bar>
 
     <v-card ref="print" class="pa-10">
-      <center class="printHeader"><h2>اعداد المخزن</h2></center>
+      <center class="printHeader">
+        <h2>اعداد المخزن</h2>
+      </center>
 
       <v-row>
         <v-col v-if="this.checkPermission('store_search_supervisor')">
-          <v-autocomplete
-            :items="supervisors"
-            item-text="username"
-            item-value="idUser"
-            outlined
-            dense
-            hide-details
-            label="المشرف"
-            v-model="selectedSuperVisor"
-            @change="setDelegates()"
-          ></v-autocomplete>
+          <v-autocomplete :items="supervisors" item-text="username" item-value="idUser" outlined dense hide-details
+            label="المشرف" v-model="selectedSuperVisor" @change="setDelegates()"></v-autocomplete>
         </v-col>
         <v-col v-if="this.checkPermission('store_search_delegate')">
-          <v-autocomplete
-            :items="delegates"
-            item-text="username"
-            item-value="idUser"
-            outlined
-            dense
-            hide-details
-            multiple
-            label="المندوب"
-            v-model="selectedDelegate"
-          ></v-autocomplete>
+          <v-autocomplete :items="delegates" item-text="username" item-value="idUser" outlined dense hide-details multiple
+            label="المندوب" v-model="selectedDelegate"></v-autocomplete>
         </v-col>
         <v-col>
-          <v-text-field
-            outlined
-            dense
-            hide-details
-            label="من تاريخ"
-            v-model="search.from"
-            type="date"
-          ></v-text-field>
+          <v-text-field outlined dense hide-details label="من تاريخ" v-model="search.from" type="date"></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field
-            outlined
-            dense
-            hide-details
-            label="الى تاريخ"
-            v-model="search.to"
-            type="date"
-          ></v-text-field>
+          <v-text-field outlined dense hide-details label="الى تاريخ" v-model="search.to" type="date"></v-text-field>
         </v-col>
         <v-col>
           <v-btn @click="fetchSearch()" color="primary"> بحث </v-btn>
         </v-col>
       </v-row>
       <br />
-      <v-data-table
-        :items-per-page="500"
-        :items="store"
-        :headers="
-          checkPermission('store_view_incomes') && selectedDelegate.length == 0
-            ? tableHeader
-            : tableHeader2
-        "
-        multi-sort
-      >
+      <v-data-table :items-per-page="500" :items="store" :headers="checkPermission('store_view_incomes') && selectedDelegate.length == 0
+        ? tableHeader
+        : tableHeader2
+        " multi-sort>
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">
-            <img
-              v-if="item.imagePath != null"
-              :src="$baseUrl + 'files/' + item.imagePath"
-            />
-            <img
-              v-if="item.imagePath == null"
-              src="@/assets/no_image_placeholder.png"
-            />
+            <img v-if="item.imagePath != null" :src="$baseUrl + 'files/' + item.imagePath" />
+            <img v-if="item.imagePath == null" src="@/assets/no_image_placeholder.png" />
           </v-avatar>
         </template>
         <template v-slot:[`item.lastRemaining`]="{ item }">
@@ -98,39 +56,42 @@
         </template>
         <template v-slot:[`item.storex`]="{ item }">
           <v-chip :color="item.storex < 0.25 ? 'error' : 'success'">
-            {{ item.storex }}</v-chip
-          >
+            {{ item.storex }}</v-chip>
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
-          <a
-            target="_blank"
-            :href="
-              '/damagedItemsRail?itemId=' +
-              item.idItem +
-              '&from=' +
-              search.from +
-              '&to=' +
-              search.to
-            "
-            >{{ item.totalDamaged.toLocaleString() }}</a
-          >
+          <a target="_blank" :href="'/damagedItemsRail?itemId=' +
+            item.idItem +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to
+            ">{{ item.totalDamaged.toLocaleString() }}</a>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn
-            v-if="checkPermission('item_rail')"
-            target="_BLANK"
-            :to="
-              '/itemRail/' +
-              item.idItem +
-              '?name=' +
-              item.fullItemName +
-              '&from=' +
-              search.from +
-              '&to=' +
-              search.to
-            "
-            icon
-          >
+          <v-btn v-if="checkPermission('item_rail')" target="_BLANK" :to="'/itemRail/' +
+            item.idItem +
+            '?name=' +
+            item.fullItemName +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to
+            " icon>
+            <v-icon>la-eye</v-icon>
+          </v-btn>
+        </template>
+        <template v-slot:[`item.actions2`]="{ item }">
+          <v-btn v-if="checkPermission('item_rail')" target="_BLANK" :to="'/itemRail/' +
+            item.idItem +
+            '?name=' +
+            item.fullItemName +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to +
+            '&userId=' +
+            $route.query.delegate
+            " icon>
             <v-icon>la-eye</v-icon>
           </v-btn>
         </template>
@@ -184,6 +145,7 @@ export default {
       { text: "المبلغ الاجمالي", value: "totalSellPrice" },
       { text: "التالف", value: "totalDamaged" },
       { text: "المبلغ للتالف", value: "totalDamagedPrice" },
+      { text: "الاجراءات", value: "actions2" },
     ],
   }),
   created: function () {
@@ -247,8 +209,8 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "supervisorDelegates/userid/" +
-            this.selectedSuperVisor
+          "supervisorDelegates/userid/" +
+          this.selectedSuperVisor
         )
         .then((res) => {
           this.selectedDelegate = res.data.map((e) => e.delegateId);
@@ -262,7 +224,7 @@ export default {
         this.$http
           .get(
             this.$baseUrl +
-              `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
+            `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
           )
           .then((res) => {
             var secondDate = new Date(this.search.from);
@@ -279,7 +241,7 @@ export default {
             this.$http
               .get(
                 this.$baseUrl +
-                  `item/detailedStore?from=2020-01-01&to=${secondDateString}`
+                `item/detailedStore?from=2020-01-01&to=${secondDateString}`
               )
               .then((res) => {
                 this.lastStore = res.data;
@@ -294,9 +256,9 @@ export default {
         this.$http
           .get(
             this.$baseUrl +
-              `item/detailedStoreByUser/${JSON.stringify(
-                this.selectedDelegate
-              ).slice(1, -1)}?from=${this.search.from}&to=${this.search.to}`
+            `item/detailedStoreByUser/${JSON.stringify(
+              this.selectedDelegate
+            ).slice(1, -1)}?from=${this.search.from}&to=${this.search.to}`
           )
           .then((res) => {
             this.store = res.data;
@@ -333,25 +295,31 @@ export default {
 .printHeader {
   display: none !important;
 }
+
 @media print {
   .printHeader {
     display: block !important;
     padding: 10px;
   }
+
   .v-chip {
     color: black !important;
   }
+
   @page {
     size: A4 landscape;
   }
+
   * {
     direction: rtl !important;
     color-adjust: exact !important;
     zoom: 0.9;
   }
+
   .v-btn {
     display: none !important;
   }
+
   .v-card {
     box-shadow: none !important;
   }

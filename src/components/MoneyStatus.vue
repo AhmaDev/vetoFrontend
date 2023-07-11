@@ -1,10 +1,5 @@
 <template>
-  <div
-    ref="print"
-    v-if="deliveryStatus != null"
-    id="deliveryStatus"
-    class="pa-10"
-  >
+  <div ref="print" v-if="deliveryStatus != null" id="deliveryStatus" class="pa-10">
     <v-sheet class="pa-10 sheet" elevation="2">
       <div v-if="appData != null" class="pa-10">
         <center>
@@ -41,12 +36,8 @@
           <th>الصافي</th>
         </thead>
         <template v-for="(item, i) in deliveryStatus.invoicesData">
-          <tr
-            :style="
-              item.total == 0 ? 'background-color: red; color: white' : ''
-            "
-            :key="i"
-          >
+          <tr :style="item.total == 0 ? 'background-color: red; color: white' : ''
+            " :key="i">
             <td style="font-size: 14px !important; font-weight: bold !important;">{{ getItemName(item.itemId) }}</td>
             <td></td>
             <td></td>
@@ -62,30 +53,24 @@
             <td></td>
             <td></td>
           </tr>
-          <template  v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0">
-          <tr
-            :style="
-              giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0 ? 'background-color: red; color: white' : ''
-            "
-            v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)"
-            :key="'GIFT_' + gift.itemId"
-           
-          >
-            <td style="font-size: 14px !important; font-weight: bold !important;">{{ getItemName(gift.itemId) }}</td>
-            <td></td>
-            <td></td>
-            <td style="font-size: 14px !important; font-weight: bold !important;">{{ gift.count }}</td>
-            <td v-if="gift.discountTypeId > 0">
-              {{ getDiscountName(gift.discountTypeId) }}
-            </td>
-            <td v-else>
-              {{ gift.total / gift.count }}
-            </td>
-            <td>{{ gift.total.toLocaleString() }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <template v-if="giftItems.filter((x) => x.itemId == item.itemId).length > 0">
+            <tr :style="giftItems.filter((x) => x.itemId == item.itemId)[0].total == 0 ? 'background-color: red; color: white' : ''
+              " v-for="gift in giftItems.filter((x) => x.itemId == item.itemId)" :key="'GIFT_' + gift.itemId">
+              <td style="font-size: 14px !important; font-weight: bold !important;">{{ getItemName(gift.itemId) }}</td>
+              <td></td>
+              <td></td>
+              <td style="font-size: 14px !important; font-weight: bold !important;">{{ gift.count }}</td>
+              <td v-if="gift.discountTypeId > 0">
+                {{ getDiscountName(gift.discountTypeId) }}
+              </td>
+              <td v-else>
+                {{ gift.total / gift.count }}
+              </td>
+              <td>{{ gift.total.toLocaleString() }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
           </template>
         </template>
       </table>
@@ -290,7 +275,11 @@ export default {
       );
     },
     getItemName(itemId) {
-      return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
+      if (this.items.filter((i) => i.idItem == itemId).length > 0) {
+        return this.items.filter((i) => i.idItem == itemId)[0].fullItemName;
+      } else {
+        return "جاري تحميل اسماء المواد";
+      }
     },
     deliveryDate(date) {
       if (moment(date).locale("en").format("dddd") == "Thursday") {
@@ -326,21 +315,26 @@ td,
 th {
   padding: 10px;
 }
+
 th {
   background-color: #ddd;
 }
+
 .sheet {
   page-break-after: always;
   direction: rtl !important;
 }
+
 @media print {
   @page {
     size: A4 portrait;
   }
+
   * {
     font-size: 10px !important;
     -webkit-print-color-adjust: exact;
   }
+
   .v-btn {
     display: none !important;
   }

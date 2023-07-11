@@ -10,23 +10,19 @@
         <v-btn @click="sort(3)">راجع المبيعات</v-btn>
       </v-btn-toggle>
       <v-spacer></v-spacer>
-      <v-btn
-        @click="emptyItemModal = true"
-        color="error"
-        v-if="this.checkPermission('store_empty')"
-      >
+      <v-btn @click="emptyItemModal = true" color="error" v-if="this.checkPermission('store_empty')">
         تصفير المادة ليوم معين
       </v-btn>
     </v-app-bar>
-    <v-alert
-      style="position: sticky !important; top: 64px; z-index: 100"
-      color="primary"
-      dark
-    >
+    <v-alert style="position: sticky !important; top: 64px; z-index: 100" color="primary" dark>
       {{ $route.query.name }}
     </v-alert>
+    <v-alert v-if="$route.query.userId != null" style="" color="error" dark>
+      للمندوب -- {{ tableData.filter(e => e.createdBy == $route.query.userId)[0].delegateName }}
+    </v-alert>
     <v-card>
-      <v-data-table :items-per-page="500" :headers="header" :items="tableData">
+      <v-data-table :items-per-page="500" :headers="header"
+        :items="$route.query.userId == null ? tableData : tableData.filter(e => e.createdBy == $route.query.userId)">
         <template v-slot:[`item.type`]="{ item }">
           <v-chip v-if="item.invoiceTypeId == 1" outlined small color="success">
             بيع
@@ -55,20 +51,9 @@
       <v-card>
         <v-card-text>
           <br /><br />
-          <v-text-field
-            type="date"
-            outlined
-            label="التاريخ"
-            v-model="selectedDate"
-          ></v-text-field>
+          <v-text-field type="date" outlined label="التاريخ" v-model="selectedDate"></v-text-field>
           <br />
-          <v-btn
-            @click="emptyItem()"
-            :disabled="selectedDate == null"
-            block
-            color="error"
-            >تأكيد التصفير</v-btn
-          >
+          <v-btn @click="emptyItem()" :disabled="selectedDate == null" block color="error">تأكيد التصفير</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -112,12 +97,12 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "reports/itemRail/" +
-            this.$route.params.id +
-            "?date1=" +
-            this.$route.query.from +
-            "&date2=" +
-            this.$route.query.to
+          "reports/itemRail/" +
+          this.$route.params.id +
+          "?date1=" +
+          this.$route.query.from +
+          "&date2=" +
+          this.$route.query.to
         )
         .then((res) => {
           this.tableData = res.data;
@@ -133,10 +118,10 @@ export default {
         this.$http
           .put(
             this.$baseUrl +
-              "emptyQuntityOfItemByDate/" +
-              this.$route.params.id +
-              "?date=" +
-              this.selectedDate
+            "emptyQuntityOfItemByDate/" +
+            this.$route.params.id +
+            "?date=" +
+            this.selectedDate
           )
           .then(() => {
             this.$toast.open({
@@ -172,5 +157,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
