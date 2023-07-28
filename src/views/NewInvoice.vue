@@ -4,27 +4,20 @@
       <v-toolbar-title>فاتورة رقم #{{ invoice.idInvoice }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
-
+      <v-btn target="_BLANK" v-if="invoice.idInvoice != 0" :to="'/customer/' + invoice.customerId">معلومات الزبون</v-btn>
       <v-btn :disabled="!checkPermission('invoices_edit')" @click="save()" icon>
         <v-icon>mdi-check</v-icon>
       </v-btn>
       <template v-if="invoice.idInvoice != 0">
         <v-menu offset-y>
           <template v-bind:item="item" v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              icon
-              :disabled="!checkPermission('invoice_delete')"
-            >
+            <v-btn v-bind="attrs" v-on="on" icon :disabled="!checkPermission('invoice_delete')">
               <v-icon color="red" title="حذف المادة">mdi-delete-outline</v-icon>
             </v-btn>
           </template>
           <v-list>
             <v-list-item @click="deleteInvoice()">
-              <v-list-item-title
-                >اضغط هنا لتأكيد حذف الفاتورة</v-list-item-title
-              >
+              <v-list-item-title>اضغط هنا لتأكيد حذف الفاتورة</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -38,274 +31,120 @@
     <v-row>
       <v-col cols="3">
         <v-card class="pa-5" no-elevation>
-          <v-text-field
-            disabled
-            v-model="invoice.idInvoice"
-            outlined
-            dense
-            label="رقم الفاتورة"
-            prepend-icon="mdi-pound"
-          />
-          <v-text-field
-            type="date"
-            v-model="invoice.creationFixedDate"
-            outlined
-            dense
-            label="تاريخ الفاتورة"
-            @change="calculateDate()"
-            :disabled="invoice.invoiceTypeId != 3"
-          />
-          <v-text-field
-            type="time"
-            v-model="invoice.creationFixedTime"
-            outlined
-            dense
-            label="وقت الفاتورة"
-            disabled
-          />
-          <v-autocomplete
-            v-model="invoice.invoiceTypeId"
-            :items="invoiceTypes"
-            outlined
-            dense
-            label="نوع الفاتورة"
-            item-text="invoiceTypeName"
-            item-value="idInvoiceType"
-            :disabled="!checkPermission('invoices_edit')"
-          ></v-autocomplete>
-          <v-autocomplete
-            v-model="invoice.customerId"
-            :items="
-              invoice.invoiceTypeId == 2 ||
-              invoice.invoiceTypeId == 4 ||
-              invoice.invoiceTypeId == 5
-                ? manufactures
-                : customers
-            "
-            outlined
-            @change="setDelegate()"
-            dense
-            :label="
-              invoice.invoiceTypeId == 2 ||
-              invoice.invoiceTypeId == 4 ||
-              invoice.invoiceTypeId == 5
-                ? 'المورد'
-                : 'الزبون'
-            "
-            item-text="storeName"
-            item-value="idCustomer"
-            :suffix="
-              invoice.invoiceTypeId == null ? 'يرجى اختيار نوع الفاتورة' : ''
-            "
-            :disabled="
-              !checkPermission('invoices_edit') || invoice.invoiceTypeId == null
-            "
-          ></v-autocomplete>
-          <v-autocomplete
-            v-model="invoice.sellPriceId"
-            :key="forceRerender"
-            :items="sellPrices"
-            outlined
-            dense
-            label="فئة الفاتورة"
-            item-text="sellPriceName"
-            item-value="idSellPrice"
-            :disabled="!checkPermission('invoices_edit')"
-          ></v-autocomplete>
-          <v-autocomplete
-            v-model="invoice.sellTypeId"
-            :items="sellTypes"
-            outlined
-            dense
-            label="حالة الفاتورة"
-            item-text="sellTypeName"
-            item-value="idSellType"
-            :disabled="!checkPermission('invoices_edit')"
-          ></v-autocomplete>
-          <v-autocomplete
-            v-model="invoice.createdBy"
-            :items="users"
-            outlined
-            dense
-            label="الجهة"
-            item-text="username"
-            item-value="idUser"
-            v-if="invoice.invoiceTypeId == 1 || invoice.invoiceTypeId == 3"
-            :disabled="!checkPermission('invoices_edit')"
-          ></v-autocomplete>
-          <v-textarea
-            v-model="invoice.notice"
-            outlined
-            dense
-            label="الملاحظات"
-            :disabled="!checkPermission('invoices_edit')"
-          ></v-textarea>
+          <v-text-field disabled v-model="invoice.idInvoice" outlined dense label="رقم الفاتورة"
+            prepend-icon="mdi-pound" />
+          <v-text-field type="date" v-model="invoice.creationFixedDate" outlined dense label="تاريخ الفاتورة"
+            @change="calculateDate()" :disabled="invoice.invoiceTypeId != 3" />
+          <v-text-field type="time" v-model="invoice.creationFixedTime" outlined dense label="وقت الفاتورة" disabled />
+          <v-autocomplete v-model="invoice.invoiceTypeId" :items="invoiceTypes" outlined dense label="نوع الفاتورة"
+            item-text="invoiceTypeName" item-value="idInvoiceType"
+            :disabled="!checkPermission('invoices_edit')"></v-autocomplete>
+          <v-autocomplete v-model="invoice.customerId" :items="invoice.invoiceTypeId == 2 ||
+            invoice.invoiceTypeId == 4 ||
+            invoice.invoiceTypeId == 5
+            ? manufactures
+            : customers
+            " outlined @change="setDelegate()" dense :label="invoice.invoiceTypeId == 2 ||
+    invoice.invoiceTypeId == 4 ||
+    invoice.invoiceTypeId == 5
+    ? 'المورد'
+    : 'الزبون'
+    " item-text="storeName" item-value="idCustomer" :suffix="invoice.invoiceTypeId == null ? 'يرجى اختيار نوع الفاتورة' : ''
+    " :disabled="!checkPermission('invoices_edit') || invoice.invoiceTypeId == null
+    "></v-autocomplete>
+          <v-autocomplete v-model="invoice.sellPriceId" :key="forceRerender" :items="sellPrices" outlined dense
+            label="فئة الفاتورة" item-text="sellPriceName" item-value="idSellPrice"
+            :disabled="!checkPermission('invoices_edit')"></v-autocomplete>
+          <v-autocomplete v-model="invoice.sellTypeId" :items="sellTypes" outlined dense label="حالة الفاتورة"
+            item-text="sellTypeName" item-value="idSellType"
+            :disabled="!checkPermission('invoices_edit')"></v-autocomplete>
+          <v-autocomplete v-model="invoice.createdBy" :items="users" outlined dense label="الجهة" item-text="username"
+            item-value="idUser" v-if="invoice.invoiceTypeId == 1 || invoice.invoiceTypeId == 3"
+            :disabled="!checkPermission('invoices_edit')"></v-autocomplete>
+          <v-textarea v-model="invoice.notice" outlined dense label="الملاحظات"
+            :disabled="!checkPermission('invoices_edit')"></v-textarea>
         </v-card>
       </v-col>
       <v-col cols="9" :key="forceRerender">
         <v-card class="pa-5" no-elevation>
           <v-row>
             <v-col cols="4">
-              <v-autocomplete
-                :items="items"
-                outlined
-                dense
-                label="المادة"
-                item-text="fullItemName"
-                item-value="idItem"
+              <v-autocomplete :items="items" outlined dense label="المادة" item-text="fullItemName" item-value="idItem"
                 v-on:change="
                   getPriceForItem($event);
-                  getTotalPerItem();
-                "
-                v-model="inputFields.itemId"
-                :disabled="!checkPermission('invoices_edit')"
-              >
+                getTotalPerItem();
+                " v-model="inputFields.itemId" :disabled="!checkPermission('invoices_edit')">
                 <template v-slot:item="data">
                   <v-list-item-avatar>
                     <img :src="$baseUrl + 'files/' + data.item.imagePath" />
                   </v-list-item-avatar>
                   <v-list-item-content>
-                    <v-list-item-title
-                      v-html="data.item.fullItemName"
-                    ></v-list-item-title>
-                    <v-list-item-subtitle
-                      v-html="data.item.itemGroupName"
-                    ></v-list-item-subtitle>
+                    <v-list-item-title v-html="data.item.fullItemName"></v-list-item-title>
+                    <v-list-item-subtitle v-html="data.item.itemGroupName"></v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-autocomplete>
             </v-col>
             <v-col>
-              <v-text-field
-                v-on:change="getTotalPerItem()"
-                v-model="inputFields.price"
-                type="number"
-                outlined
-                dense
-                label="المبلغ"
-                :disabled="!checkPermission('invoices_edit')"
-              />
+              <v-text-field v-on:change="getTotalPerItem()" v-model="inputFields.price" type="number" outlined dense
+                label="المبلغ" :disabled="!checkPermission('invoices_edit')" />
             </v-col>
             <v-col>
-              <v-text-field
-                v-on:change="getTotalPerItem()"
-                v-model="inputFields.quantity"
-                type="number"
-                outlined
-                dense
-                label="الكمية"
-                :disabled="!checkPermission('invoices_edit')"
-              />
+              <v-text-field v-on:change="getTotalPerItem()" v-model="inputFields.quantity" type="number" outlined dense
+                label="الكمية" :disabled="!checkPermission('invoices_edit')" />
             </v-col>
             <v-col>
-              <v-text-field
-                v-on:change="getTotalPerItem()"
-                v-model="inputFields.discount"
-                type="number"
-                outlined
-                dense
-                label="الخصم %"
-                :disabled="!checkPermission('invoices_edit')"
-              />
+              <v-text-field v-on:change="getTotalPerItem()" v-model="inputFields.discount" type="number" outlined dense
+                label="الخصم %" :disabled="!checkPermission('invoices_edit')" />
             </v-col>
             <v-col>
-              <v-autocomplete
-                :items="discounts"
-                outlined
-                dense
-                label="نوع الخصم"
-                item-text="discountName"
-                item-value="idDiscount"
-                v-model="inputFields.discountId"
-                :disabled="!checkPermission('invoices_edit')"
-              ></v-autocomplete>
+              <v-autocomplete :items="discounts" outlined dense label="نوع الخصم" item-text="discountName"
+                item-value="idDiscount" v-model="inputFields.discountId"
+                :disabled="!checkPermission('invoices_edit')"></v-autocomplete>
             </v-col>
             <v-col>
-              <v-text-field
-                disabled
-                type="number"
-                outlined
-                dense
-                label="الاجمالي"
-                v-model="inputFields.total"
-              />
+              <v-text-field disabled type="number" outlined dense label="الاجمالي" v-model="inputFields.total" />
             </v-col>
             <v-col cols="1">
-              <v-btn
-                :disabled="!checkPermission('invoices_edit')"
-                @click="addItemToInvoice()"
-                icon
-                dark
-                :color="$background"
-              >
+              <v-btn :disabled="!checkPermission('invoices_edit')" @click="addItemToInvoice()" icon dark
+                :color="$background">
                 <v-icon> mdi-plus </v-icon>
               </v-btn>
             </v-col>
           </v-row>
-          <v-data-table
-            :headers="invoiceContents.headers"
-            :items="invoiceContents.contents"
-            :items-per-page="50"
-            v-model="selectedItems"
-            show-select
-            item-key="idInvoiceContent"
-            class="elevation-0"
-            height="500"
-            fixed-header
-          >
+          <v-data-table :headers="invoiceContents.headers" :items="invoiceContents.contents" :items-per-page="50"
+            v-model="selectedItems" show-select item-key="idInvoiceContent" class="elevation-0" height="500" fixed-header>
             <template v-slot:[`item.options`]="{ item }">
               <v-menu offset-y>
                 <template v-bind:item="item" v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    :disabled="!checkPermission('invoices_edit')"
-                    v-bind="attrs"
-                    v-on="on"
-                    icon
-                  >
-                    <v-icon color="red" title="حذف المادة"
-                      >mdi-delete-outline</v-icon
-                    >
+                  <v-btn :disabled="!checkPermission('invoices_edit')" v-bind="attrs" v-on="on" icon>
+                    <v-icon color="red" title="حذف المادة">mdi-delete-outline</v-icon>
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item
-                    @click="
-                      deleteItemFromInvoice(
-                        invoiceContents.contents.indexOf(item)
-                      )
-                    "
-                  >
-                    <v-list-item-title
-                      >اضغط هنا لتأكيد حذف المادة</v-list-item-title
-                    >
+                  <v-list-item @click="
+                    deleteItemFromInvoice(
+                      invoiceContents.contents.indexOf(item)
+                    )
+                    ">
+                    <v-list-item-title>اضغط هنا لتأكيد حذف المادة</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
 
               <v-menu offset-y>
                 <template v-bind:item="item" v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    :disabled="!checkPermission('invoices_edit')"
-                    v-bind="attrs"
-                    v-on="on"
-                    icon
-                  >
-                    <v-icon :color="$background" title="تصفير المادة"
-                      >mdi-numeric-0-box-multiple-outline</v-icon
-                    >
+                  <v-btn :disabled="!checkPermission('invoices_edit')" v-bind="attrs" v-on="on" icon>
+                    <v-icon :color="$background" title="تصفير المادة">mdi-numeric-0-box-multiple-outline</v-icon>
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item
-                    @click="
-                      emptyQuantityOfItem(
-                        invoiceContents.contents.indexOf(item)
-                      )
-                    "
-                  >
-                    <v-list-item-title
-                      >اضغط هنا لتصفير كمية المادة</v-list-item-title
-                    >
+                  <v-list-item @click="
+                    emptyQuantityOfItem(
+                      invoiceContents.contents.indexOf(item)
+                    )
+                    ">
+                    <v-list-item-title>اضغط هنا لتصفير كمية المادة</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -325,20 +164,9 @@
       </v-col>
     </v-row>
 
-    <v-fab-transition
-      v-if="invoice.idInvoice != 0 && invoice.invoiceTypeName == 'بيع'"
-    >
-      <v-btn
-        v-show="selectedItems.length > 0"
-        color="red"
-        @click="restoreItemsToStore()"
-        dark
-        rounded
-        large
-        fixed
-        bottom
-        left
-      >
+    <v-fab-transition v-if="invoice.idInvoice != 0 && invoice.invoiceTypeName == 'بيع'">
+      <v-btn v-show="selectedItems.length > 0" color="red" @click="restoreItemsToStore()" dark rounded large fixed bottom
+        left>
         استرجاع المواد
       </v-btn>
     </v-fab-transition>
@@ -718,8 +546,8 @@ export default {
         this.$http
           .put(
             this.$baseUrl +
-              "invoice/emptyQuntityOfItem/" +
-              item.idInvoiceContent,
+            "invoice/emptyQuntityOfItem/" +
+            item.idInvoiceContent,
             {
               count: 0,
               discount: 0,
@@ -804,11 +632,11 @@ export default {
       let selectedDate = new Date(this.invoice.creationFixedDate);
       let date = new Date(
         Date.now() -
-          parseInt(this.settingsFields.daysToRestoreInvoices) *
-            24 *
-            60 *
-            60 *
-            1000
+        parseInt(this.settingsFields.daysToRestoreInvoices) *
+        24 *
+        60 *
+        60 *
+        1000
       );
       console.log("CURRENT: " + selectedDate.getTime());
       console.log("DATE: " + date.getTime());
@@ -840,5 +668,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

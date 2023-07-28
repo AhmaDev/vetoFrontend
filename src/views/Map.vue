@@ -4,40 +4,20 @@
       <v-toolbar-title>الخريطة</v-toolbar-title>
       <v-spacer></v-spacer>
       <template v-if="this.checkPermission('map_edit')">
-        <v-btn
-          @click="customers = allCustomers.filter((e) => e.totalInvoices > 0)"
-          v-if="editCustomers"
-          color="primary"
-        >
+        <v-btn @click="customers = allCustomers.filter((e) => e.totalInvoices > 0)" v-if="editCustomers" color="primary">
           المعاميل
         </v-btn>
-        <v-btn
-          @click="customers = allCustomers.filter((e) => e.totalInvoices == 0)"
-          v-if="editCustomers"
-          color="primary"
-        >
+        <v-btn @click="customers = allCustomers.filter((e) => e.totalInvoices == 0)" v-if="editCustomers" color="primary">
           غير المعاميل
         </v-btn>
-        <v-btn
-          @click="customers = allCustomers"
-          v-if="editCustomers"
-          color="primary"
-        >
+        <v-btn @click="customers = allCustomers" v-if="editCustomers" color="primary">
           الكل
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn
-          @click="editCustomers = true"
-          v-if="!editCustomers"
-          color="primary"
-        >
+        <v-btn @click="editCustomers = true" v-if="!editCustomers" color="primary">
           رسم المسار
         </v-btn>
-        <v-btn
-          @click="editCustomers = false"
-          v-if="editCustomers"
-          color="error"
-        >
+        <v-btn @click="editCustomers = false" v-if="editCustomers" color="error">
           الخروج من رسم المسار
         </v-btn>
         <v-btn @click="selectByDrag()" v-if="editCustomers" color="success">
@@ -46,26 +26,28 @@
       </template>
     </v-app-bar>
 
+    <v-card :loading="$loading.active" style="position: fixed; top: 80px; left: 30%; right: 30%; z-index: 1000000;"
+      v-if="editCustomers" class="pa-0">
+      <v-row class="pa-5">
+        <v-col>
+          <v-text-field v-model="searchPeriodForm.from" hide-details dense outlined type="date" label="من"></v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field v-model="searchPeriodForm.to" hide-details dense outlined type="date" label="الى"></v-text-field>
+        </v-col>
+        <v-col>
+          <v-btn @click="searchPeriod()" color="success">بحث</v-btn>
+        </v-col>
+      </v-row>
+    </v-card>
+
+
     <v-navigation-drawer v-if="editCustomers" app>
       <div class="pa-5">
-        <v-autocomplete
-          :items="users"
-          item-text="username"
-          item-value="idUser"
-          label="الجهة"
-          v-model="search.selectedUser"
-          outlined
-          dense
-        ></v-autocomplete>
-        <v-autocomplete
-          :items="searchDays"
-          item-text="displayName"
-          item-value="day"
-          label="يوم الزيارة"
-          v-model="search.selectedDay"
-          outlined
-          dense
-        ></v-autocomplete>
+        <v-autocomplete :items="users" item-text="username" item-value="idUser" label="الجهة"
+          v-model="search.selectedUser" outlined dense></v-autocomplete>
+        <v-autocomplete :items="searchDays" item-text="displayName" item-value="day" label="يوم الزيارة"
+          v-model="search.selectedDay" outlined dense></v-autocomplete>
         <v-list-item>
           <v-list-item-content>
             الزبائن : {{ customers.length }}
@@ -73,15 +55,8 @@
         </v-list-item>
         <v-btn @click="searchCustomers()" block color="primary">بحث</v-btn>
         <br /><br />
-        <v-text-field
-          v-if="customers.length > 0"
-          label="البحث عن كود زبون"
-          outlined
-          type="number"
-          hint="اضغط Enter بعد كتابة كود الزبون"
-          dense
-          @keypress.enter="searchCustomerOnmap($event)"
-        ></v-text-field>
+        <v-text-field v-if="customers.length > 0" label="البحث عن كود زبون" outlined type="number"
+          hint="اضغط Enter بعد كتابة كود الزبون" dense @keypress.enter="searchCustomerOnmap($event)"></v-text-field>
 
         <template v-if="selectedCustomers.length > 0">
           <v-list-item>
@@ -95,25 +70,15 @@
             </v-list-item-action>
           </v-list-item>
           <br />
-          <v-btn @click="dialogs.setDelegate = true" block color="primary"
-            >تحويل الجهة</v-btn
-          >
+          <v-btn @click="dialogs.setDelegate = true" block color="primary">تحويل الجهة</v-btn>
           <br />
           <br />
           <br />
-          <v-btn
-            v-if="userInfo.roleId == 1"
-            @click="deleteCustomers()"
-            block
-            color="error"
-            >حذف</v-btn
-          >
+          <v-btn v-if="userInfo.roleId == 1" @click="deleteCustomers()" block color="error">حذف</v-btn>
         </template>
       </div>
     </v-navigation-drawer>
-    <v-card
-      v-if="!editCustomers"
-      style="
+    <v-card v-if="!editCustomers" style="
         position: fixed;
         left: 20px;
         bottom: 20px;
@@ -121,77 +86,38 @@
         z-index: 100000;
         width: 350px;
         overflow: scroll;
-      "
-    >
+      ">
       <v-card-text>
         <h3>المندوبين</h3>
         <small>اضغط على اسم المندوب لمشاهدة الحركة</small>
         <v-list>
-          <v-list-item
-            v-for="user in users.filter((e) => e.roleId == 4)"
-            :key="'USER_' + user.idUser"
-            link
-            :to="'/track/' + user.idUser"
-          >
+          <v-list-item v-for="user in users.filter((e) => e.roleId == 4)" :key="'USER_' + user.idUser" link
+            :to="'/track/' + user.idUser">
             <v-list-item-content>
               <v-list-item-title>{{ user.username }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
-              <v-chip
-                v-if="mapData.filter((e) => e.userId == user.idUser).length > 0"
-                small
-                color="success"
-                >متصل</v-chip
-              >
-              <v-chip
-                v-if="
-                  mapData.filter((e) => e.userId == user.idUser).length == 0
-                "
-                small
-                color="error"
-                >غير متصل</v-chip
-              >
+              <v-chip v-if="mapData.filter((e) => e.userId == user.idUser).length > 0" small color="success">متصل</v-chip>
+              <v-chip v-if="mapData.filter((e) => e.userId == user.idUser).length == 0
+                " small color="error">غير متصل</v-chip>
             </v-list-item-action>
           </v-list-item>
         </v-list>
       </v-card-text>
     </v-card>
-    <l-map
-      :key="forceRerender"
-      style="height: 100vh"
-      :zoom="map.zoom"
-      ref="map"
-      :center="map.center"
-    >
+    <l-map :key="forceRerender" style="height: 100vh" :zoom="map.zoom" ref="map" :center="map.center">
       <l-draw-toolbar position="topleft" v-if="editCustomers" />
-      <l-tile-layer
-        :url="map.url"
-        :attribution="map.attribution"
-      ></l-tile-layer>
+      <l-tile-layer :url="map.url" :attribution="map.attribution"></l-tile-layer>
       <template v-if="this.checkPermission('map_tacking')">
         <template v-if="!editCustomers">
           <template v-if="reloadMarkers">
-            <l-marker
-              v-for="marker in mapData"
-              :key="'MARKER' + marker.userId"
-              :lat-lng.sync="marker.fixedLocation"
-            >
+            <l-marker v-for="marker in mapData" :key="'MARKER' + marker.userId" :lat-lng.sync="marker.fixedLocation">
               <l-icon>
                 <div class="userMarker">
                   <b style="color: white"> {{ getUserName(marker.userId) }}</b>
                 </div>
-                <img
-                  src="@/assets/user.svg"
-                  v-if="checkDate(marker.date)"
-                  width="30px"
-                  alt=""
-                />
-                <img
-                  v-if="!checkDate(marker.date)"
-                  src="@/assets/disconnected.png"
-                  width="40px"
-                  alt=""
-                />
+                <img src="@/assets/user.svg" v-if="checkDate(marker.date)" width="30px" alt="" />
+                <img v-if="!checkDate(marker.date)" src="@/assets/disconnected.png" width="40px" alt="" />
               </l-icon>
               <l-popup ref="marker">
                 اخر تحديث للموقع قبل
@@ -202,20 +128,11 @@
         </template>
       </template>
       <template v-if="editCustomers">
-        <l-circle-marker
-          v-for="marker in customers"
-          :key="marker.idCustomer"
-          :radius="15"
-          :stroke="false"
-          :fillOpacity="0.8"
-          @update="forceRerender++"
-          :fillColor="checkIfSelected(marker)"
-          @click="selectCustomer(marker)"
-          @contextmenu="openCustomer(marker.idCustomer)"
-          :lat-lng="getCustomerLocation(marker.location)"
-        >
-          <l-tooltip
-            >{{ marker.storeName }} - {{ marker.idCustomer }}
+        <l-circle-marker v-for="marker in customers" :key="marker.idCustomer" :radius="15" :stroke="false"
+          :fillOpacity="0.8" @update="forceRerender++" :fillColor="checkIfSelected(marker)"
+          @click="selectCustomer(marker)" @contextmenu="openCustomer(marker.idCustomer)"
+          :lat-lng="getCustomerLocation(marker.location)">
+          <l-tooltip>{{ marker.storeName }} - {{ marker.idCustomer }}
             <br />
             اضفط زر الفأرة الايمن لمشاهدة معلومات الزبون
           </l-tooltip>
@@ -227,28 +144,13 @@
       <v-card>
         <v-card-title class="text-h5"> قم بأختيار الجهة </v-card-title>
         <v-card-text>
-          <v-autocomplete
-            v-model="selectedDelegateId"
-            :items="users"
-            item-text="username"
-            item-value="idUser"
-          >
+          <v-autocomplete v-model="selectedDelegateId" :items="users" item-text="username" item-value="idUser">
           </v-autocomplete>
-          <v-autocomplete
-            v-model="selectedVisitDay"
-            :items="days"
-            item-text="displayName"
-            item-value="day"
-            label="يوم الزيارة الاول"
-          >
+          <v-autocomplete v-model="selectedVisitDay" :items="days" item-text="displayName" item-value="day"
+            label="يوم الزيارة الاول">
           </v-autocomplete>
-          <v-autocomplete
-            v-model="selectedSecondVisitDay"
-            :items="days"
-            item-text="displayName"
-            item-value="day"
-            label="يوم الزيارة الثاني"
-          >
+          <v-autocomplete v-model="selectedSecondVisitDay" :items="days" item-text="displayName" item-value="day"
+            label="يوم الزيارة الثاني">
           </v-autocomplete>
         </v-card-text>
         <v-card-actions>
@@ -299,7 +201,7 @@ export default {
   },
   data: () => ({
     permissions: [],
-    editCustomers: false,
+    editCustomers: true,
     customers: [],
     allCustomers: [],
     selectedCustomers: [],
@@ -315,6 +217,10 @@ export default {
       zoom: 12,
       center: [33.4, 44.3],
       markerLatLng: [33.4, 44.3],
+    },
+    searchPeriodForm: {
+      from: null,
+      to: null,
     },
     mapData: [],
     popUpOptions: {
@@ -388,6 +294,7 @@ export default {
     },
     searchCustomers() {
       let loading = this.$loading.show();
+
       let query = "";
       if (this.search.selectedDay == "all") {
         query = `user=${this.search.selectedUser}&totalInvoices=1`;
@@ -516,6 +423,40 @@ export default {
       });
       window.open(routeData.href, "_blank");
     },
+    searchPeriod() {
+      if (this.allCustomers.length == 0) {
+        this.$toast.open({
+          type: "warning",
+          message: "يرجى اختيار مندوب",
+          duration: 3000,
+        });
+        return;
+      }
+      if (this.searchPeriodForm.from == null || this.searchPeriodForm.to == null) {
+        this.$toast.open({
+          type: "warning",
+          message: "يرجى اختيار تاريخ",
+          duration: 3000,
+        });
+        return;
+      }
+      let loading = this.$loading.show();
+      this.$http.get(this.$baseUrl + "invoice/filter?search=true&user=" + this.search.selectedUser + `&dateRangeFrom=${this.searchPeriodForm.from}&dateRangeTo=${this.searchPeriodForm.to}`).then(res => {
+        let customers = [];
+        let invoices = res.data;
+        console.log(invoices, this.allCustomers);
+        for (var i = 0; i < invoices.length; i++) {
+          let invoice = invoices[i];
+          // check if customer exist
+          customers.push(this.allCustomers.filter(e => e.idCustomer == invoice.customerId)[0]);
+        }
+        console.log(customers);
+        this.customers = customers;
+        loading.hide();
+      });
+
+
+    },
   },
   created: function () {
     // LOAD PERMS START
@@ -571,10 +512,12 @@ export default {
   height: 40px;
   text-align: center;
 }
+
 .disconnected {
   position: absolute;
   top: 0px;
 }
+
 .leaflet-control-toolbar,
 .leaflet-popup-toolbar {
   padding-left: 0px !important;

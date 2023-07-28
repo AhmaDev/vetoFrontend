@@ -13,96 +13,47 @@
     </v-app-bar>
 
     <v-card ref="print" class="pa-10">
-      <center class="printHeader"><h2>التقرير العام</h2></center>
+      <center class="printHeader">
+        <h2>التقرير العام</h2>
+      </center>
 
       <v-row>
         <v-col>
-          <v-text-field
-            type="date"
-            outlined
-            dense
-            hide-details
-            :disabled="!checkPermission('overview_date')"
-            label="تاريخ البداية"
-            v-model="startDate"
-          ></v-text-field>
+          <v-text-field type="date" outlined dense hide-details :disabled="!checkPermission('overview_date')"
+            label="تاريخ البداية" v-model="startDate"></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field
-            type="date"
-            outlined
-            dense
-            :disabled="!checkPermission('overview_date')"
-            hide-details
-            label="تاريخ النهاية"
-            v-model="endDate"
-          ></v-text-field>
+          <v-text-field type="date" outlined dense :disabled="!checkPermission('overview_date')" hide-details
+            label="تاريخ النهاية" v-model="endDate"></v-text-field>
         </v-col>
         <v-col>
-          <v-autocomplete
-            :items="supervisors"
-            item-text="username"
-            item-value="idUser"
-            outlined
-            dense
-            hide-details
-            label="المشرف"
-            v-model="selectedSuperVisor"
-            @change="setDelegates()"
-          ></v-autocomplete>
+          <v-autocomplete :items="supervisors" item-text="username" item-value="idUser" outlined dense hide-details
+            label="المشرف" v-model="selectedSuperVisor" @change="setDelegates()"></v-autocomplete>
         </v-col>
         <v-col>
-          <v-autocomplete
-            :items="delegates"
-            item-text="username"
-            item-value="idUser"
-            outlined
-            dense
-            hide-details
-            multiple
-            label="المندوب"
-            v-model="selectedDelegate"
-          ></v-autocomplete>
+          <v-autocomplete :items="delegates" item-text="username" item-value="idUser" outlined dense hide-details multiple
+            label="المندوب" v-model="selectedDelegate"></v-autocomplete>
         </v-col>
         <v-col>
-          <v-autocomplete
-            :items="sellPrices"
-            item-text="sellPriceName"
-            item-value="idSellPrice"
-            outlined
-            dense
-            hide-details
-            label="ترتيب حسب سعر البيع"
-            v-model="selectedSellPrice"
-          ></v-autocomplete>
+          <v-autocomplete :items="sellPrices" item-text="sellPriceName" item-value="idSellPrice" outlined dense
+            hide-details label="ترتيب حسب سعر البيع" v-model="selectedSellPrice"></v-autocomplete>
         </v-col>
         <v-col>
           <v-btn @click="search()" color="primary" block dark> بحث </v-btn>
         </v-col>
       </v-row>
       <br />
-      <v-data-table
-        :items="
-          selectedSellPrice == 0
-            ? report.data
-            : report.data.filter((e) => e.sellPriceId == selectedSellPrice)
-        "
-        :items-per-page="2000"
-        hide-default-footer
-        :headers="report.header"
-        multi-sort
-        :key="forceRerender"
-      >
+      <v-data-table :items="selectedSellPrice == 0
+        ? report.data
+        : report.data.filter((e) => e.sellPriceId == selectedSellPrice)
+        " :items-per-page="2000" hide-default-footer :headers="report.header" multi-sort :key="forceRerender">
         <template v-slot:[`item.totalCustomers`]="{ item }">
           {{ item.totalCustomers.toLocaleString() }}
         </template>
         <template v-slot:[`item.totalSelling`]="{ item }">
-          <router-link
-            target="_BLANK"
-            v-if="checkPermission('overview_visits')"
-            :to="'visits?delegate=' + item.idUser + '&date=' + startDate"
-            >{{ item.totalSelling.toLocaleString() }}</router-link
-          >
+          <router-link target="_BLANK" v-if="checkPermission('overview_visits')"
+            :to="'visits?delegate=' + item.idUser + '&date=' + startDate">{{ item.totalSelling.toLocaleString()
+            }}</router-link>
           <div v-if="!checkPermission('overview_visits')">
             {{ item.totalSelling.toLocaleString() }}
           </div>
@@ -114,22 +65,16 @@
           {{ item.totalRemaining.toLocaleString() }}
         </template>
         <template v-slot:[`item.totalOffers`]="{ item }">
-          <router-link
-            target="_BLANK"
-            :to="'discounts?delegate=' + item.idUser + '&date=' + startDate"
-            >{{ item.totalOffers.toLocaleString() }}</router-link
-          >
+          <router-link target="_BLANK" :to="'discounts?delegate=' + item.idUser + '&date=' + startDate">{{
+            item.totalOffers.toLocaleString() }}</router-link>
         </template>
         <template v-slot:[`item.totalGifts`]="{ item }">
           {{ item.totalGifts.toLocaleString() }}
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
-          <router-link
-            target="_BLANK"
-            v-if="checkPermission('overview_damaged')"
-            :to="'damagedItems?delegate=' + item.idUser + '&date=' + startDate"
-            >{{ item.totalDamaged.toLocaleString() }}</router-link
-          >
+          <router-link target="_BLANK" v-if="checkPermission('overview_damaged')"
+            :to="'damagedItems?delegate=' + item.idUser + '&date=' + startDate">{{ item.totalDamaged.toLocaleString()
+            }}</router-link>
           <div v-if="!checkPermission('overview_damaged')">
             {{ item.totalDamaged.toLocaleString() }}
           </div>
@@ -145,41 +90,28 @@
         </template>
 
         <template v-slot:[`item.invoicesCount`]="{ item }">
-          <router-link
-            v-if="checkPermission('overview_access_sales')"
-            target="_BLANK"
-            :to="
-              'store?delegate=' +
-              item.idUser +
-              '&dateFrom=' +
-              startDate +
-              '&dateTo=' +
-              endDate
-            "
-            >{{ item.invoicesCount.toLocaleString() }}</router-link
-          >
+          <router-link v-if="checkPermission('overview_access_sales')" target="_BLANK" :to="'store?delegate=' +
+            item.idUser +
+            '&dateFrom=' +
+            startDate +
+            '&dateTo=' +
+            endDate
+            ">{{ item.invoicesCount.toLocaleString() }}</router-link>
           <div v-if="!checkPermission('overview_access_sales')">
             {{ item.invoicesCount.toLocaleString() }}
           </div>
         </template>
         <template v-slot:[`item.username`]="{ item }">
-          <router-link
-            v-if="checkPermission('overview_access_account')"
-            target="_BLANK"
-            :to="'user/' + item.idUser"
-            >{{ item.username }}</router-link
-          >
+          <router-link v-if="checkPermission('overview_access_account')" target="_BLANK" :to="'user/' + item.idUser">{{
+            item.username }}</router-link>
           <div v-if="!checkPermission('overview_access_account')">
             {{ item.username }}
           </div>
         </template>
         <template v-slot:[`item.totalVisits`]="{ item }">
-          <router-link
-            target="_BLANK"
-            v-if="checkPermission('overview_visits')"
-            :to="'visits?delegate=' + item.idUser + '&date=' + startDate"
-            >{{ item.totalVisits.toLocaleString() }}</router-link
-          >
+          <router-link target="_BLANK" v-if="checkPermission('overview_visits')"
+            :to="'visits?delegate=' + item.idUser + '&date=' + startDate">{{ item.totalVisits.toLocaleString()
+            }}</router-link>
           <div v-if="!checkPermission('overview_visits')">
             {{ item.totalVisits.toLocaleString() }}
           </div>
@@ -216,8 +148,8 @@
           <div>
             {{
               calculateLate(item.idUser) == -1
-                ? "..."
-                : calculateLateDuration(calculateLate(item.idUser))
+              ? "..."
+              : calculateLateDuration(calculateLate(item.idUser))
             }}
           </div>
         </template>
@@ -225,35 +157,34 @@
           <div>
             {{
               calculateLate(item.idUser) == -1
-                ? "..."
-                : calculateLateDuration(
-                    finalLate(
-                      compareDates(item.firstVisitDate, item.firstInvoiceDate),
-                      compareDates2(item.lastVisitDate, item.lastInvoiceDate),
-                      calculateLate(item.idUser)
-                    )
-                  )
+              ? "..."
+              : calculateLateDuration(
+                finalLate(
+                  compareDates(item.firstVisitDate, item.firstInvoiceDate),
+                  compareDates2(item.lastVisitDate, item.lastInvoiceDate),
+                  calculateLate(item.idUser)
+                )
+              )
             }}
           </div>
         </template>
-        <template v-slot:footer>
-          <div class="pa-10 footerGrid" style="font-size: 14px !important">
-            <v-row>
-              <v-col> عدد الزبائن <br />{{ sum("totalCustomers") }} </v-col>
-              <v-col> عدد الفواتير <br />{{ sum("invoicesCount") }} </v-col>
-              <v-col> عدد الراجع <br />{{ sum("restoresCount") }} </v-col>
-              <v-col> مجموع الفواتير <br />{{ sum("totalSelling") }} </v-col>
-              <v-col> مجموع الراجع <br />{{ sum("totalRestores") }} </v-col>
-              <v-col> مجموع الهدايا <br />{{ sum("totalGifts") }} </v-col>
-              <v-col> مجموع العروض <br />{{ sum("totalOffers") }} </v-col>
-              <v-col> مجموع التالف <br />{{ sum("totalDamaged") }} </v-col>
-              <v-col class="success white--text">
-                الاجمالي <br />{{ sum("totalRemaining") }}
-              </v-col>
-            </v-row>
-          </div>
-        </template>
       </v-data-table>
+      <div class="pa-10  footerGrid"
+        style="font-size: 14px !important; float: right; margin-top: 100px; width: 100%; margin: 30px">
+        <v-row>
+          <v-col> عدد الزبائن <br />{{ sum("totalCustomers") }} </v-col>
+          <v-col> عدد الفواتير <br />{{ sum("invoicesCount") }} </v-col>
+          <v-col> عدد الراجع <br />{{ sum("restoresCount") }} </v-col>
+          <v-col> مجموع الفواتير <br />{{ sum("totalSelling") }} </v-col>
+          <v-col> مجموع الراجع <br />{{ sum("totalRestores") }} </v-col>
+          <v-col> مجموع الهدايا <br />{{ sum("totalGifts") }} </v-col>
+          <v-col> مجموع العروض <br />{{ sum("totalOffers") }} </v-col>
+          <v-col> مجموع التالف <br />{{ sum("totalDamaged") }} </v-col>
+          <v-col class="success white--text">
+            الاجمالي <br />{{ sum("totalRemaining") }}
+          </v-col>
+        </v-row>
+      </div>
     </v-card>
   </div>
 </template>
@@ -284,7 +215,7 @@ export default {
         { text: "فواتير البيع", value: "invoicesCount" },
         { text: "الزيارات", value: "totalVisits" },
         { text: "المتبقي", value: "remain" },
-        { text: "عدد المعاميل", value: "activeCustomers" },
+        // { text: "عدد المعاميل", value: "activeCustomers" },
         { text: "مبيعات اجمالية", value: "totalSelling" },
         { text: "راجع المبيعات", value: "totalRestores" },
         { text: "فواتير الراجع", value: "restoresCount" },
@@ -335,11 +266,11 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "reports/overviewHuge?days=" +
-            JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
-              1,
-              -1
-            )
+          "reports/overviewHuge?days=" +
+          JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
+            1,
+            -1
+          )
         )
         .then((res) => {
           this.report.data = res.data;
@@ -349,10 +280,10 @@ export default {
             this.$http
               .get(
                 this.$baseUrl +
-                  "supervisorDelegates/delegate/" +
-                  user.idUser +
-                  "?date=" +
-                  this.startDate
+                "supervisorDelegates/delegate/" +
+                user.idUser +
+                "?date=" +
+                this.startDate
               )
               .then((workRes) => {
                 this.delegatesWork.push({
@@ -398,13 +329,13 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "reports/overviewHuge?" +
-            q +
-            "&days=" +
-            JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
-              1,
-              -1
-            )
+          "reports/overviewHuge?" +
+          q +
+          "&days=" +
+          JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
+            1,
+            -1
+          )
         )
         .then((res) => {
           this.report.data = res.data;
@@ -414,10 +345,10 @@ export default {
             this.$http
               .get(
                 this.$baseUrl +
-                  "supervisorDelegates/delegate/" +
-                  user.idUser +
-                  "?date=" +
-                  this.startDate
+                "supervisorDelegates/delegate/" +
+                user.idUser +
+                "?date=" +
+                this.startDate
               )
               .then((workRes) => {
                 this.delegatesWork.push({
@@ -437,8 +368,8 @@ export default {
         this.selectedSellPrice == 0
           ? this.report.data
           : this.report.data.filter(
-              (e) => e.sellPriceId == this.selectedSellPrice
-            );
+            (e) => e.sellPriceId == this.selectedSellPrice
+          );
       for (let i = 0; i < table.length; i++) {
         sum = sum + table[i][columnName];
       }
@@ -449,8 +380,8 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "supervisorDelegates/userid/" +
-            this.selectedSuperVisor
+          "supervisorDelegates/userid/" +
+          this.selectedSuperVisor
         )
         .then((res) => {
           this.selectedDelegate = res.data.map((e) => e.delegateId);
@@ -570,31 +501,39 @@ export default {
 a {
   text-decoration: none;
 }
+
 .footerGrid .col {
   border: 1px grey solid !important;
 }
+
 .printHeader {
   display: none !important;
 }
+
 @media print {
   .printHeader {
     display: block !important;
     padding: 10px;
   }
+
   @page {
     size: A4 landscape;
   }
+
   * {
     direction: rtl !important;
     color-adjust: exact !important;
     zoom: 0.9 !important;
   }
+
   .v-btn {
     display: none !important;
   }
+
   .v-data-table__wrapper {
     border: 1px #000000 solid !important;
   }
+
   .v-card {
     box-shadow: none !important;
   }

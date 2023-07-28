@@ -9,49 +9,25 @@
       </v-btn>
     </v-app-bar>
     <v-card ref="print" class="pa-10">
-      <center class="printHeader"><h2>كشف الهدايا</h2></center>
+      <center class="printHeader">
+        <h2>كشف الهدايا</h2>
+      </center>
       <v-row>
         <v-col>
-          <v-text-field
-            outlined
-            dense
-            hide-details
-            label="من تاريخ"
-            v-model="search.from"
-            type="date"
-          ></v-text-field>
+          <v-text-field outlined dense hide-details label="من تاريخ" v-model="search.from" type="date"></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field
-            outlined
-            dense
-            hide-details
-            label="الى تاريخ"
-            v-model="search.to"
-            type="date"
-          ></v-text-field>
+          <v-text-field outlined dense hide-details label="الى تاريخ" v-model="search.to" type="date"></v-text-field>
         </v-col>
         <v-col>
           <v-btn @click="fetchSearch()" color="primary"> بحث </v-btn>
         </v-col>
       </v-row>
-      <v-data-table
-        items-per-page="1000"
-        hide-default-footer
-        :items="discounts"
-        :headers="discountsHeader"
-        multi-sort
-      >
+      <v-data-table :items-per-page="1000" hide-default-footer :items="discounts" :headers="discountsHeader" multi-sort>
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">
-            <img
-              v-if="item.imagePath != null"
-              :src="$baseUrl + 'files/' + item.imagePath"
-            />
-            <img
-              v-if="item.imagePath == null"
-              src="@/assets/no_image_placeholder.png"
-            />
+            <img v-if="item.imagePath != null" :src="$baseUrl + 'files/' + item.imagePath" />
+            <img v-if="item.imagePath == null" src="@/assets/no_image_placeholder.png" />
           </v-avatar>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
@@ -142,11 +118,11 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "discount/items" +
-            "?from=" +
-            this.search.from +
-            "&to=" +
-            this.search.to
+          "discount/items" +
+          "?from=" +
+          this.search.from +
+          "&to=" +
+          this.search.to
         )
         .then((res) => {
           if (this.$route.query.delegate) {
@@ -167,21 +143,26 @@ export default {
 .printHeader {
   display: none !important;
 }
+
 @media print {
   @page {
     size: A4 landscape;
   }
+
   * {
     direction: rtl !important;
     color-adjust: exact !important;
     zoom: 0.9;
   }
+
   .v-btn {
     display: none !important;
   }
+
   .v-card {
     box-shadow: none !important;
   }
+
   .printHeader {
     display: block !important;
     padding: 10px;

@@ -34,7 +34,7 @@
         </v-col>
       </v-row>
       <br />
-      <v-data-table :items-per-page="500" :items="store" :headers="checkPermission('store_view_incomes') && selectedDelegate.length == 0
+      <v-data-table :items-per-page="2000" :items="store" :headers="checkPermission('store_view_incomes') && selectedDelegate.length == 0
         ? tableHeader
         : tableHeader2
         " multi-sort>
@@ -55,8 +55,11 @@
           }}
         </template>
         <template v-slot:[`item.storex`]="{ item }">
-          <v-chip :color="item.storex < 0.25 ? 'error' : 'success'">
-            {{ item.storex }}</v-chip>
+          {{ item.storex }}
+        </template>
+        <template v-slot:[`item.stock`]="{ item }">
+          <v-chip :color="item.stock < 0.25 ? 'error' : 'success'">
+            {{ item.stock }}</v-chip>
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
           <a target="_blank" :href="'/damagedItemsRail?itemId=' +
@@ -126,14 +129,14 @@ export default {
       { text: "اسم المادة", value: "fullItemName" },
       { text: "المورد", value: "manufactureName" },
       { text: "المجموعة", value: "itemGroupName" },
-      { text: "رصيد اول المدة", value: "lastRemaining" },
+      { text: "رصيد اول المدة", value: "storex" },
       { text: "المبيعات", value: "totalSell" },
       { text: "المشتريات", value: "totalBuy" },
       { text: "الراجع", value: "totalRestores" },
       { text: "التالف", value: "totalDamaged" },
       { text: "راجع المشتريات", value: "totalBuyRestores" },
       { text: "شراء مؤقت", value: "totalTempBuy" },
-      { text: "المتبقي", value: "storex" },
+      { text: "المتبقي", value: "stock" },
       { text: "الاجراءات", value: "actions" },
     ],
     tableHeader2: [
@@ -238,20 +241,21 @@ export default {
               secondDate.getDate();
             console.log(secondDateString);
             this.store = res.data;
-            this.$http
-              .get(
-                this.$baseUrl +
-                `item/detailedStore?from=2020-01-01&to=${secondDateString}`
-              )
-              .then((res) => {
-                this.lastStore = res.data;
+            this.store = this.store.map(
+              (row) => ((row.storex = this.getTotal2(row)), row)
+            );
+            // this.$http
+            //   .get(
+            //     this.$baseUrl +
+            //     `item/detailedStore?from=2020-01-01&to=${secondDateString}`
+            //   )
+            //   .then((res) => {
+            //     this.lastStore = res.data;
 
-                this.store = this.store.map(
-                  (row) => ((row.storex = this.getTotal(row)), row)
-                );
-              })
-              .finally(() => loading.hide());
-          });
+            //     
+            //   })
+
+          }).finally(() => loading.hide());
       } else {
         this.$http
           .get(
@@ -269,16 +273,21 @@ export default {
     },
     getTotal(item) {
       return (
-        this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
-        this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
-        this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
-        (this.lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
-          this.lastStore.filter((s) => s.idItem == item.idItem)[0]
-            .totalBuyRestores) -
+        item.stock -
         item.totalSell -
         item.totalBuyRestores +
         item.totalBuy +
         item.totalRestores +
+        item.totalTempBuy
+      );
+    },
+    getTotal2(item) {
+      return (
+        item.stock +
+        item.totalSell +
+        item.totalBuyRestores -
+        item.totalBuy -
+        item.totalRestores -
         item.totalTempBuy
       );
     },
