@@ -11,52 +11,20 @@
     <v-card class="pa-5">
       <v-row>
         <v-col cols="2">
-          <v-text-field
-            label="من تاريخ"
-            dense
-            clearable
-            v-model="search.dateFrom"
-            hide-details
-            outlined
-            type="date"
-          ></v-text-field>
+          <v-text-field label="من تاريخ" dense clearable v-model="search.dateFrom" hide-details outlined
+            type="date"></v-text-field>
         </v-col>
         <v-col cols="2">
-          <v-text-field
-            label="الى تاريخ"
-            dense
-            clearable
-            v-model="search.dateTo"
-            hide-details
-            outlined
-            type="date"
-          ></v-text-field>
+          <v-text-field label="الى تاريخ" dense clearable v-model="search.dateTo" hide-details outlined
+            type="date"></v-text-field>
         </v-col>
         <v-col>
-          <v-autocomplete
-            :items="users.filter((e) => e.roleId == 3)"
-            item-text="username"
-            item-value="idUser"
-            outlined
-            dense
-            hide-details
-            label="المشرف"
-            v-model="selectedSuperVisor"
-            @change="setDelegates()"
-          ></v-autocomplete>
+          <v-autocomplete :items="users.filter((e) => e.roleId == 3)" item-text="username" item-value="idUser" outlined
+            dense hide-details label="المشرف" v-model="selectedSuperVisor" @change="setDelegates()"></v-autocomplete>
         </v-col>
         <v-col>
-          <v-autocomplete
-            item-value="idUser"
-            item-text="username"
-            hide-details
-            outlined
-            dense
-            placeholder="المندوب"
-            clearable
-            v-model="selectedUser"
-            :items="users"
-          ></v-autocomplete>
+          <v-autocomplete item-value="idUser" item-text="username" hide-details outlined dense placeholder="المندوب"
+            clearable v-model="selectedUser" :items="users"></v-autocomplete>
         </v-col>
         <v-col cols="2">
           <v-btn @click="performSearch()" dark :color="$background" block>
@@ -68,20 +36,12 @@
       <v-simple-table>
         <thead>
           <tr>
-            <th
-              colspan="2"
-              style="background-color: rgb(100, 100, 100); color: white"
-            >
+            <th colspan="2" style="background-color: rgb(100, 100, 100); color: white">
               المجموعة
             </th>
             <th colspan="2">المجموع</th>
-            <th
-              style="background-color: rgb(202, 248, 184)"
-              class="text-center"
-              colspan="2"
-              v-for="group in itemGroups"
-              :key="group.idItemGroup"
-            >
+            <th style="background-color: rgb(202, 248, 184)" class="text-center" colspan="2" v-for="group in itemGroups"
+              :key="group.idItemGroup">
               {{ group.itemGroupName }}
             </th>
           </tr>
@@ -91,66 +51,44 @@
             <th style="background-color: rgb(100, 248, 184)">المبيعات</th>
             <th style="background-color: rgb(202, 150, 184)">الاجمالي</th>
             <template v-for="group in itemGroups">
-              <th
-                style="background-color: rgb(100, 248, 184)"
-                :key="'SALES_' + group.idItemGroup"
-              >
+              <th style="background-color: rgb(100, 248, 184)" :key="'SALES_' + group.idItemGroup">
                 المبيعات
               </th>
-              <th
-                style="background-color: rgb(202, 150, 184)"
-                :key="'TOTAL_' + group.idItemGroup"
-              >
+              <th style="background-color: rgb(202, 150, 184)" :key="'TOTAL_' + group.idItemGroup">
                 الاجمالي
               </th>
             </template>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(user, i) in selectedUser == null
-              ? tableUsers
-              : users.filter((e) => e.idUser == selectedUser)"
-            :key="user.idUser || user.delegateId"
-          >
+          <tr v-for="(user, i) in selectedUser == null
+            ? tableUsers
+            : users.filter((e) => e.idUser == selectedUser)" :key="user.idUser || user.delegateId">
             <td>{{ i + 1 }}</td>
             <td width="200px">
               <span v-if="selectedUser == null">
-                {{ user.delegateName || user.username }}</span
-              >
+                {{ user.delegateName || user.username }}</span>
               <span v-if="selectedUser != null"> {{ user.username }}</span>
             </td>
-            <td
-              style="background-color: rgb(132 232 232)"
-              :key="
-                'GROUPEDITEMSALES_' +
-                `_${i}_` +
-                (user.idUser || user.delegateId)
-              "
-            >
+            <td style="background-color: rgb(132 232 232)" :key="'GROUPEDITEMSALES_' +
+              `_${i}_` +
+              (user.idUser || user.delegateId)
+              ">
               {{
                 getTotalCount(user.idUser || user.delegateId).toLocaleString()
               }}
             </td>
-            <th
-              style="background-color: rgb(293 193 193)"
-              :key="
-                'GROUPEDITEMTOTAL_' +
+            <th style="background-color: rgb(293 193 193)" :key="'GROUPEDITEMTOTAL_' +
                 `_${i}_` +
                 (user.idUser || user.delegateId)
-              "
-            >
+                ">
               {{
                 getTotalByUser(user.idUser || user.delegateId).toLocaleString()
               }}
             </th>
             <template v-for="(group, index) in itemGroups">
-              <td
-                style="background-color: rgb(232 232 232)"
-                :key="
-                  'ITEMSALES_' + `_${index}_` + (user.idUser || user.delegateId)
-                "
-              >
+              <td style="background-color: rgb(232 232 232)" :key="'ITEMSALES_' + `_${index}_` + (user.idUser || user.delegateId)
+                ">
                 {{
                   getItemCountByUser(
                     user.idUser || user.delegateId,
@@ -158,12 +96,8 @@
                   ).toLocaleString()
                 }}
               </td>
-              <th
-                style="background-color: rgb(193 193 193)"
-                :key="
-                  'ITEMTOTAL_' + `_${index}_` + (user.idUser || user.delegateId)
-                "
-              >
+              <th style="background-color: rgb(193 193 193)" :key="'ITEMTOTAL_' + `_${index}_` + (user.idUser || user.delegateId)
+                  ">
                 {{
                   getItemSalesByUser(
                     user.idUser || user.delegateId,
@@ -180,16 +114,10 @@
             <td colspan="1">{{ getTotalCountx().toLocaleString() }}</td>
             <td colspan="1">{{ getTotalPricex().toLocaleString() }}</td>
             <template v-for="(group, index) in itemGroups">
-              <td
-                style="background-color: rgb(232 232 132)"
-                :key="'FOOTER_' + `_${index}_` + group.idItemGroup"
-              >
+              <td style="background-color: rgb(232 232 132)" :key="'FOOTER_' + `_${index}_` + group.idItemGroup">
                 {{ getTotalCountByGroup(group.idItemGroup).toLocaleString() }}
               </td>
-              <th
-                style="background-color: rgb(232 232 132)"
-                :key="'FOOTERx_' + `_${index}_` + group.idItemGroup"
-              >
+              <th style="background-color: rgb(232 232 132)" :key="'FOOTERx_' + `_${index}_` + group.idItemGroup">
                 {{ getTotalPriceByGroup(group.idItemGroup).toLocaleString() }}
               </th>
             </template>
@@ -648,8 +576,8 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            "supervisorDelegates/userid/" +
-            this.selectedSuperVisor
+          "supervisorDelegates/userid/" +
+          this.selectedSuperVisor
         )
         .then((res) => {
           this.tableUsers = res.data;

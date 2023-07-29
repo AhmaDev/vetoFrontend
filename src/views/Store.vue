@@ -34,7 +34,7 @@
         </v-col>
       </v-row>
       <br />
-      <v-data-table :items-per-page="2000" :items="store" :headers="checkPermission('store_view_incomes') && selectedDelegate.length == 0
+      <v-data-table :items-per-page="-1" :items="store" :headers="checkPermission('store_view_incomes') && selectedDelegate.length == 0
         ? tableHeader
         : tableHeader2
         " multi-sort>

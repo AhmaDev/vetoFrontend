@@ -448,7 +448,9 @@ export default {
         for (var i = 0; i < invoices.length; i++) {
           let invoice = invoices[i];
           // check if customer exist
-          customers.push(this.allCustomers.filter(e => e.idCustomer == invoice.customerId)[0]);
+          if (customers.filter(e => e.idCustomer == invoice.customerId).length == 0) {
+            customers.push(this.allCustomers.filter(e => e.idCustomer == invoice.customerId)[0]);
+          }
         }
         console.log(customers);
         this.customers = customers;
