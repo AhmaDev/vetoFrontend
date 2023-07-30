@@ -19,12 +19,12 @@
 
       <v-row>
         <v-col>
-          <v-text-field type="date" outlined dense hide-details :disabled="!checkPermission('overview_date')"
-            label="تاريخ البداية" v-model="startDate"></v-text-field>
+          <v-text-field :min="min" :max="max" type="date" outlined dense hide-details
+            :disabled="!checkPermission('overview_date')" label="تاريخ البداية" v-model="startDate"></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field type="date" outlined dense :disabled="!checkPermission('overview_date')" hide-details
-            label="تاريخ النهاية" v-model="endDate"></v-text-field>
+          <v-text-field :min="min" :max="max" type="date" outlined dense :disabled="!checkPermission('overview_date')"
+            hide-details label="تاريخ النهاية" v-model="endDate"></v-text-field>
         </v-col>
         <v-col>
           <v-autocomplete :items="supervisors" item-text="username" item-value="idUser" outlined dense hide-details
@@ -199,7 +199,10 @@ export default {
     delegates: [],
     startDate: "",
     sellPrices: [],
+    userData: null,
     endDate: "",
+    min: "2020-01-01",
+    max: "2030-01-01",
     forceRerender: 0,
     selectedSuperVisor: 0,
     selectedDelegate: 0,
@@ -246,12 +249,24 @@ export default {
         this.$router.go(-1);
       }
     });
-    // LOAD PERMS END
-    this.getCurrentDate().then((value) => {
-      this.startDate = value;
-      this.endDate = value;
-      this.fetch();
+    this.$http.get(this.$baseUrl + 'users/userinfo/' + this.userInfo.idUser).then((perms) => {
+      this.userData = perms.data;
+      if (this.userData.unlockOverviewReport == 1) {
+        this.min = moment(this.userData.ovStartDate).format('YYYY-MM-DD');
+        this.max = moment(this.userData.ovEndDate).format('YYYY-MM-DD');
+        this.startDate = this.max;
+        this.endDate = this.max;
+        this.fetch();
+      } else {
+        this.getCurrentDate().then((value) => {
+          this.startDate = value;
+          this.endDate = value;
+          this.fetch();
+        });
+      }
     });
+    // LOAD PERMS END
+
   },
   methods: {
     checkPermission(permissionKey) {
@@ -492,6 +507,14 @@ export default {
       let eDate = new Date(endDate);
       const diffTime = Math.abs(eDate - sDate);
       return diffTime - late;
+    },
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
     },
   },
 };

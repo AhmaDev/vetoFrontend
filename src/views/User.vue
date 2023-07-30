@@ -84,6 +84,16 @@
             <v-checkbox :true-value="1" :false-value="0" label="امكانية تعديل معلومات الزبون"
               v-model="userdata.canEditCustomer"></v-checkbox>
           </div>
+
+          <div v-if="![3, 4].includes(user.roleId) && userInfo.roleId == 1">
+            <v-checkbox :true-value="1" :false-value="0" label="تحديد البحث في التقرير العام"
+              v-model="unlockOverviewReport"></v-checkbox>
+            <v-text-field :disabled="unlockOverviewReport == 0" type="date" outlined label="تاريخ بدء البحث"
+              v-model="ovStartDate"></v-text-field>
+            <v-text-field :disabled="unlockOverviewReport == 0" type="date" outlined label="تاريخ انتهاء البحث"
+              v-model="ovEndDate"></v-text-field>
+            <v-btn color="success" @click="saveUnlockDate()">حفظ صلاحية التقرير العام</v-btn>
+          </div>
         </v-col>
       </v-row>
     </v-card>
@@ -91,6 +101,7 @@
 </template>
 
 <script>
+import * as moment from 'moment';
 export default {
   name: "User",
   data: () => ({
@@ -115,6 +126,9 @@ export default {
       canViewDelegateRail: 0,
       canEditCustomer: 0,
     },
+    unlockOverviewReport: 0,
+    ovStartDate: null,
+    ovEndDate: null,
     user: null,
     sellPrices: [],
   }),
@@ -157,6 +171,9 @@ export default {
           .get(this.$baseUrl + "users/userinfo/" + this.userId)
           .then((res) => {
             this.userdata = res.data;
+            this.unlockOverviewReport = this.userdata.unlockOverviewReport;
+            this.ovStartDate = moment(this.userdata.ovStartDate).format('YYYY-MM-DD');
+            this.ovEndDate = moment(this.userdata.ovEndDate).format('YYYY-MM-DD');
           })
           .catch((err) => {
             if (err.response.status == 404) {
@@ -235,6 +252,31 @@ export default {
           });
         })
         .finally(() => loading.hide());
+    },
+    saveUnlockDate() {
+      let loading = this.$loading.show();
+      this.$http
+        .put(this.$baseUrl + "users/edit/userinfo/" + this.userId, {
+          unlockOverviewReport: this.unlockOverviewReport,
+          ovStartDate: this.ovStartDate,
+          ovEndDate: this.ovEndDate,
+        })
+        .then(() => {
+          this.$toast.open({
+            type: "success",
+            message: " تم تعديل المعومات",
+            duration: 3000,
+          });
+        })
+        .finally(() => loading.hide());
+    }
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    userInfo() {
+      return this.$store.getters.getLoginInfo;
     },
   },
 };

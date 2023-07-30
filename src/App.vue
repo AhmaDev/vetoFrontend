@@ -1,8 +1,6 @@
 <template>
-  <v-app
-    :class="!checkPermission('disable_selection') ? 'disableSelection' : ''"
-    :style="this.$vuetify.theme.dark ? '' : 'background-color: #EEE'"
-  >
+  <v-app :class="!checkPermission('disable_selection') ? 'disableSelection' : ''"
+    :style="this.$vuetify.theme.dark ? '' : 'background-color: #EEE'">
     <component :is="`style`">
       <!-- .selectedNavBarItem { border-right: 6px {{$background}} solid; transition: 0.3s; } -->
       .selectedNavBarItem .las { background-color: {{ this.$background }};
@@ -14,25 +12,14 @@
       {{ this.$background }} solid !important;}
     </component>
 
-    <v-navigation-drawer
-      class="elevation-10"
-      permanent
-      app
-      right
-      fixed
-      v-if="isLoggedIn"
-    >
+    <v-navigation-drawer class="elevation-10" permanent app right fixed v-if="isLoggedIn">
       <v-list dense>
         <center>
           <br />
-          <Logo
-            :background="
-              $baseUrl.includes('sultan')
-                ? $vuetify.theme.primary
-                : $vuetify.theme.primary
-            "
-            width="150px"
-          />
+          <Logo :background="$baseUrl.includes('sultan')
+              ? $vuetify.theme.primary
+              : $vuetify.theme.primary
+            " width="150px" />
 
           <div v-if="appData.length > 0">
             {{ appData.filter((e) => e.variable == "title")[0].value }}
@@ -43,13 +30,8 @@
           </v-chip>
         </center>
         <template v-for="item in items">
-          <v-list-item
-            :key="item.title"
-            v-if="item.child == null"
-            link
-            :to="item.route"
-            active-class="selectedNavBarItem"
-          >
+          <v-list-item :key="item.title" v-if="item.child == null" link :to="item.route"
+            active-class="selectedNavBarItem">
             <v-list-item-content>
               <v-list-item-title>
                 <i :class="item.icon + ' homePageNavBarIcons'"></i>
@@ -57,12 +39,7 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-group
-            v-if="item.child != null"
-            :key="item.title"
-            :prepend-icon="item.action"
-            no-action
-          >
+          <v-list-group v-if="item.child != null" :key="item.title" :prepend-icon="item.action" no-action>
             <template v-slot:activator>
               <v-list-item-content>
                 <v-list-item-title>
@@ -73,12 +50,7 @@
             </template>
 
             <template v-for="child in item.child">
-              <v-list-item
-                :key="child.title"
-                link
-                :to="child.route"
-                active-class="selectedNavBarItem"
-              >
+              <v-list-item :key="child.title" link :to="child.route" active-class="selectedNavBarItem">
                 <v-list-item-content>
                   <v-list-item-title>
                     <i :class="child.icon + ' homePageNavBarIcons'"></i>
@@ -104,13 +76,10 @@
           <v-list-item @click="darkMode()">
             <v-list-item-content>
               <v-list-item-title>
-                <i
-                  :class="
-                    $vuetify.theme.dark
-                      ? 'las la-sun homePageNavBarIcons'
-                      : 'las la-moon homePageNavBarIcons'
-                  "
-                ></i>
+                <i :class="$vuetify.theme.dark
+                    ? 'las la-sun homePageNavBarIcons'
+                    : 'las la-moon homePageNavBarIcons'
+                  "></i>
                 {{ $vuetify.theme.dark ? "Light mode" : "Dark mode" }}
               </v-list-item-title>
             </v-list-item-content>
@@ -239,6 +208,12 @@ export default {
         title: "الحسابات",
         icon: "las la-user-circle",
         route: "/accounts",
+        child: null,
+      },
+      {
+        title: "المستخدمين المتصلين",
+        icon: "las la-user-circle",
+        route: "/clients",
         child: null,
       },
       {

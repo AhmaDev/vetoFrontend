@@ -96,6 +96,11 @@ const routes = [
     component: () => import("../views/Visits.vue"),
   },
   {
+    path: "/clients",
+    name: "Clients",
+    component: () => import("../views/Clients.vue"),
+  },
+  {
     path: "/delegateRail",
     name: "DelegateRail",
     component: () => import("../views/DelegateRail.vue"),

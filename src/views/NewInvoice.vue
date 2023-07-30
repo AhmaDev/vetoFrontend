@@ -5,6 +5,9 @@
 
       <v-spacer></v-spacer>
       <v-btn target="_BLANK" v-if="invoice.idInvoice != 0" :to="'/customer/' + invoice.customerId">معلومات الزبون</v-btn>
+      <v-btn :to="'/customerRail/' + invoice.customerId" v-if="invoice.idInvoice != 0" target="_BLANK">
+        كشف حساب الزبون
+      </v-btn>
       <v-btn :disabled="!checkPermission('invoices_edit')" @click="save()" icon>
         <v-icon>mdi-check</v-icon>
       </v-btn>

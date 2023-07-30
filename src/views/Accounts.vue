@@ -23,7 +23,7 @@
       <br />
       <v-data-table :height="'60vh'" fixed-header :items-per-page="-1" :items="accounts.filter((user) => user.roleId == roles[selectedRoleId].idRole)
         "
-        :headers="selectedRoleId == 3 ? tableHeadersForDelegates : selectedRoleId == 2 ? tableHeadersForSuperVisor : tableHeaders">
+        :headers="userInfo.roleId != 1 ? tableHeaders : selectedRoleId == 3 ? tableHeadersForDelegates : selectedRoleId == 2 ? tableHeadersForSuperVisor : tableHeaders">
 
 
 
@@ -31,7 +31,8 @@
         <template v-slot:[`item.username`]="{ item }">
           <v-text-field outlined dense hide-details :value="item.username"
             @change="changeUserName(item.idUser, $event)"></v-text-field>
-          <v-card v-if="item.idUserInfo == null" class="pa-2 ma-2 white--text" color="error">يرجى تعيين سعر بيع
+          <v-card v-if="item.idUserInfo == null && userInfo.roleId == 1" class="pa-2 ma-2 white--text" color="error">يرجى
+            تعيين سعر بيع
             للمستخدم</v-card>
         </template>
         <template v-if="selectedRoleId == 3" v-slot:[`item.perms1`]="{ item }">
@@ -144,7 +145,7 @@ export default {
     roles: [],
     expanded: [],
     selectedUserId: 0,
-    selectedRoleId: 3,
+    selectedRoleId: 0,
     passwordDialog: false,
     newPasswordField: "",
     tableHeaders: [
