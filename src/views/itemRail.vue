@@ -17,12 +17,11 @@
     <v-alert style="position: sticky !important; top: 64px; z-index: 100" color="primary" dark>
       {{ $route.query.name }}
     </v-alert>
-    <v-alert v-if="$route.query.userId != null" style="" color="error" dark>
+    <!-- <v-alert v-if="$route.query.userId != null" style="" color="error" dark>
       للمندوب -- {{ tableData.filter(e => e.createdBy == $route.query.userId)[0].delegateName }}
-    </v-alert>
+    </v-alert> -->
     <v-card>
-      <v-data-table :items-per-page="500" :headers="header"
-        :items="$route.query.userId == null ? tableData : tableData.filter(e => e.createdBy == $route.query.userId)">
+      <v-data-table :items-per-page="500" :headers="header" :items="tableData">
         <template v-slot:[`item.type`]="{ item }">
           <v-chip v-if="item.invoiceTypeId == 1" outlined small color="success">
             بيع
@@ -107,6 +106,7 @@ export default {
         .then((res) => {
           this.tableData = res.data;
           this.allTableData = res.data;
+
           console.log(this.tableData);
         })
         .finally(() => loading.hide());

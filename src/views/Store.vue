@@ -93,7 +93,7 @@
             '&to=' +
             search.to +
             '&userId=' +
-            $route.query.delegate
+            selectedDelegate
             " icon>
             <v-icon>la-eye</v-icon>
           </v-btn>
