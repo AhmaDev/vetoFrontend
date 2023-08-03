@@ -254,9 +254,9 @@ export default {
       if (this.userData.unlockOverviewReport == 1) {
         this.min = moment(this.userData.ovStartDate).format('YYYY-MM-DD');
         this.max = moment(this.userData.ovEndDate).format('YYYY-MM-DD');
-        this.startDate = this.max;
-        this.endDate = this.max;
-        this.fetch();
+        // this.startDate = this.max;
+        // this.endDate = this.max;
+        // this.fetch();
       } else {
         this.getCurrentDate().then((value) => {
           this.startDate = value;
