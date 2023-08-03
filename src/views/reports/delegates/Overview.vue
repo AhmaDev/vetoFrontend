@@ -249,6 +249,15 @@ export default {
         this.$router.go(-1);
       }
     });
+    this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
+      this.supervisors = res.data;
+    });
+    this.$http.get(this.$baseUrl + "sellPrice").then((res) => {
+      this.sellPrices = res.data;
+    });
+    this.$http.get(this.$baseUrl + "users").then((res) => {
+      this.delegates = res.data;
+    });
     this.$http.get(this.$baseUrl + 'users/userinfo/' + this.userInfo.idUser).then((perms) => {
       this.userData = perms.data;
       if (this.userData.unlockOverviewReport == 1) {
@@ -312,15 +321,7 @@ export default {
         })
         .finally(() => loading.hide());
 
-      this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
-        this.supervisors = res.data;
-      });
-      this.$http.get(this.$baseUrl + "sellPrice").then((res) => {
-        this.sellPrices = res.data;
-      });
-      this.$http.get(this.$baseUrl + "users").then((res) => {
-        this.delegates = res.data;
-      });
+
     },
     search() {
       var q = "";
