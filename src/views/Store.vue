@@ -240,22 +240,27 @@ export default {
               "-" +
               secondDate.getDate();
             console.log(secondDateString);
-            this.store = res.data;
-            this.store = this.store.map(
-              (row) => ((row.storex = this.getTotal2(row)), row)
-            );
-            // this.$http
-            //   .get(
-            //     this.$baseUrl +
-            //     `item/detailedStore?from=2020-01-01&to=${secondDateString}`
-            //   )
-            //   .then((res) => {
-            //     this.lastStore = res.data;
+            let tempStore = res.data;
+            this.$http
+              .get(
+                this.$baseUrl +
+                `item/compressedDetailedStore?from=2023-05-30&to=${secondDateString}`
+              )
+              .then((res) => {
+                let stockItems = res.data.map(
+                  (row) => ((row.stocks = JSON.parse(row.stocks)), row)
+                );
+                tempStore.forEach(item => {
+                  let stox = stockItems.filter(e => e.idItem == item.idItem)[0].stocks;
+                  item.storex = ((stox.buy + stox.restore) - stox.sell);
+                  item.storexx = ((stox.buy + stox.restore) - stox.sell);
+                  item.stock = item.storexx + item.totalBuy + item.totalRestores - item.totalSell - item.totalBuyRestores;
+                });
+                this.store = tempStore;
+                console.log(secondDateString, stockItems, this.store);
+              }).finally(() => loading.hide());
 
-            //     
-            //   })
-
-          }).finally(() => loading.hide());
+          })
       } else {
         this.$http
           .get(
@@ -282,13 +287,14 @@ export default {
       );
     },
     getTotal2(item) {
+      let pastItem = this.lastStore.filter(e => e.idItem == item.idItem)[0];
       return (
         item.stock +
-        item.totalSell +
-        item.totalBuyRestores -
-        item.totalBuy -
-        item.totalRestores -
-        item.totalTempBuy
+        pastItem.totalSell +
+        pastItem.totalBuyRestores -
+        pastItem.totalBuy -
+        pastItem.totalRestores -
+        pastItem.totalTempBuy
       );
     },
     sort() {
