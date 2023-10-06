@@ -201,6 +201,11 @@ const routes = [
     name: "visitsReport",
     component: () => import("../views/VisitsReport.vue"),
   },
+  {
+    path: "/packages",
+    name: "packages",
+    component: () => import("../views/packages.vue"),
+  },
 ];
 
 const router = new VueRouter({

@@ -26,30 +26,49 @@
           <v-autocomplete item-value="idUser" item-text="username" hide-details outlined dense placeholder="المندوب"
             clearable v-model="selectedUser" :items="users"></v-autocomplete>
         </v-col>
-        <v-col cols="2">
+        <v-col>
+          <v-autocomplete item-value="idItemGroup" item-text="itemGroupName" hide-details outlined dense
+            placeholder="المجموعة" @change="sort(selectedGroupId, 'up')" v-model="selectedGroupId"
+            :items="allItemGroups"></v-autocomplete>
+        </v-col>
+        <v-col cols="1">
           <v-btn @click="performSearch()" dark :color="$background" block>
             بحث
           </v-btn>
         </v-col>
+        <v-col v-if="itemGroups != allItemGroups" cols="2">
+          <v-btn @click="selectedGroupId = null; itemGroups = allItemGroups; tempTable = [];" dark :color="$background"
+            block>
+            اظهار كل المجموعات
+          </v-btn>
+          <small>سيكون التحميل ابطئ عند اظهار كل المجموعات</small>
+        </v-col>
       </v-row>
+
       <br />
-      <v-simple-table>
+      <v-simple-table v-if="tempTable.length == 0">
         <thead>
           <tr>
             <th colspan="2" style="background-color: rgb(100, 100, 100); color: white">
               المجموعة
             </th>
-            <th colspan="2">المجموع</th>
+            <th v-if="selectedGroupId == null" colspan="2">المجموع</th>
             <th style="background-color: rgb(202, 248, 184)" class="text-center" colspan="2" v-for="group in itemGroups"
               :key="group.idItemGroup">
+              <v-btn @click="sort(group.idItemGroup, 'up')" icon x-small>
+                <v-icon>la-long-arrow-alt-up</v-icon>
+              </v-btn>
               {{ group.itemGroupName }}
+              <v-btn @click="sort(group.idItemGroup, 'down')" icon x-small>
+                <v-icon>la-long-arrow-alt-down</v-icon>
+              </v-btn>
             </th>
           </tr>
           <tr>
             <th>#</th>
             <th>اسم الحساب</th>
-            <th style="background-color: rgb(100, 248, 184)">المبيعات</th>
-            <th style="background-color: rgb(202, 150, 184)">الاجمالي</th>
+            <th v-if="selectedGroupId == null" style="background-color: rgb(100, 248, 184)">المبيعات</th>
+            <th v-if="selectedGroupId == null" style="background-color: rgb(202, 150, 184)">الاجمالي</th>
             <template v-for="group in itemGroups">
               <th style="background-color: rgb(100, 248, 184)" :key="'SALES_' + group.idItemGroup">
                 المبيعات
@@ -70,7 +89,7 @@
                 {{ user.delegateName || user.username }}</span>
               <span v-if="selectedUser != null"> {{ user.username }}</span>
             </td>
-            <td style="background-color: rgb(132 232 232)" :key="'GROUPEDITEMSALES_' +
+            <td v-if="selectedGroupId == null" style="background-color: rgb(132 232 232)" :key="'GROUPEDITEMSALES_' +
               `_${i}_` +
               (user.idUser || user.delegateId)
               ">
@@ -78,10 +97,10 @@
                 getTotalCount(user.idUser || user.delegateId).toLocaleString()
               }}
             </td>
-            <th style="background-color: rgb(293 193 193)" :key="'GROUPEDITEMTOTAL_' +
-                `_${i}_` +
-                (user.idUser || user.delegateId)
-                ">
+            <th v-if="selectedGroupId == null" style="background-color: rgb(293 193 193)" :key="'GROUPEDITEMTOTAL_' +
+              `_${i}_` +
+              (user.idUser || user.delegateId)
+              ">
               {{
                 getTotalByUser(user.idUser || user.delegateId).toLocaleString()
               }}
@@ -111,8 +130,97 @@
         <tfoot>
           <tr>
             <td colspan="2">المجموع</td>
-            <td colspan="1">{{ getTotalCountx().toLocaleString() }}</td>
-            <td colspan="1">{{ getTotalPricex().toLocaleString() }}</td>
+            <td v-if="selectedGroupId == null" colspan="1">{{ getTotalCountx().toLocaleString() }}</td>
+            <td v-if="selectedGroupId == null" colspan="1">{{ getTotalPricex().toLocaleString() }}</td>
+            <template v-for="(group, index) in itemGroups">
+              <td style="background-color: rgb(232 232 132)" :key="'FOOTER_' + `_${index}_` + group.idItemGroup">
+                {{ getTotalCountByGroup(group.idItemGroup).toLocaleString() }}
+              </td>
+              <th style="background-color: rgb(232 232 132)" :key="'FOOTERx_' + `_${index}_` + group.idItemGroup">
+                {{ getTotalPriceByGroup(group.idItemGroup).toLocaleString() }}
+              </th>
+            </template>
+          </tr>
+        </tfoot>
+      </v-simple-table>
+      <v-simple-table v-if="tempTable.length != 0">
+        <thead>
+          <tr>
+            <th colspan="2" style="background-color: rgb(100, 100, 100); color: white">
+              المجموعة
+            </th>
+            <th v-if="selectedGroupId == null" colspan="2">المجموع</th>
+            <th style="background-color: rgb(202, 248, 184)" class="text-center" colspan="2" v-for="group in itemGroups"
+              :key="group.idItemGroup">
+              <v-btn @click="sort(group.idItemGroup, 'up')" icon x-small>
+                <v-icon>la-long-arrow-alt-up</v-icon>
+              </v-btn>
+              {{ group.itemGroupName }}
+              <v-btn @click="sort(group.idItemGroup, 'down')" icon x-small>
+                <v-icon>la-long-arrow-alt-down</v-icon>
+              </v-btn>
+            </th>
+          </tr>
+          <tr>
+            <th>#</th>
+            <th>اسم الحساب</th>
+            <th v-if="selectedGroupId == null" style="background-color: rgb(100, 248, 184)">المبيعات</th>
+            <th v-if="selectedGroupId == null" style="background-color: rgb(202, 150, 184)">الاجمالي</th>
+            <template v-for="group in itemGroups">
+              <th style="background-color: rgb(100, 248, 184)" :key="'SALES_' + group.idItemGroup">
+                المبيعات
+              </th>
+              <th style="background-color: rgb(202, 150, 184)" :key="'TOTAL_' + group.idItemGroup">
+                الاجمالي
+              </th>
+            </template>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(user, i) in tempTable" :key="user.idUser || user.delegateId">
+            <td>{{ i + 1 }}</td>
+            <td width="200px">
+              <span v-if="selectedUser == null">
+                {{ user.delegateName || user.username }}</span>
+              <span v-if="selectedUser != null"> {{ user.username }}</span>
+            </td>
+            <td v-if="selectedGroupId == null" style="background-color: rgb(132 232 232)" :key="'GROUPEDITEMSALES_' +
+              `_${i}_` +
+              (user.idUser || user.delegateId)
+              ">
+              {{
+                getTotalCount(user.idUser || user.delegateId).toLocaleString()
+              }}
+            </td>
+            <th v-if="selectedGroupId == null" style="background-color: rgb(293 193 193)" :key="'GROUPEDITEMTOTAL_' +
+              `_${i}_` +
+              (user.idUser || user.delegateId)
+              ">
+              {{
+                getTotalByUser(user.idUser || user.delegateId).toLocaleString()
+              }}
+            </th>
+            <template v-for="(group, index) in itemGroups">
+              <td style="background-color: rgb(232 232 232)" :key="'ITEMSALES_' + `_${index}_` + (user.idUser || user.delegateId)
+                ">
+                {{
+                  user.totalCount.toLocaleString()
+                }}
+              </td>
+              <th style="background-color: rgb(193 193 193)" :key="'ITEMTOTAL_' + `_${index}_` + (user.idUser || user.delegateId)
+                  ">
+                {{
+                  user.totalSales.toLocaleString()
+                }}
+              </th>
+            </template>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">المجموع</td>
+            <td v-if="selectedGroupId == null" colspan="1">{{ getTotalCountx().toLocaleString() }}</td>
+            <td v-if="selectedGroupId == null" colspan="1">{{ getTotalPricex().toLocaleString() }}</td>
             <template v-for="(group, index) in itemGroups">
               <td style="background-color: rgb(232 232 132)" :key="'FOOTER_' + `_${index}_` + group.idItemGroup">
                 {{ getTotalCountByGroup(group.idItemGroup).toLocaleString() }}
@@ -245,9 +353,13 @@ export default {
     items: [],
     permissions: [],
     selectedGroupItem: null,
+    selectedGroupId: null,
     selectedUser: null,
+    tempTable: [],
     itemGroups: [],
+    allItemGroups: [],
     users: [],
+    allUsers: [],
     tableUsers: [],
     selectedSuperVisor: 0,
     supervisors: [],
@@ -297,7 +409,8 @@ export default {
       this.$http
         .get(this.$baseUrl + "users")
         .then((res) => {
-          this.users = res.data;
+          this.users = res.data.filter(e => e.roleId != 5);
+          this.allUsers = res.data.filter(e => e.roleId != 5);
           this.tableUsers = res.data;
         })
         .finally(() => {
@@ -323,6 +436,9 @@ export default {
         .get(this.$baseUrl + "itemGroup")
         .then((res) => {
           this.itemGroups = res.data;
+          this.allItemGroups = res.data;
+          this.selectedGroupId = this.itemGroups[0].idItemGroup;
+          this.sort(this.selectedGroupId, 'up');
         })
         .finally(() => {
           loading.hide();
@@ -471,6 +587,27 @@ export default {
         }
 
         return sum;
+      }
+    },
+    async sort(groupId, type) {
+      this.selectedGroupId = groupId;
+      this.itemGroups = this.allItemGroups.filter(e => e.idItemGroup == groupId)
+      this.tempTable = [];
+
+      for await (var user of this.users) {
+        this.tempTable.push({
+          idUser: user.idUser,
+          username: user.username,
+          totalCount: this.getItemCountByUser(user.idUser, this.selectedGroupId),
+          totalSales: this.getItemSalesByUser(user.idUser, this.selectedGroupId),
+        })
+      }
+      console.log('tempTable', this.tempTable);
+      if (type == 'down') {
+        this.tempTable.sort((a, b) => a.totalSales - b.totalSales);
+      }
+      if (type == 'up') {
+        this.tempTable.sort((a, b) => b.totalSales - a.totalSales);
       }
     },
     getTotalCountx() {

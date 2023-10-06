@@ -17,8 +17,8 @@
         <center>
           <br />
           <Logo :background="$baseUrl.includes('sultan')
-              ? $vuetify.theme.primary
-              : $vuetify.theme.primary
+            ? $vuetify.theme.primary
+            : $vuetify.theme.primary
             " width="150px" />
 
           <div v-if="appData.length > 0">
@@ -77,8 +77,8 @@
             <v-list-item-content>
               <v-list-item-title>
                 <i :class="$vuetify.theme.dark
-                    ? 'las la-sun homePageNavBarIcons'
-                    : 'las la-moon homePageNavBarIcons'
+                  ? 'las la-sun homePageNavBarIcons'
+                  : 'las la-moon homePageNavBarIcons'
                   "></i>
                 {{ $vuetify.theme.dark ? "Light mode" : "Dark mode" }}
               </v-list-item-title>
@@ -161,6 +161,7 @@ export default {
           },
           { title: "المواد", icon: "las la-box", route: "/items" },
           { title: "مبيعات المواد", icon: "las la-box", route: "/itemSales" },
+          { title: "باقات العروض", icon: "las la-gifts", route: "/packages" },
           {
             title: " التوزيع والمالية",
             icon: "las la-route",
