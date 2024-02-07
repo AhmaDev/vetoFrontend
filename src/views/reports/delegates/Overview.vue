@@ -19,12 +19,32 @@
 
       <v-row>
         <v-col>
-          <v-text-field :min="min" :max="max" type="date" outlined dense hide-details
-            :disabled="!checkPermission('overview_date')" label="تاريخ البداية" v-model="startDate"></v-text-field>
+
+          <v-menu ref="menu" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y
+            min-width="auto">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field v-model="startDate" label="تاريخ البداية" outlined dense hide-details
+                prepend-inner-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>
+            </template>
+            <v-date-picker :disabled="!checkPermission('overview_date')" v-model="startDate" :max="max" :min="min"
+              label="تاريخ البداية"></v-date-picker>
+          </v-menu>
+
         </v-col>
         <v-col>
-          <v-text-field :min="min" :max="max" type="date" outlined dense :disabled="!checkPermission('overview_date')"
-            hide-details label="تاريخ النهاية" v-model="endDate"></v-text-field>
+
+          <v-menu ref="menu" v-model="menu2" :close-on-content-click="false" transition="scale-transition" offset-y
+            min-width="auto">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field v-model="endDate" label="تاريخ النهاية" outlined dense hide-details
+                prepend-inner-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>
+            </template>
+            <v-date-picker :disabled="!checkPermission('overview_date')" v-model="endDate" :max="max" :min="min"
+              label="تاريخ النهاية"></v-date-picker>
+          </v-menu>
+
+
+
         </v-col>
         <v-col>
           <v-autocomplete :items="supervisors" item-text="username" item-value="idUser" outlined dense hide-details
@@ -547,7 +567,7 @@ a {
   * {
     direction: rtl !important;
     color-adjust: exact !important;
-    zoom: 0.9 !important;
+    zoom: 0.8 !important;
   }
 
   .v-btn {
