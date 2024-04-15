@@ -51,12 +51,13 @@
             label="المشرف" v-model="selectedSuperVisor" @change="setDelegates()"></v-autocomplete>
         </v-col>
         <v-col>
-          <v-autocomplete :items="delegates" item-text="username" item-value="idUser" outlined dense hide-details multiple
-            label="المندوب" v-model="selectedDelegate"></v-autocomplete>
+          <v-autocomplete :items="delegates" item-text="username" item-value="idUser" outlined dense hide-details
+            multiple label="المندوب" v-model="selectedDelegate"></v-autocomplete>
         </v-col>
         <v-col>
-          <v-autocomplete :items="sellPrices" item-text="sellPriceName" item-value="idSellPrice" outlined dense
-            hide-details label="ترتيب حسب سعر البيع" v-model="selectedSellPrice"></v-autocomplete>
+          <v-autocomplete :disabled="userData.overviewSellPrice > 0" :items="sellPrices" item-text="sellPriceName"
+            item-value="idSellPrice" outlined dense hide-details label="ترتيب حسب سعر البيع"
+            v-model="selectedSellPrice"></v-autocomplete>
         </v-col>
         <v-col>
           <v-btn @click="search()" color="primary" block dark> بحث </v-btn>
@@ -86,7 +87,7 @@
         </template>
         <template v-slot:[`item.totalOffers`]="{ item }">
           <router-link target="_BLANK" :to="'discounts?delegate=' + item.idUser + '&date=' + startDate">{{
-            item.totalOffers.toLocaleString() }}</router-link>
+        item.totalOffers.toLocaleString() }}</router-link>
         </template>
         <template v-slot:[`item.totalGifts`]="{ item }">
           {{ item.totalGifts.toLocaleString() }}
@@ -101,29 +102,29 @@
         </template>
         <template v-slot:[`item.remain`]="{ item }">
           {{
-            (
-              item.totalCustomers -
-              item.invoicesCount -
-              item.totalVisits
-            ).toLocaleString()
-          }}
+        (
+          item.totalCustomers -
+          item.invoicesCount -
+          item.totalVisits
+        ).toLocaleString()
+      }}
         </template>
 
         <template v-slot:[`item.invoicesCount`]="{ item }">
           <router-link v-if="checkPermission('overview_access_sales')" target="_BLANK" :to="'store?delegate=' +
-            item.idUser +
-            '&dateFrom=' +
-            startDate +
-            '&dateTo=' +
-            endDate
-            ">{{ item.invoicesCount.toLocaleString() }}</router-link>
+        item.idUser +
+        '&dateFrom=' +
+        startDate +
+        '&dateTo=' +
+        endDate
+        ">{{ item.invoicesCount.toLocaleString() }}</router-link>
           <div v-if="!checkPermission('overview_access_sales')">
             {{ item.invoicesCount.toLocaleString() }}
           </div>
         </template>
         <template v-slot:[`item.username`]="{ item }">
           <router-link v-if="checkPermission('overview_access_account')" target="_BLANK" :to="'user/' + item.idUser">{{
-            item.username }}</router-link>
+        item.username }}</router-link>
           <div v-if="!checkPermission('overview_access_account')">
             {{ item.username }}
           </div>
@@ -139,53 +140,53 @@
         <template v-slot:[`item.firstInvoiceDate`]="{ item }">
           <div>
             {{
-              formatAMPM(
-                compareDates(item.firstVisitDate, item.firstInvoiceDate)
-              )
-            }}
+        formatAMPM(
+          compareDates(item.firstVisitDate, item.firstInvoiceDate)
+        )
+      }}
           </div>
         </template>
         <template v-slot:[`item.lastInvoiceDate`]="{ item }">
           <div>
             {{
-              formatAMPM(
-                compareDates2(item.lastVisitDate, item.lastInvoiceDate)
-              )
-            }}
+        formatAMPM(
+          compareDates2(item.lastVisitDate, item.lastInvoiceDate)
+        )
+      }}
           </div>
         </template>
         <template v-slot:[`item.timeCompare`]="{ item }">
           <div>
             {{
-              startDateFixed(
-                compareDates(item.firstVisitDate, item.firstInvoiceDate),
-                compareDates2(item.lastVisitDate, item.lastInvoiceDate)
-              ).replace("منذ", "")
-            }}
+        startDateFixed(
+          compareDates(item.firstVisitDate, item.firstInvoiceDate),
+          compareDates2(item.lastVisitDate, item.lastInvoiceDate)
+        ).replace("منذ", "")
+      }}
           </div>
         </template>
         <template v-slot:[`item.late`]="{ item }">
           <div>
             {{
-              calculateLate(item.idUser) == -1
-              ? "..."
-              : calculateLateDuration(calculateLate(item.idUser))
-            }}
+        calculateLate(item.idUser) == -1
+          ? "..."
+          : calculateLateDuration(calculateLate(item.idUser))
+      }}
           </div>
         </template>
         <template v-slot:[`item.finalLate`]="{ item }">
           <div>
             {{
-              calculateLate(item.idUser) == -1
-              ? "..."
-              : calculateLateDuration(
-                finalLate(
-                  compareDates(item.firstVisitDate, item.firstInvoiceDate),
-                  compareDates2(item.lastVisitDate, item.lastInvoiceDate),
-                  calculateLate(item.idUser)
-                )
-              )
-            }}
+        calculateLate(item.idUser) == -1
+          ? "..."
+          : calculateLateDuration(
+            finalLate(
+              compareDates(item.firstVisitDate, item.firstInvoiceDate),
+              compareDates2(item.lastVisitDate, item.lastInvoiceDate),
+              calculateLate(item.idUser)
+            )
+          )
+      }}
           </div>
         </template>
       </v-data-table>
@@ -224,6 +225,8 @@ export default {
     min: "2020-01-01",
     max: "2030-01-01",
     forceRerender: 0,
+    menu1: null,
+    menu2: null,
     selectedSuperVisor: 0,
     selectedDelegate: 0,
     selectedSellPrice: 0,
@@ -280,9 +283,12 @@ export default {
     });
     this.$http.get(this.$baseUrl + 'users/userinfo/' + this.userInfo.idUser).then((perms) => {
       this.userData = perms.data;
+      console.log(this.userData);
+      this.selectedSellPrice = this.userData.overviewSellPrice;
       if (this.userData.unlockOverviewReport == 1) {
         this.min = moment(this.userData.ovStartDate).format('YYYY-MM-DD');
         this.max = moment(this.userData.ovEndDate).format('YYYY-MM-DD');
+
         // this.startDate = this.max;
         // this.endDate = this.max;
         // this.fetch();
@@ -290,7 +296,7 @@ export default {
         this.getCurrentDate().then((value) => {
           this.startDate = value;
           this.endDate = value;
-          this.fetch();
+          // this.fetch();
         });
       }
     });

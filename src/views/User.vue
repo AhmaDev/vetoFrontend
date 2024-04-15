@@ -20,7 +20,8 @@
               <v-text-field outlined label="العنوان" v-model="userdata.address" hide-details></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field outlined hide-details label="رقم الهاتف الاول" v-model="userdata.phoneNumber"></v-text-field>
+              <v-text-field outlined hide-details label="رقم الهاتف الاول"
+                v-model="userdata.phoneNumber"></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field outlined hide-details label="رقم الهاتف الثاني"
@@ -36,6 +37,11 @@
             </v-col>
             <v-col cols="12">
               <v-text-field outlined label="التحصيل الدراسي" hide-details v-model="userdata.education"></v-text-field>
+            </v-col>
+            <v-col v-if="![3, 4].includes(user.roleId) && userInfo.roleId == 1" cols="12">
+              <v-autocomplete outlined label="التقرير العام - سعر البيع" hide-details
+                v-model="userdata.overviewSellPrice" :items="overviewSellPrices" item-text="sellPriceName"
+                item-value="idSellPrice"></v-autocomplete>
             </v-col>
             <v-col cols="4">
               <v-btn onclick="document.getElementById('filepicker').click()" block>
@@ -66,7 +72,8 @@
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canCreateCustomer')"
               label="امكانية انشاء زبون جديد" v-model="userdata.canCreateCustomer"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewContinueusCustomers')"
-              label="مشاهدة الزبائن الدائميين والغير دائميين" v-model="userdata.canViewContinueusCustomers"></v-checkbox>
+              label="مشاهدة الزبائن الدائميين والغير دائميين"
+              v-model="userdata.canViewContinueusCustomers"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewDelegateRail')"
               label="مشاهدة حركة المندوب" v-model="userdata.canViewDelegateRail"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" label="امكانية تعديل معلومات الزبون"
@@ -78,7 +85,8 @@
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewMonthlySales2')"
               label="مشاهدة التفاصيل المالية" v-model="userdata.canViewMonthlySales"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewContinueusCustomers')"
-              label="مشاهدة الزبائن الدائميين والغير دائميين" v-model="userdata.canViewContinueusCustomers"></v-checkbox>
+              label="مشاهدة الزبائن الدائميين والغير دائميين"
+              v-model="userdata.canViewContinueusCustomers"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canCreateCustomer')"
               label="امكانية فرز على المشرفين" v-model="userdata.canCreateCustomer"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" label="امكانية تعديل معلومات الزبون"
@@ -93,6 +101,8 @@
             <v-text-field :disabled="unlockOverviewReport == 0" type="date" outlined label="تاريخ انتهاء البحث"
               v-model="ovEndDate"></v-text-field>
             <v-btn color="success" @click="saveUnlockDate()">حفظ صلاحية التقرير العام</v-btn>
+
+
           </div>
         </v-col>
       </v-row>
@@ -125,12 +135,16 @@ export default {
       canViewContinueusCustomers: 0,
       canViewDelegateRail: 0,
       canEditCustomer: 0,
+      overviewSellPrice: 0,
     },
     unlockOverviewReport: 0,
     ovStartDate: null,
     ovEndDate: null,
     user: null,
     sellPrices: [],
+    overviewSellPrices: [
+      { idSellPrice: 0, sellPriceName: 'الكل' }
+    ],
   }),
   created: function () {
     // LOAD PERMS START
@@ -193,6 +207,7 @@ export default {
       });
       this.$http.get(this.$baseUrl + "sellprice").then((res) => {
         this.sellPrices = res.data;
+        this.overviewSellPrices.push(...res.data)
       });
     },
     selectFiles(e) {
@@ -243,6 +258,7 @@ export default {
           canViewContinueusCustomers: this.userdata.canViewContinueusCustomers,
           canViewDelegateRail: this.userdata.canViewDelegateRail,
           canEditCustomer: this.userdata.canEditCustomer,
+          overviewSellPrice: this.userdata.overviewSellPrice,
         })
         .then(() => {
           this.$toast.open({
