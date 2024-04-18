@@ -80,6 +80,8 @@
               v-model="userdata.canEditCustomer"></v-checkbox>
             <v-checkbox :true-value="1" :false-value="0" label="امكانية حذف مادة من الفاتورة"
               v-model="userdata.canDeleteItemFromInvoice"></v-checkbox>
+            <v-checkbox :true-value="1" :false-value="0" label="امكانية اضافة هدية للزبون"
+              v-model="userdata.canGiveAGift"></v-checkbox>
           </div>
           <div v-if="user.roleId == 3">
             <v-checkbox :true-value="1" :false-value="0" v-if="checkPermission('canViewDelegateRail')"
@@ -139,6 +141,7 @@ export default {
       canEditCustomer: 0,
       overviewSellPrice: 0,
       canDeleteItemFromInvoice: 0,
+      canGiveAGift: 0,
     },
     unlockOverviewReport: 0,
     ovStartDate: null,
@@ -263,6 +266,7 @@ export default {
           canEditCustomer: this.userdata.canEditCustomer,
           overviewSellPrice: this.userdata.overviewSellPrice,
           canDeleteItemFromInvoice: this.userdata.canDeleteItemFromInvoice,
+          canGiveAGift: this.userdata.canGiveAGift,
         })
         .then(() => {
           this.$toast.open({
