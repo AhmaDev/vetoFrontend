@@ -20,8 +20,8 @@
             label="المشرف" v-model="selectedSuperVisor" @change="setDelegates()"></v-autocomplete>
         </v-col>
         <v-col v-if="this.checkPermission('store_search_delegate')">
-          <v-autocomplete :items="delegates" item-text="username" item-value="idUser" outlined dense hide-details multiple
-            label="المندوب" v-model="selectedDelegate"></v-autocomplete>
+          <v-autocomplete :items="delegates" item-text="username" item-value="idUser" outlined dense hide-details
+            multiple label="المندوب" v-model="selectedDelegate"></v-autocomplete>
         </v-col>
         <v-col>
           <v-text-field outlined dense hide-details label="من تاريخ" v-model="search.from" type="date"></v-text-field>
@@ -46,13 +46,13 @@
         </template>
         <template v-slot:[`item.lastRemaining`]="{ item }">
           {{
-            lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
-            lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
-            lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
-            (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
-              lastStore.filter((s) => s.idItem == item.idItem)[0]
-                .totalBuyRestores)
-          }}
+        lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
+        lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
+        lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
+        (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
+          lastStore.filter((s) => s.idItem == item.idItem)[0]
+            .totalBuyRestores)
+      }}
         </template>
         <template v-slot:[`item.storex`]="{ item }">
           {{ item.storex }}
@@ -62,39 +62,48 @@
             {{ item.stock }}</v-chip>
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
-          <a target="_blank" :href="'/damagedItemsRail?itemId=' +
-            item.idItem +
-            '&from=' +
-            search.from +
-            '&to=' +
-            search.to
-            ">{{ item.totalDamaged.toLocaleString() }}</a>
+          <a v-if="selectedDelegate.length != 1" target="_blank" :href="'/damagedItemsRail?itemId=' +
+        item.idItem +
+        '&from=' +
+        search.from +
+        '&to=' +
+        search.to
+        ">{{ item.totalDamaged.toLocaleString() }}</a>
+          <a v-if="selectedDelegate.length == 1" target="_blank" :href="'/damagedItemsRail?itemId=' +
+        item.idItem +
+        '&from=' +
+        search.from +
+        '&to=' +
+        search.to +
+        '&delegateId=' +
+        selectedDelegate[0]
+        ">{{ item.totalDamaged.toLocaleString() }}</a>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn v-if="checkPermission('item_rail')" target="_BLANK" :to="'/itemRail/' +
-            item.idItem +
-            '?name=' +
-            item.fullItemName +
-            '&from=' +
-            search.from +
-            '&to=' +
-            search.to
-            " icon>
+        item.idItem +
+        '?name=' +
+        item.fullItemName +
+        '&from=' +
+        search.from +
+        '&to=' +
+        search.to
+        " icon>
             <v-icon>la-eye</v-icon>
           </v-btn>
         </template>
         <template v-slot:[`item.actions2`]="{ item }">
           <v-btn v-if="checkPermission('item_rail')" target="_BLANK" :to="'/itemRail/' +
-            item.idItem +
-            '?name=' +
-            item.fullItemName +
-            '&from=' +
-            search.from +
-            '&to=' +
-            search.to +
-            '&userId=' +
-            selectedDelegate
-            " icon>
+        item.idItem +
+        '?name=' +
+        item.fullItemName +
+        '&from=' +
+        search.from +
+        '&to=' +
+        search.to +
+        '&userId=' +
+        selectedDelegate
+        " icon>
             <v-icon>la-eye</v-icon>
           </v-btn>
         </template>

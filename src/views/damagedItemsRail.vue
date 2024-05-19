@@ -6,36 +6,14 @@
     <v-card class="pa-10">
       <v-row>
         <v-col>
-          <v-autocomplete
-            outlined
-            label="المادة"
-            v-model="search.itemId"
-            :items="items"
-            item-value="idItem"
-            item-text="fullItemName"
-            dense
-            hide-details=""
-          ></v-autocomplete>
+          <v-autocomplete outlined label="المادة" v-model="search.itemId" :items="items" item-value="idItem"
+            item-text="fullItemName" dense hide-details=""></v-autocomplete>
         </v-col>
         <v-col>
-          <v-text-field
-            type="date"
-            v-model="search.from"
-            outlined
-            label="من تاريخ"
-            dense
-            hide-details
-          ></v-text-field>
+          <v-text-field type="date" v-model="search.from" outlined label="من تاريخ" dense hide-details></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field
-            type="date"
-            v-model="search.to"
-            outlined
-            label="الى تاريخ"
-            dense
-            hide-details
-          ></v-text-field>
+          <v-text-field type="date" v-model="search.to" outlined label="الى تاريخ" dense hide-details></v-text-field>
         </v-col>
         <v-col cols="1">
           <v-btn @click="fetch()" color="primary">بحث</v-btn>
@@ -62,12 +40,12 @@
             <td>{{ invoice.createdByName }}</td>
             <td>
               {{
-                (
-                  invoice.count /
-                  items.filter((e) => e.idItem == search.itemId)[0]
-                    .cartonQauntity
-                ).toFixed(2)
-              }}
+            (
+              invoice.count /
+              items.filter((e) => e.idItem == search.itemId)[0]
+                .cartonQauntity
+            ).toFixed(2)
+          }}
             </td>
             <td>
               {{ invoice.count }}
@@ -76,12 +54,7 @@
               {{ invoice.totalPrice.toLocaleString() }}
             </td>
             <td>
-              <v-btn
-                :to="'/damagedItems/' + invoice.damagedItemsInvoiceId"
-                target="_blank"
-                small
-                color="primary"
-              >
+              <v-btn :to="'/damagedItems/' + invoice.damagedItemsInvoiceId" target="_blank" small color="primary">
                 <span>مشاهدة</span>
               </v-btn>
             </td>
@@ -127,10 +100,13 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-            `damagedInvoice/contents?item=${this.search.itemId}&dateRangeFrom=${this.search.from}&dateRangeTo=${this.search.to}`
+          `damagedInvoice/contents?item=${this.search.itemId}&dateRangeFrom=${this.search.from}&dateRangeTo=${this.search.to}`
         )
         .then((res) => {
           this.invoices = res.data;
+          if (this.$route.query.delegateId) {
+            this.invoices = this.invoices.filter(e => e.createdBy == this.$route.query.delegateId)
+          }
         })
         .finally(() => loading.hide());
     },
@@ -138,5 +114,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
