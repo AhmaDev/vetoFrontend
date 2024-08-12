@@ -59,7 +59,7 @@
         </template>
         <template v-slot:[`item.stock`]="{ item }">
           <v-chip :color="item.stock < 0.25 ? 'error' : 'success'">
-            {{ item.stock }}</v-chip>
+            {{ item.stock.toFixed(2).replace(/[.,]00$/, "") }}</v-chip>
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
           <a v-if="selectedDelegate.length != 1" target="_blank" :href="'/damagedItemsRail?itemId=' +
