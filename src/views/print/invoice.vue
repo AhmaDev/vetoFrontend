@@ -95,6 +95,12 @@
                 {{ invoice.totalPrice.toLocaleString() }}
               </td>
             </tr>
+            <tr v-if="invoice.totalDamaged > 0">
+              <td style="border: 0px;" colspan="4"></td>
+              <td colspan="4" style="background-color: red; color: white; font-weight: bold; text-align: center;-webkit-print-color-adjust: exact !important;  color-adjust: exact !important; print-color-adjust: exact !important;">
+                يوجد فاتورة تالف للزبون 
+              </td>
+            </tr>
           </tbody>
         </table>
         <br />
