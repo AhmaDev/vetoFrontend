@@ -161,6 +161,7 @@ export default {
           },
           { title: "المواد", icon: "las la-box", route: "/items" },
           { title: "مبيعات المواد", icon: "las la-box", route: "/itemSales" },
+          { title: "تقارير المبيعات", icon: "las la-receipt", route: "/sales-report" },
           { title: "باقات العروض", icon: "las la-gifts", route: "/packages" },
           {
             title: " التوزيع والمالية",
