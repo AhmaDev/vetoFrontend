@@ -44,6 +44,14 @@
           <span :class="item.total == 0 ? `error--text` : `success--text`" class="font-weight-bold">{{
             (item.total).toLocaleString() }}</span>
         </template>
+        <template v-slot:[`item.totalMain`]="{ item }">
+          <span :class="item.totalMain == 0 ? `error--text` : `success--text`" class="font-weight-bold">{{
+            (item.totalMain).toLocaleString() }}</span>
+        </template>
+        <template v-slot:[`item.final`]="{ item }">
+          <span :class="item.final == 0 ? `error--text` : `success--text`" class="font-weight-bold">{{
+            (item.final).toLocaleString() }}</span>
+        </template>
         <template v-slot:[`item.count`]="{ item }">
           <span :class="item.count == 0 ? `error--text` : `success--text`" class="font-weight-bold">{{
             (item.count).toLocaleString() }}</span>
@@ -59,6 +67,8 @@
             <td></td>
             <td>{{finalData.reduce((a, b) => a + b.count, 0).toLocaleString()}}</td>
             <td>{{finalData.reduce((a, b) => a + b.total, 0).toLocaleString()}}</td>
+            <td>{{finalData.reduce((a, b) => a + b.totalMain, 0).toLocaleString()}}</td>
+            <td>{{finalData.reduce((a, b) => a + b.final, 0).toLocaleString()}}</td>
           </tr>
         </template>
       </v-data-table>
@@ -83,7 +93,9 @@ export default {
         { text: "المندوب", value: "username" },
         { text: "المشرفين", value: "supervisors" },
         { text: "المبيعات", value: "count" },
-        { text: "الاجمالي", value: "total" }
+        { text: "اجمالي المجموعة", value: "total" },
+        { text: "الاجمالي", value: "totalMain" },
+        { text: "الصافي", value: "final" },
       ],
       selectedSuperVisor: null,
       selectedGroupId: null,
@@ -155,13 +167,16 @@ export default {
         let query = `?dateRangeFrom=${this.search.dateFrom}&dateRangeTo=${this.search.dateTo}`;
         const response = await this.$http.get(this.$baseUrl + "invoice/invoiceContent" + query);
         this.sales = response.data;
+        let totalSales = response.data;
         if (this.selectedGroupId != null) {
           const items = this.items.filter((e) => e.itemGroupId == this.selectedGroupId).map((e) => e.idItem);
           this.sales = this.sales.filter((e) => items.includes(e.itemId));
         }
         this.users.forEach((e) => {
           e.total = this.sales.filter((s) => s.createdBy == e.idUser).reduce((a, b) => a + b.total, 0);
+          e.totalMain = totalSales.filter((s) => s.createdBy == e.idUser).reduce((a, b) => a + b.total, 0);
           e.count = this.sales.filter((s) => s.createdBy == e.idUser).reduce((a, b) => a + b.count, 0);
+          e.final = e.totalMain - e.total;
         });
         if (this.selectedSuperVisor != null) {
           const sp = this.supervisors.filter((e) => e.idUser == this.selectedSuperVisor)[0];
@@ -194,6 +209,8 @@ export default {
           wb.Workbook["Views"] = [{ RTL: true }];
         }
         var ws = wb.Sheets["Sheet1"];
+        ws['!cols'].push({ width: 20 });
+        ws['!cols'].push({ width: 20 });
         ws['!cols'].push({ width: 20 });
         ws['!cols'].push({ width: 20 });
         ws['!cols'].push({ width: 20 });
