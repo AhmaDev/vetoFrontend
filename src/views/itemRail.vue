@@ -44,6 +44,9 @@
             <v-icon> la-eye </v-icon>
           </v-btn>
         </template>
+        <template v-slot:[`item.notice`]="{ item }">
+          {{discountTypes.find(e => e.idDiscount == item.discountTypeId)?.discountName || ''}}
+        </template>
       </v-data-table>
     </v-card>
     <v-dialog v-model="emptyItemModal" width="100%" max-width="500">
@@ -67,6 +70,7 @@ export default {
     allTableData: [],
     selectedType: "all",
     permissions: [],
+    discountTypes: [],
     selectedDate: null,
     header: [
       { text: "نوع الحركة", value: "type" },
@@ -75,6 +79,7 @@ export default {
       { text: "اسم المحل", value: "storeName" },
       { text: "المندوب", value: "delegateName" },
       { text: "الكمية", value: "count" },
+      { text: "الملاحظات", value: "notice" },
       { text: "سعر المادة في الفاتورة", value: "price" },
       { text: "بتاريخ", value: "creationFixedDate" },
       { text: "الاجراءات", value: "actions" },
@@ -110,6 +115,10 @@ export default {
           console.log(this.tableData);
         })
         .finally(() => loading.hide());
+      this.$http.get(this.$baseUrl + "discount").then((res) => {
+        this.discountTypes = res.data;
+      });
+
     },
     emptyItem() {
       let c = confirm("هل انت متأكد من تصفير المادة");

@@ -316,7 +316,7 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-          "reports/overviewHuge?days=" +
+          "reports/overviewHuge-new?days=" +
           JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(
             1,
             -1
@@ -371,7 +371,7 @@ export default {
       this.$http
         .get(
           this.$baseUrl +
-          "reports/overviewHuge?" +
+          "reports/overviewHuge-new?" +
           q +
           "&days=" +
           JSON.stringify(this.getDays(this.startDate, this.endDate)).slice(

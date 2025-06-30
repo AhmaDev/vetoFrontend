@@ -216,7 +216,7 @@ export default {
     fetch() {
       let loading = this.$loading.show();
       this.$http
-        .get(this.$baseUrl + "item/detailedStore")
+        .get(this.$baseUrl + "item/detailedStore-new")
         .then((res) => {
           this.store = res.data;
         })
@@ -242,7 +242,7 @@ export default {
         this.$http
           .get(
             this.$baseUrl +
-            `item/detailedStore?from=${this.search.from}&to=${this.search.to}`
+            `item/detailedStore-new?from=${this.search.from}&to=${this.search.to}`
           )
           .then((res) => {
             var secondDate = new Date(this.search.from);
@@ -259,7 +259,7 @@ export default {
             this.$http
               .get(
                 this.$baseUrl +
-                `item/compressedDetailedStore?from=2023-05-30&to=${secondDateString}`
+                `item/compressedDetailedStore-new?from=2023-05-30&to=${secondDateString}`
               )
               .then((res) => {
                 let stockItems = res.data.map(
@@ -280,7 +280,7 @@ export default {
         this.$http
           .get(
             this.$baseUrl +
-            `item/detailedStoreByUser/${JSON.stringify(
+            `item/detailedStoreByUser-new/${JSON.stringify(
               this.selectedDelegate
             ).slice(1, -1)}?from=${this.search.from}&to=${this.search.to}`
           )
