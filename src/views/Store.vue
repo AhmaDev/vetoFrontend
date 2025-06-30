@@ -3,9 +3,13 @@
     <v-app-bar app>
       <v-toolbar-title>المواد</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="$print($refs.print)" color="success" dark>
+      <v-btn class="mx-2" @click="$print($refs.print)" color="success" dark>
         <v-icon>la-print</v-icon>
         طباعة
+      </v-btn>
+      <v-btn color="success" @click="tablesToExcel()">
+        <v-icon left>la-download</v-icon>
+        <span>تحميل</span>
       </v-btn>
     </v-app-bar>
 
@@ -46,13 +50,13 @@
         </template>
         <template v-slot:[`item.lastRemaining`]="{ item }">
           {{
-        lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
-        lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
-        lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
-        (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
-          lastStore.filter((s) => s.idItem == item.idItem)[0]
-            .totalBuyRestores)
-      }}
+            lastStore.filter((s) => s.idItem == item.idItem)[0].totalBuy +
+            lastStore.filter((s) => s.idItem == item.idItem)[0].totalRestores +
+            lastStore.filter((s) => s.idItem == item.idItem)[0].totalTempBuy -
+            (lastStore.filter((s) => s.idItem == item.idItem)[0].totalSell +
+              lastStore.filter((s) => s.idItem == item.idItem)[0]
+                .totalBuyRestores)
+          }}
         </template>
         <template v-slot:[`item.storex`]="{ item }">
           {{ item.storex }}
@@ -63,47 +67,47 @@
         </template>
         <template v-slot:[`item.totalDamaged`]="{ item }">
           <a v-if="selectedDelegate.length != 1" target="_blank" :href="'/damagedItemsRail?itemId=' +
-        item.idItem +
-        '&from=' +
-        search.from +
-        '&to=' +
-        search.to
-        ">{{ item.totalDamaged.toLocaleString() }}</a>
+            item.idItem +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to
+            ">{{ item.totalDamaged.toLocaleString() }}</a>
           <a v-if="selectedDelegate.length == 1" target="_blank" :href="'/damagedItemsRail?itemId=' +
-        item.idItem +
-        '&from=' +
-        search.from +
-        '&to=' +
-        search.to +
-        '&delegateId=' +
-        selectedDelegate[0]
-        ">{{ item.totalDamaged.toLocaleString() }}</a>
+            item.idItem +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to +
+            '&delegateId=' +
+            selectedDelegate[0]
+            ">{{ item.totalDamaged.toLocaleString() }}</a>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn v-if="checkPermission('item_rail')" target="_BLANK" :to="'/itemRail/' +
-        item.idItem +
-        '?name=' +
-        item.fullItemName +
-        '&from=' +
-        search.from +
-        '&to=' +
-        search.to
-        " icon>
+            item.idItem +
+            '?name=' +
+            item.fullItemName +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to
+            " icon>
             <v-icon>la-eye</v-icon>
           </v-btn>
         </template>
         <template v-slot:[`item.actions2`]="{ item }">
           <v-btn v-if="checkPermission('item_rail')" target="_BLANK" :to="'/itemRail/' +
-        item.idItem +
-        '?name=' +
-        item.fullItemName +
-        '&from=' +
-        search.from +
-        '&to=' +
-        search.to +
-        '&userId=' +
-        selectedDelegate
-        " icon>
+            item.idItem +
+            '?name=' +
+            item.fullItemName +
+            '&from=' +
+            search.from +
+            '&to=' +
+            search.to +
+            '&userId=' +
+            selectedDelegate
+            " icon>
             <v-icon>la-eye</v-icon>
           </v-btn>
         </template>
@@ -113,6 +117,8 @@
 </template>
 
 <script>
+import * as XLSX from "xlsx-js-style/dist/xlsx.bundle";
+
 export default {
   name: "Store",
   data: () => ({
@@ -310,6 +316,27 @@ export default {
       this.store = this.store.sort((a, b) =>
         a.totalSell.localeCompare(b.totalSell)
       );
+    },
+    tablesToExcel() {
+      this.showSDollar = true;
+      setTimeout(() => {
+        var table_elt = document.getElementsByClassName(
+          "v-data-table__wrapper"
+        )[0];
+        var wb = XLSX.utils.table_to_book(table_elt, { raw: true });
+        if (wb.Workbook) {
+          wb.Workbook.Views[0]["RTL"] = true;
+        } else {
+          wb.Workbook = {};
+          wb.Workbook["Views"] = [{ RTL: true }];
+        }
+
+        // Package and Release Data (`writeFile` tries to write and save an XLSB file)
+        XLSX.writeFile(wb, "Report.xlsx");
+        setTimeout(() => {
+          this.showSDollar = false;
+        }, 1000);
+      }, 500);
     },
   },
 };
