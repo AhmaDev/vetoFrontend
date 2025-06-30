@@ -45,7 +45,7 @@
           </v-btn>
         </template>
         <template v-slot:[`item.notice`]="{ item }">
-          {{discountTypes.find(e => e.idDiscount == item.discountTypeId)?.discountName || ''}}
+          {{ getDiscountName(item.discountTypeId) }}
         </template>
       </v-data-table>
     </v-card>
@@ -144,6 +144,11 @@ export default {
           .finally(() => loading.hide());
       }
     },
+    getDiscountName(discountTypeId) {
+      const found = this.discountTypes.find(e => e.idDiscount == discountTypeId);
+      return found ? found.discountName : '';
+    },
+
     sort(type) {
       if (type == "all") {
         this.tableData = this.allTableData;
