@@ -62,6 +62,7 @@ export default {
     discountsHeader: [
       { text: "", value: "imagePath" },
       { text: "اسم المادة", value: "fullItemName" },
+      { text: "المورد", value: "manufactureName" },
       { text: "المندوب", value: "username" },
       { text: "الزبون", value: "storeName" },
       { text: "كود الزبون", value: "idCustomer" },
@@ -132,6 +133,8 @@ export default {
           } else {
             this.discounts = res.data;
           }
+          console.log(this.discounts);
+          
         })
         .finally(() => loading.hide());
     },

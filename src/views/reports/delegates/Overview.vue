@@ -71,6 +71,11 @@
         <template v-slot:[`item.totalCustomers`]="{ item }">
           {{ item.totalCustomers.toLocaleString() }}
         </template>
+        <template v-slot:[`item.superVisorName`]="{ item }">
+          <v-chip x-small :key="sv" v-for="sv in getSVName(item.idUser)">
+            {{ sv }}
+          </v-chip>
+        </template>
         <template v-slot:[`item.totalSelling`]="{ item }">
           <router-link target="_BLANK" v-if="checkPermission('overview_visits')"
             :to="'visits?delegate=' + item.idUser + '&date=' + startDate">{{ item.totalSelling.toLocaleString()
@@ -87,7 +92,7 @@
         </template>
         <template v-slot:[`item.totalOffers`]="{ item }">
           <router-link target="_BLANK" :to="'discounts?delegate=' + item.idUser + '&date=' + startDate">{{
-        item.totalOffers.toLocaleString() }}</router-link>
+            item.totalOffers.toLocaleString() }}</router-link>
         </template>
         <template v-slot:[`item.totalGifts`]="{ item }">
           {{ item.totalGifts.toLocaleString() }}
@@ -102,29 +107,29 @@
         </template>
         <template v-slot:[`item.remain`]="{ item }">
           {{
-        (
-          item.totalCustomers -
-          item.invoicesCount -
-          item.totalVisits
-        ).toLocaleString()
-      }}
+            (
+              item.totalCustomers -
+              item.invoicesCount -
+              item.totalVisits
+            ).toLocaleString()
+          }}
         </template>
 
         <template v-slot:[`item.invoicesCount`]="{ item }">
           <router-link v-if="checkPermission('overview_access_sales')" target="_BLANK" :to="'store?delegate=' +
-        item.idUser +
-        '&dateFrom=' +
-        startDate +
-        '&dateTo=' +
-        endDate
-        ">{{ item.invoicesCount.toLocaleString() }}</router-link>
+            item.idUser +
+            '&dateFrom=' +
+            startDate +
+            '&dateTo=' +
+            endDate
+            ">{{ item.invoicesCount.toLocaleString() }}</router-link>
           <div v-if="!checkPermission('overview_access_sales')">
             {{ item.invoicesCount.toLocaleString() }}
           </div>
         </template>
         <template v-slot:[`item.username`]="{ item }">
           <router-link v-if="checkPermission('overview_access_account')" target="_BLANK" :to="'user/' + item.idUser">{{
-        item.username }}</router-link>
+            item.username }}</router-link>
           <div v-if="!checkPermission('overview_access_account')">
             {{ item.username }}
           </div>
@@ -140,53 +145,53 @@
         <template v-slot:[`item.firstInvoiceDate`]="{ item }">
           <div>
             {{
-        formatAMPM(
-          compareDates(item.firstVisitDate, item.firstInvoiceDate)
-        )
-      }}
+              formatAMPM(
+                compareDates(item.firstVisitDate, item.firstInvoiceDate)
+            )
+            }}
           </div>
         </template>
         <template v-slot:[`item.lastInvoiceDate`]="{ item }">
           <div>
             {{
-        formatAMPM(
-          compareDates2(item.lastVisitDate, item.lastInvoiceDate)
-        )
-      }}
+              formatAMPM(
+                compareDates2(item.lastVisitDate, item.lastInvoiceDate)
+            )
+            }}
           </div>
         </template>
         <template v-slot:[`item.timeCompare`]="{ item }">
           <div>
             {{
-        startDateFixed(
-          compareDates(item.firstVisitDate, item.firstInvoiceDate),
-          compareDates2(item.lastVisitDate, item.lastInvoiceDate)
-        ).replace("منذ", "")
-      }}
+              startDateFixed(
+                compareDates(item.firstVisitDate, item.firstInvoiceDate),
+                compareDates2(item.lastVisitDate, item.lastInvoiceDate)
+              ).replace("منذ", "")
+            }}
           </div>
         </template>
         <template v-slot:[`item.late`]="{ item }">
           <div>
             {{
-        calculateLate(item.idUser) == -1
-          ? "..."
-          : calculateLateDuration(calculateLate(item.idUser))
-      }}
+              calculateLate(item.idUser) == -1
+                ? "..."
+                : calculateLateDuration(calculateLate(item.idUser))
+            }}
           </div>
         </template>
         <template v-slot:[`item.finalLate`]="{ item }">
           <div>
             {{
-        calculateLate(item.idUser) == -1
-          ? "..."
-          : calculateLateDuration(
-            finalLate(
-              compareDates(item.firstVisitDate, item.firstInvoiceDate),
-              compareDates2(item.lastVisitDate, item.lastInvoiceDate),
-              calculateLate(item.idUser)
-            )
-          )
-      }}
+              calculateLate(item.idUser) == -1
+                ? "..."
+                : calculateLateDuration(
+                  finalLate(
+                    compareDates(item.firstVisitDate, item.firstInvoiceDate),
+                    compareDates2(item.lastVisitDate, item.lastInvoiceDate),
+                    calculateLate(item.idUser)
+                  )
+                )
+            }}
           </div>
         </template>
       </v-data-table>
@@ -217,6 +222,7 @@ export default {
   data: () => ({
     permissions: [],
     supervisors: [],
+    supervisorsDelegates: [],
     delegates: [],
     startDate: "",
     sellPrices: [],
@@ -236,7 +242,7 @@ export default {
         { text: "سعر البيع", value: "sellPriceName" },
         { text: "اسم المندوب", value: "username" },
         // { text: "المنطقة", value: "address" },
-        { text: "المشرف", value: "superVisorName" },
+        { text: "المشرفين", value: "superVisorName" },
         { text: "عدد الزبائن", value: "totalCustomers" },
         { text: "فواتير البيع", value: "invoicesCount" },
         { text: "الزيارات", value: "totalVisits" },
@@ -274,6 +280,9 @@ export default {
     });
     this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
       this.supervisors = res.data;
+    });
+    this.$http.get(this.$baseUrl + "supervisorDelegates").then((res) => {
+      this.supervisorsDelegates = res.data;
     });
     this.$http.get(this.$baseUrl + "sellPrice").then((res) => {
       this.sellPrices = res.data;
@@ -349,6 +358,14 @@ export default {
 
 
     },
+    getSVName(id) {
+      let sv = this.supervisorsDelegates.filter((e) => e.delegateId == id);
+      if (sv.length > 0) {
+        return sv.map(e => this.supervisors.filter(s => s.idUser == e.supervisorId)[0].username);
+      } else {
+        return [];
+      }
+    },
     search() {
       var q = "";
       if (this.startDate == "" || this.endDate == "") {
@@ -380,6 +397,8 @@ export default {
           )
         )
         .then((res) => {
+          console.log('ovd', res.data);
+
           this.report.data = res.data;
           for (let i = 0; i < this.report.data.length; i++) {
             const user = this.report.data[i];
