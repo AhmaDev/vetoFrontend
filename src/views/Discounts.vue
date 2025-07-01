@@ -23,7 +23,7 @@
           <v-btn @click="fetchSearch()" color="primary"> بحث </v-btn>
         </v-col>
       </v-row>
-      <v-data-table sort-by="creationFixedDate" :items-per-page="1000" hide-default-footer :items="discounts" :headers="discountsHeader" multi-sort>
+      <v-data-table sort-by="creationFixedDate" :items-per-page="-1" hide-default-footer :items="discounts" :headers="discountsHeader" multi-sort>
         <template v-slot:[`item.imagePath`]="{ item }">
           <v-avatar size="36">
             <img v-if="item.imagePath != null" :src="$baseUrl + 'files/' + item.imagePath" />
