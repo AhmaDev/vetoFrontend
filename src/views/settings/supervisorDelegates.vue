@@ -3,69 +3,43 @@
     <v-row>
       <v-col cols="3">
         <v-list>
-          <v-list-item
-            @click="setSelectedSuperVisor(supervisor.idUser)"
-            v-for="(supervisor, i) in supervisors"
-            :key="i"
-            :class="
-              selectedSuperVisor == supervisor.idUser
-                ? 'v-list-item--active'
-                : ''
-            "
-          >
+          <v-list-item @click="setSelectedSuperVisor(supervisor.idUser)" v-for="(supervisor, i) in supervisors" :key="i"
+            :class="selectedSuperVisor == supervisor.idUser
+              ? 'v-list-item--active'
+              : ''
+              ">
             <v-list-item-content>
-              <v-list-item-title
-                v-text="supervisor.username"
-              ></v-list-item-title>
+              <v-list-item-title v-text="supervisor.username"></v-list-item-title>
             </v-list-item-content>
+            <v-list-item-action>
+              <v-checkbox @click.stop v-model="supervisor.isMainSupervisor" :true-value="1" :false-value="0"
+                @change="setIsMainSupervisor(supervisor.idUser, $event)" label=" رئيسي"></v-checkbox>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
       </v-col>
       <v-col cols="9" v-if="selectedSuperVisor > 0">
         <v-row>
           <v-col>
-            <v-autocomplete
-              :items="delegates"
-              item-text="username"
-              item-value="idUser"
-              v-model="selectedDelegate"
-              outlined
-              multiple
-              dense
-              label="اختيار مندوب"
-            ></v-autocomplete>
+            <v-autocomplete :items="delegates" item-text="username" item-value="idUser" v-model="selectedDelegate"
+              outlined multiple dense label="اختيار مندوب"></v-autocomplete>
           </v-col>
-          <v-col
-            ><v-btn color="primary" @click="addDeleteSuperVisor()"
-              >اضافة</v-btn
-            ></v-col
-          >
+          <v-col><v-btn color="primary" @click="addDeleteSuperVisor()">اضافة</v-btn></v-col>
         </v-row>
 
-        <v-data-table
-          :items="supervisorDelegates"
-          :headers="tableHeaders"
-          class="elevation-0"
-          height="500"
-          fixed-header
-        >
+        <v-data-table :items="supervisorDelegates" :headers="tableHeaders" class="elevation-0" height="500"
+          fixed-header>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu offset-y>
               <template v-bind="item" v-slot:activator="{ on, attrs }">
                 <v-btn v-bind="attrs" v-on="on" icon>
-                  <v-icon color="red" title="حذف المندوب من قائمة المشرف"
-                    >mdi-delete-outline</v-icon
-                  >
+                  <v-icon color="red" title="حذف المندوب من قائمة المشرف">mdi-delete-outline</v-icon>
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item
-                  @click="deleteDelegate(item.idSupervisorDelegates)"
-                >
-                  <v-list-item-title
-                    >اضغط هنا لتأكيد حذف المندوب من قائمة
-                    المشرف</v-list-item-title
-                  >
+                <v-list-item @click="deleteDelegate(item.idSupervisorDelegates)">
+                  <v-list-item-title>اضغط هنا لتأكيد حذف المندوب من قائمة
+                    المشرف</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -100,6 +74,8 @@ export default {
     let loading = this.$loading.show();
     this.$http.get(this.$baseUrl + "users/role/3").then((res) => {
       this.supervisors = res.data;
+      console.log(this.supervisors);
+
     });
     this.$http
       .get(this.$baseUrl + "users")
@@ -120,6 +96,11 @@ export default {
         })
         .finally(() => loading.hide());
     },
+    setIsMainSupervisor(id, event) {
+      this.$http.put(this.$baseUrl + "users/edit/" + id, {
+        isMainSupervisor: event
+      })
+    },
     addDeleteSuperVisor() {
       if (this.selectedDelegate.length == 0) {
         this.$toast.open({
@@ -138,8 +119,8 @@ export default {
       this.$http
         .post(
           this.$baseUrl +
-            "supervisorDelegates/multiple/" +
-            this.selectedSuperVisor,
+          "supervisorDelegates/multiple/" +
+          this.selectedSuperVisor,
           values
         )
         .then(() => {
@@ -166,5 +147,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -72,7 +72,7 @@
           {{ item.totalCustomers.toLocaleString() }}
         </template>
         <template v-slot:[`item.superVisorName`]="{ item }">
-          <v-chip x-small :key="sv" v-for="sv in getSVName(item.idUser)">
+          <v-chip small :key="sv" v-for="sv in getSVName(item.idUser)">
             {{ sv }}
           </v-chip>
         </template>
@@ -147,7 +147,7 @@
             {{
               formatAMPM(
                 compareDates(item.firstVisitDate, item.firstInvoiceDate)
-            )
+              )
             }}
           </div>
         </template>
@@ -156,7 +156,7 @@
             {{
               formatAMPM(
                 compareDates2(item.lastVisitDate, item.lastInvoiceDate)
-            )
+              )
             }}
           </div>
         </template>
@@ -361,7 +361,18 @@ export default {
     getSVName(id) {
       let sv = this.supervisorsDelegates.filter((e) => e.delegateId == id);
       if (sv.length > 0) {
-        return sv.map(e => this.supervisors.filter(s => s.idUser == e.supervisorId)[0].username);
+        let svs = [];
+        for (let i = 0; i < sv.length; i++) {
+          let userSV = this.supervisors.filter(
+            (e) => e.idUser == sv[i].supervisorId
+          );
+          for (let j = 0; j < userSV.length; j++) {
+            if (userSV[j].isMainSupervisor == 1) {
+              svs.push(userSV[j].username);
+            }
+          }
+        }
+        return svs;
       } else {
         return [];
       }
